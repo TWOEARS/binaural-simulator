@@ -50,6 +50,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       params.sample_rate = obj.SampleRate;
       params.hrir_file = obj.HRIRDataset.Filename;
       params.threads = obj.NumberOfThreads;
+      params.delayline_size = ceil(obj.MaximumDelay*obj.SampleRate);
+      params.initial_delay = ceil(obj.MaximumDelay*obj.SampleRate);
       obj.Renderer('init', obj.NumberOfSSRSources, params);
       
       % define source types

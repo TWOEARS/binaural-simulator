@@ -8,6 +8,9 @@ classdef (Abstract) SimulatorInterface < hgsetget
     Renderer@function_handle;  % rendering mex-function @type function_handle
     HRIRDataset@simulator.DirectionalIR;  % hrirs @type DirectionalIR
     
+    % maximum delay in seconds caused by distance @type double
+    MaximumDelay = 0.1;  %       
+    
     Sources@simulator.AudioSource  % array of sources @type AudioSource[]
     Sinks@simulator.AudioSink;  % sinks @type AudioSink
     Walls@simulator.Wall;  % array of walls @type Wall[]
@@ -20,14 +23,14 @@ classdef (Abstract) SimulatorInterface < hgsetget
   
   properties
     Init;
-  end
-  
+  end  
   properties (Dependent, GetAccess=private)
     Refresh;
     Process;
     ClearMemory;
     ShutDown;
   end
+  
   methods (Abstract)
     init(obj);
     refresh(obj);
@@ -99,6 +102,11 @@ classdef (Abstract) SimulatorInterface < hgsetget
       end
       obj.errorIfInitialized;
       obj.HRIRDataset = HRIRDataset;
+    end
+    function set.MaximumDelay(obj, MaximumDelay)
+      isargpositivescalar(MaximumDelay)
+      obj.errorIfInitialized;
+      obj.MaximumDelay = MaximumDelay;
     end
     function set.Sinks(obj, Sinks)
       isargclass('simulator.AudioSink',Sinks);  % check class
