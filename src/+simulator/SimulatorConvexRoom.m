@@ -127,7 +127,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     function clearMemory(obj)
       % function clearMemory(obj)
       % clear memory of renderer
-      blocks = ceil(obj.HRIRDataset.NumberOfSamples/obj.BlockSize);
+      blocks = ceil( (obj.HRIRDataset.NumberOfSamples + ...
+        2*obj.MaximumDelay*obj.SampleRate)/obj.BlockSize ...
+        );
       input = single(zeros(obj.BlockSize, obj.NumberOfSSRSources));
       for idx=1:blocks
         [~] = obj.Renderer('process', input);

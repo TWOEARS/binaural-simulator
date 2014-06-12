@@ -350,8 +350,11 @@ void BinauralRenderer::Source::_process()
   }
 
   _interp_factor = interp_factor;  // Assign (once!) to BlockParameter
-  _int_delay = static_cast<int>(float_delay + 0.5f);  // ... same here
-  _weight = this->delayline.delay_is_valid(_int_delay) ? weight : 0;
+
+  // check if delay is valid for delay line
+  auto tmp_delay = static_cast<int>(float_delay + 0.5f);
+  // TODO: add functionality to delay line to correct delay
+  _int_delay = this->delayline.delay_is_valid(tmp_delay) ? tmp_delay : 0;
 
   float angles = _input.parent._angles;
 
