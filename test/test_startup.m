@@ -6,7 +6,7 @@ basepath=which('test_startup');
 basepath=basepath(1:end-14);
 
 addpath([basepath, '../src/tools']);
-addpath([basepath, '../src/ssr/mex']); 
+addpath([basepath, '../../../ssr/mex']); 
 addpath([basepath, '../src']);  
 database_path = [basepath, '../../database/'];
 
