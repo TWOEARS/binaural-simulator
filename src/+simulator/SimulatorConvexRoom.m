@@ -82,11 +82,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       end
       
       % PWD sources
-      % NOTE: idx == length(obj.ImageSources)
-      for kdx=obj.pwdSourcesDx
-        inc = obj.Sources(kdx).RequiredChannels;
-        obj.inputArray(:,idx+(1:inc)) = obj.Sources(kdx).getData(obj.BlockSize);
-        idx = idx + inc;
+      for kdx=1:length(obj.PWDSubSources)
+        obj.inputArray(:,idx+kdx) = obj.PWDSubSources(kdx).getData(obj.BlockSize);
       end
       
       out = obj.Renderer(...
@@ -292,8 +289,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       for idx=1:NObj
         for kdx=1:PWDSources(idx).RequiredChannels
           wdx = wdx + 1;
-          SubSources(wdx) = simulator.AudioSource( ...
-            simulator.AudioSourceType.PLANE, simulator.buffer.FIFO());
+          SubSources(wdx) = simulator.AudioSource(...
+            simulator.AudioSourceType.PLANE, ...
+            simulator.buffer.Channel(PWDSources(idx).AudioBuffer,kdx)...
+            );
           SubSources(wdx).GroupObject = PWDSources(idx);
           SubSources(wdx).UnitFront = PWDSources(idx).Directions(:,kdx);
         end
