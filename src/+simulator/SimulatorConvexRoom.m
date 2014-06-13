@@ -17,7 +17,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     parentWallsDx;  % index for 'mother' wall of images sources
     sucSinksDx;  % index for 'child' images sinks of sinks    
     
-    pwdSourcesDx;    
+    pwdSourcesDx;
+    PWDSubSources@simulator.AudioSource;
     
     directSourcesDx;
     
@@ -29,17 +30,23 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       % function init(obj)
       % initialize Simulator
       
-      % init images of Sinks and Sources
-      obj.mirroredSourcesDx = ...
-        find( [obj.Sources.Type] == simulator.AudioSourceType.POINT);
+      % init direct binaural Sources
       obj.directSourcesDx = ...
-        find( [obj.Sources.Type] == simulator.AudioSourceType.DIRECT);
+        find( [obj.Sources.Type] == simulator.AudioSourceType.DIRECT);     
+      
+      % init pwd sources
       obj.pwdSourcesDx = ...
         find( [obj.Sources.Type] == simulator.AudioSourceType.PWD);
+      if ~isempty(obj.pwdSourcesDx)
+        obj.PWDSubSources ...
+          = obj.pwdInit(obj.Sources(obj.pwdSourcesDx));
+      end
       
+      % init images of Sinks and Sources
+      obj.mirroredSourcesDx = ...
+        find( [obj.Sources.Type] == simulator.AudioSourceType.POINT);      
       [obj.ImageSources, obj.parentSourcesDx, ~, obj.parentWallsDx] ...
         = obj.ismInit(obj.Sources(obj.mirroredSourcesDx));     
-      
       [obj.ImageSinks, ~, obj.sucSinksDx] = obj.ismInit(obj.Sinks);
       
       % init input array for renderer
@@ -57,7 +64,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       % define source types
       source_types = repmat({'point'}, 1, obj.NumberOfImageSources);
       source_types = [source_types, ...
-        repmat({'plane'}, 1, length(obj.pwdSourcesDx))];
+        repmat({'plane'}, 1, length(obj.PWDSubSources))];
       
       obj.Renderer('source_model', source_types{:});    
       
@@ -83,9 +90,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       end
       
       out = obj.Renderer(...
-        'source_position', [obj.ImageSources.PositionXY],...
-        'source_orientation', [obj.ImageSources.OrientationXY],...
-        'source_mute', [obj.ImageSources.Mute],...
+        'source_position', ...
+        [[obj.ImageSources.PositionXY], [obj.PWDSubSources.PositionXY]],...
+        'source_orientation', ...
+        [[obj.ImageSources.OrientationXY], [obj.PWDSubSources.OrientationXY]],...
+        'source_mute', ...
+        logical([[obj.ImageSources.Mute], [obj.PWDSubSources.Mute]]),...
         'reference_position', [obj.Sinks.PositionXY],...
         'reference_orientation', [obj.Sinks.OrientationXY],...
         'process', obj.inputArray);
@@ -268,6 +278,26 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       end
     end
   end
+  %% PWD
+  methods
+    function SubSources = pwdInit(obj, PWDSources)
+      
+      NObj = length(PWDSources);
+      NSub = sum([PWDSources.RequiredChannels]);
+      
+      wdx = 0;
+      for idx=1:NObj
+        for kdx=1:PWDSources(idx).RequiredChannels
+          wdx = wdx + 1;
+          SubSources(wdx) = simulator.AudioSource( ...
+            simulator.AudioSourceType.PLANE, simulator.buffer.FIFO());
+          SubSources(wdx).GroupObject = PWDSources(idx);
+          SubSources(wdx).UnitFront = PWDSources(idx).Directions(:,kdx);
+        end
+      end
+    end
+  end  
+  
   %% misc.
   methods
     function draw(obj,id)
@@ -301,10 +331,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       % Draw Source-Position
       h(3) = plot3(src_pos(1,:), src_pos(2,:), src_pos(3,:),'rx');
       % Draw Active/Valid Sources
+      if min(img_mute) == 0
       h(4) = plot3(img_pos(1,~img_mute), ...
         img_pos(2,~img_mute), ...
         img_pos(3,~img_mute),  ...
         'bo');
+      end
       % Draw Inactive/Invalid Sources
       if max(img_mute) == 1
         h(5) = plot3(img_pos(1,img_mute), ...
