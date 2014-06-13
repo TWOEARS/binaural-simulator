@@ -90,8 +90,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         'reference_orientation', [obj.Sinks.OrientationXY],...
         'process', obj.inputArray);
       
-      % add diffuse Noise
-      for idx=obj.directSourcesDx
+      % add direct Sources
+      for idx=find([obj.Sources(obj.directSourcesDx).Mute] == 0)
         out = out + obj.Sources(idx).getData(obj.BlockSize);
       end    
       
