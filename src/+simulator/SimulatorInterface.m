@@ -7,30 +7,30 @@ classdef (Abstract) SimulatorInterface < hgsetget
     NumberOfThreads;  % threads used for computing ear signals @type uint
     Renderer@function_handle;  % rendering mex-function @type function_handle
     HRIRDataset@simulator.DirectionalIR;  % hrirs @type DirectionalIR
-    
+
     % maximum delay in seconds caused by distance @type double
-    MaximumDelay = 0.1;  %       
-    
+    MaximumDelay = 0.0;  %
+
     Sources@simulator.AudioSource  % array of sources @type AudioSource[]
     Sinks@simulator.AudioSink;  % sinks @type AudioSink
     Walls@simulator.Wall;  % array of walls @type Wall[]
 
-    ReverberationMaxOrder;  % order of image source model @type uint
+    ReverberationMaxOrder = 0.0;  % order of image source model @type uint
   end
-  
+
   %% some functionalities for controlling the Simulator
   % this properties can be used to invoke some of the abstract functions
-  
+
   properties
     Init;
-  end  
+  end
   properties (Dependent, GetAccess=private)
     Refresh;
     Process;
     ClearMemory;
     ShutDown;
   end
-  
+
   methods (Abstract)
     init(obj);
     refresh(obj);
@@ -42,7 +42,7 @@ classdef (Abstract) SimulatorInterface < hgsetget
   methods
     function set.Init(obj, Init)
       isargclass('logical', Init);
-      if (Init)        
+      if (Init)
         obj.init();
       end
       obj.Init = Init;
@@ -52,7 +52,7 @@ classdef (Abstract) SimulatorInterface < hgsetget
       if (Refresh)
         obj.refresh();
       end
-    end  
+    end
     function set.Process(obj, Process)
       isargclass('logical', Process);
       if (Process)
@@ -70,10 +70,10 @@ classdef (Abstract) SimulatorInterface < hgsetget
       if (ShutDown)
         obj.shutDown();
         obj.Init = false;
-      end      
-    end  
+      end
+    end
   end
-  
+
   %% setter, getter
   methods
     function set.BlockSize(obj, BlockSize)
@@ -136,7 +136,7 @@ classdef (Abstract) SimulatorInterface < hgsetget
       obj.ReverberationMaxOrder = ReverberationMaxOrder;
     end
   end
-  
+
   %% Misc
   methods (Access = private)
     function errorIfInitialized(obj)
@@ -144,5 +144,5 @@ classdef (Abstract) SimulatorInterface < hgsetget
         error('Cannot change property while Simulator is initialized');
       end
     end
-  end   
+  end
 end
