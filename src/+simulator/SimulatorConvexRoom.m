@@ -101,14 +101,14 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         'process', obj.inputArray);
       
       % add direct Sources
-      for idx=find([obj.Sources(obj.directSourcesDx).Mute] == 0)
+      for idx=obj.directSourcesDx([obj.Sources(obj.directSourcesDx).Mute] == 0)
         out = out + obj.Sources(idx).getData(obj.BlockSize);
-      end    
+      end
       
       % remove Data for Original Sources
       for idx=1:length(obj.Sources)
         obj.Sources(idx).removeData(obj.BlockSize);
-      end 
+      end
       
       obj.Sinks.appendData(out);  % append Data to Sinks
     end
@@ -122,16 +122,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       obj.ismPositions(obj.Sources(obj.mirroredSourcesDx), obj.ImageSources);
       obj.ismPositions(obj.Sinks, obj.ImageSinks);
       
-      obj.ismVisibility();
-      
-      for idx=1:length(obj.ImageSources)
-        % mute invalid image sources and sources with muted OriginalObject
-        obj.ImageSources(idx).Mute = ...
-          ~obj.ImageSources(idx).Valid || ...
-          obj.ImageSources(idx).OriginalObject.Mute;
-        % correct distance for 3D to 2D
-        obj.ImageSources(idx).correctDistance(obj.Sinks.Position);
-      end
+      obj.ismVisibility(obj.ImageSources);
+      obj.ismAmplitude(obj.ImageSources);
     end
     %% Clear Memory
     function clearMemory(obj)
@@ -241,13 +233,13 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       end
     end
     
-    function ismVisibility(obj)
+    function ismVisibility(obj, Images)
       % initialize visibility
-      visible = [obj.ImageSources.Valid];
+      visible = [Images.Valid];
       % select image sources which are valid after position computation
       src_range = find(visible);
       for srcdx=src_range % for each of these image sources
-        DummySource = obj.ImageSources(srcdx);
+        DummySource = Images(srcdx);
         idx = srcdx;
         sinkdx = 1;
         % iterate recursively
@@ -274,7 +266,18 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       end
       % apply visibility
       for srcdx=find(~visible)
-        obj.ImageSources(srcdx).Valid = false;
+        Images(srcdx).Valid = false;
+      end
+    end
+    
+    function ismAmplitude(obj, ImageSources)
+      for idx=1:length(ImageSources)
+        % mute invalid image sources and sources with muted OriginalObject
+        ImageSources(idx).Mute = ...
+          ~ImageSources(idx).Valid || ...
+          ImageSources(idx).OriginalObject.Mute;
+        % correct distance for 3D to 2D
+        ImageSources(idx).correctDistance(obj.Sinks.Position);
       end
     end
   end

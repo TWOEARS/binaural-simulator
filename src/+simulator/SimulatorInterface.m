@@ -9,13 +9,13 @@ classdef (Abstract) SimulatorInterface < hgsetget
     HRIRDataset@simulator.DirectionalIR;  % hrirs @type DirectionalIR
     
     % maximum delay in seconds caused by distance @type double
-    MaximumDelay = 0.1;  %       
+    MaximumDelay = 0.0;  %       
     
     Sources@simulator.AudioSource  % array of sources @type AudioSource[]
     Sinks@simulator.AudioSink;  % sinks @type AudioSink
     Walls@simulator.Wall;  % array of walls @type Wall[]
 
-    ReverberationMaxOrder;  % order of image source model @type uint
+    ReverberationMaxOrder = 0.0;  % order of image source model @type uint
   end
   
   %% some functionalities for controlling the Simulator
