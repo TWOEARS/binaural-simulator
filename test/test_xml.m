@@ -5,11 +5,12 @@ test_startup;
 
 %%
 
-theDoc = xmlread('info.xml');
+theDoc = xmlread('test.xml');
 theNode = theDoc.getDocumentElement;
 
 source = AudioSource(AudioSourceType.POINT,buffer.Noise());
-source.PropertiesFromXMLNode(theNode);
+source.XMLsetProperties(theNode);
+
 
 %%
 

@@ -41,7 +41,9 @@ classdef AudioSource < simulator.Object & dynamicprops
       obj.Type = type;
       obj.AudioBuffer = buffer;
       
-      obj.XMLProperties = {'UnitFront', 'UnitUp', 'Position'};     
+      obj.addXMLProperty('UnitUp', 'double', false);
+      obj.addXMLProperty('UnitFront', 'double', false);
+      obj.addXMLProperty('Position', 'double', false); 
     end
   end
   %% setter/getter

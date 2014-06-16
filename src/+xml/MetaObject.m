@@ -4,11 +4,11 @@ classdef (Abstract) MetaObject < hgsetget
   
   properties (SetAccess=protected)
     % Cell-Array of Strings defining Properties which can be configured via XML
-    XMLProperties@cell
+    XMLProperties@xml.PropertyDescription
   end
   
   methods
-    function PropertiesFromXMLNode(obj, xmlnode)
+    function XMLsetProperties(obj, xmlnode)
       if xmlnode.hasAttributes
         attrs = xmlnode.getAttributes;
         num_attrs = attrs.getLength;
@@ -17,9 +17,10 @@ classdef (Abstract) MetaObject < hgsetget
           name = char(attrib.getName);
           value = char(attrib.getValue);
           found = false;
-          for kdx = 1:length(obj.XMLProperties)
-            if strcmp(obj.XMLProperties{kdx},name)
-              obj.(obj.XMLProperties{kdx}) = str2num(value)';
+          for kdx = find([obj.XMLProperties.Childs] == false)
+            if strcmp(obj.XMLProperties(kdx).Name,name)
+              obj.(obj.XMLProperties(kdx).Name) ...
+                = obj.conversion(value,obj.XMLProperties(kdx).Class);
               found = true;
               break;
             end
@@ -31,5 +32,30 @@ classdef (Abstract) MetaObject < hgsetget
         end
       end
     end
+    function XMLsetChilds(obj, xmlnode)
+      
+    end
   end
+  
+  methods (Access = protected)
+    function addXMLProperty(obj, Name, Class, Childs)
+      if nargin < 3
+        Childs = false;
+      end
+      obj.XMLProperties = [obj.XMLProperties, ...
+        xml.PropertyDescription(Name, Class, Childs)];
+    end
+    function out = conversion(obj, in, Class)
+      switch Class
+        case 'double'
+          out = str2double(in).';
+        case 'char'
+          out = in;
+        otherwise
+          error('Class(%s) of XMLProperty is not supported', Class);
+      end
+    end
+  end
+  
+
 end

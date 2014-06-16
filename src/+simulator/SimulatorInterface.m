@@ -1,26 +1,36 @@
-classdef (Abstract) SimulatorInterface < hgsetget
+classdef (Abstract) SimulatorInterface < xml.MetaObject
   %SIMULATORINTERFACE is the base class for all configurations for the simulator
-
+  
   properties
     BlockSize;  % blocksize for binaural renderer @type uint
     SampleRate;  % sample rate of audio input signals in Hz @type uint
     NumberOfThreads;  % threads used for computing ear signals @type uint
     Renderer@function_handle;  % rendering mex-function @type function_handle
     HRIRDataset@simulator.DirectionalIR;  % hrirs @type DirectionalIR
-
+    
     % maximum delay in seconds caused by distance @type double
     MaximumDelay = 0.0; %
-
-Sources@simulator.AudioSource  % array of sources @type AudioSource[]
+    
+    Sources@simulator.AudioSource  % array of sources @type AudioSource[]
     Sinks@simulator.AudioSink;  % sinks @type AudioSink
     Walls@simulator.Wall;  % array of walls @type Wall[]
-
+    
     ReverberationMaxOrder = 0.0;  % order of image source model @type uint
+  end  
+  
+  %%
+  methods
+    function obj = SimulatorInterface()
+      obj.addXMLProperty('BlockSize', 'double', false);
+      obj.addXMLProperty('SampleRate', 'double', false);
+      obj.addXMLProperty('NumberOfThreads', 'double', false);
+      obj.addXMLProperty('MaximumDelay', 'double', false);
+    end
   end
-
+  
   %% some functionalities for controlling the Simulator
   % this properties can be used to invoke some of the abstract functions
-
+  
   properties
     Init;
   end
@@ -30,7 +40,7 @@ Sources@simulator.AudioSource  % array of sources @type AudioSource[]
     ClearMemory;
     ShutDown;
   end
-
+  
   methods (Abstract)
     init(obj);
     refresh(obj);
@@ -73,7 +83,7 @@ Sources@simulator.AudioSource  % array of sources @type AudioSource[]
       end
     end
   end
-
+  
   %% setter, getter
   methods
     function set.BlockSize(obj, BlockSize)
@@ -136,7 +146,7 @@ Sources@simulator.AudioSource  % array of sources @type AudioSource[]
       obj.ReverberationMaxOrder = ReverberationMaxOrder;
     end
   end
-
+  
   %% Misc
   methods (Access = private)
     function errorIfInitialized(obj)
