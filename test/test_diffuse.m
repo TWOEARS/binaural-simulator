@@ -15,17 +15,17 @@ input{1} = single(input{1}(:,1)./max(abs(input{1}(:,1))));
 
 %% processing parameters
 % Sources
-source(1) = AudioSource(AudioSourceType.POINT,buffer.FIFO());
+% source(1) = AudioSource(AudioSourceType.POINT,buffer.FIFO());
 
 angles = (-45:5:45);
-source(2) = AudioSource(...
+source(1) = AudioSource(...
   AudioSourceType.PWD,buffer.Noise(1:length(angles)), ...
   [cosd(angles);sind(angles); zeros(1, length(angles))]);
-source(2).set(...
+source(1).set(...
   'UnitFront', [0.0; 0.0; 1.0], ...
   'UnitUp', [0.0; 1.0; 0.0]);
 
-source(2).AudioBuffer.set(...
+source(1).AudioBuffer.set(...
   'Variance', 0.02, ...
   'Mean', 0.0);
 
@@ -60,15 +60,10 @@ head.set('Position', [0; 0; 1.75]);
 head.set('UnitFront', [1.0; 0.0; 0.0]);
 head.removeData();
 
-% source should be on the left (distance: 1m)
-source(1).set('Position', [0; 1.0; 1.75]);
-source(1).AudioBuffer.setData(input{1});
-source(1).set('Mute', false);
-
 sim.set('Refresh',true);
 sim.draw();
 
-while ~source(1).isEmpty()
+for idx=1:ceil(5*sim.SampleRate/sim.BlockSize)
   sim.set('Process',true);
 end
 
