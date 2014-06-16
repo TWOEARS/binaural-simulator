@@ -1,14 +1,17 @@
-classdef FIFO < simulator.buffer.Base
-  %AUDIOBUFFER is the base class for audio sources and sinks. It basically
-  %implements a FIFO buffer
-
+classdef FIFO < simulator.buffer.Data
+  %FIFOBUFFER basically implements a FIFO buffer
+  
   methods
-    function obj = FIFO(mapping)
+    function obj = FIFO(mapping) 
       if nargin < 1
         mapping = 1;
       end
-      obj = obj@simulator.buffer.Base(mapping);
+      obj = obj@simulator.buffer.Data(mapping);    
     end
+  end  
+  
+  %% Access-Functionality    
+  methods
     function appendData(obj, data)
   % function appendData(obj, data)
   % append data to existing data of FIFO buffer  

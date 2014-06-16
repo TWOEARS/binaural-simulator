@@ -1,4 +1,4 @@
-classdef Noise < simulator.buffer.Base
+classdef Noise < simulator.buffer.Data
   %AUDIONOISEBUFFER is the class for noise sources.
   
   properties
@@ -7,12 +7,16 @@ classdef Noise < simulator.buffer.Base
   end  
   
   methods
-    function obj = Noise(channels)
+    function obj = Noise(mapping) 
       if nargin < 1
-        channels = 1;
+        mapping = 1;
       end
-      obj = obj@simulator.buffer.Base(channels);
+      obj = obj@simulator.buffer.Data(mapping);    
     end
+  end
+  
+  %% Access-Functionality
+  methods
     function data = getData(obj, length)
       % function data = getData(obj, length)
       % reads data from buffer of specified length
@@ -25,8 +29,16 @@ classdef Noise < simulator.buffer.Base
       data = obj.Variance.*randn(length,obj.NumberOfInputs) - obj.Mean;
       data = data(:,obj.ChannelMapping);
     end
+    function removeData(obj, length)
+      % function removeData(obj, length) 
+      % this function does nothing
+    end
+    function v = isEmpty(obj)
+      v = false;
+    end
   end
   
+  %% Setter, Getter  
   methods
     function set.Variance(obj,v)
       isargscalar(v);
