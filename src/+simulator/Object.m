@@ -1,4 +1,4 @@
-classdef Object < hgsetget
+classdef Object < xml.MetaObject
   % OBJECT Base Class for Scene-Objects
   
   properties (SetObservable, AbortSet)
