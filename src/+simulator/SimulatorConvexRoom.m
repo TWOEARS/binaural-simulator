@@ -18,7 +18,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     sucSinksDx;  % index for 'child' images sinks of sinks    
     
     pwdSourcesDx;
-    PWDSubSources@simulator.AudioSource;
+    PWDSubSources;
     
     directSourcesDx;
     
@@ -291,7 +291,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
           wdx = wdx + 1;
           SubSources(wdx) = simulator.AudioSource(...
             simulator.AudioSourceType.PLANE, ...
-            simulator.buffer.Channel(PWDSources(idx).AudioBuffer,kdx)...
+            simulator.buffer.PassThrough(PWDSources(idx).AudioBuffer,kdx)...
             );
           SubSources(wdx).GroupObject = PWDSources(idx);
           SubSources(wdx).UnitFront = PWDSources(idx).Directions(:,kdx);
