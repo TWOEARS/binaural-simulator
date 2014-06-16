@@ -3,39 +3,22 @@ classdef (Abstract) Base < hgsetget
 
   properties (SetAccess=protected)
     ChannelMapping;
-  end
-  
-  properties (Access = protected, Hidden)
-    data = [];
-  end
-  
+  end   
   properties (Dependent)
     NumberOfInputs;
     NumberOfOutputs;
   end  
     
   methods
-    function obj = Base(mapping)     
-      obj.ChannelMapping = mapping;      
-    end
-    function b = isEmpty(obj)
-      b = isempty(obj.data);
-    end
-    function setData(obj, data)
-  % function setData(obj, data)
-  % sets data of buffer (deletes old data) 
-  %
-  % Parameters:
-  %   data: data which is stored in buffer @type double[][]
-      if size(data,2) ~= obj.NumberOfInputs
-        error('number of columns does not match number of channels');
+    function obj = Base(mapping) 
+      if nargin < 1
+        mapping = 1;
       end
-      obj.data = data;
-    end
-    function removeData(obj, length)
+      obj.ChannelMapping = mapping;      
     end
   end
   
+  %% Abstract Functions
   methods (Abstract)
     data = getData(obj, length)
   % function data = getData(obj, length)
@@ -50,6 +33,7 @@ classdef (Abstract) Base < hgsetget
   %   data: @type double[][]
   end  
   
+  %% Setter, Getter
   methods
     function set.ChannelMapping(obj,v)
       isargvector(v);
