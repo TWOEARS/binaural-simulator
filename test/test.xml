@@ -10,7 +10,7 @@
   <source Position="0 -1 0" Mute="false" Type="point">
     <buffer ChannelMapping="1" Type="noise"/>
   </source>
-  <source Position="0 1 0" Mute="false" Type="point">
+  <source Position="0 1 0" Mute="true" Type="point">
     <buffer ChannelMapping="1" Type="noise"/>
   </source>
   <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1"/>
