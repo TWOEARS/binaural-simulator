@@ -15,16 +15,6 @@ sim = SimulatorConvexRoom();  % simulator object
 % Simulator
 sim.XML(theNode);
 
-%% some configuration which is not yet implemented in xml
-
-% HRIRs
-hrir = DirectionalIR( ...
-  fullfile([database_path, 'impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav']));
-
-sim.set(...
-  'Renderer', @ssr_binaural, ...  % SSR rendering function (do not change this!)
-  'HRIRDataset', hrir)            % assign HRIR-Object to Simulator
-
 %% processing
 sim.set('Init',true);
 

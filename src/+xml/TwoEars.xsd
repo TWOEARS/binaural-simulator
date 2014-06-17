@@ -26,6 +26,7 @@
         <xs:attribute name="SampleRate" type="xs:positiveInteger"/>
         <xs:attribute name="NumberOfThreads" type="xs:positiveInteger"/>
         <xs:attribute name="MaximumDelay" type="NonNegativeDecimal"/>
+        <xs:attribute name="HRIRs" type="xs:token"/>
       </xs:complexType>
   </xs:element>
 

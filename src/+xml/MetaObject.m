@@ -45,6 +45,8 @@ classdef (Abstract) MetaObject < hgsetget
           out = str2num(in).';
         case 'char'
           out = in;
+        case 'simulator.DirectionalIR'
+          out = simulator.DirectionalIR(in);
         otherwise
           error('Class(%s) of XMLProperty is not supported', Class);
       end

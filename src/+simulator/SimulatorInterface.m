@@ -26,6 +26,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.addXMLProperty('SampleRate', 'double');
       obj.addXMLProperty('NumberOfThreads', 'double');
       obj.addXMLProperty('MaximumDelay', 'double');
+      obj.addXMLProperty('HRIRDataset', 'simulator.DirectionalIR', 'HRIRs');
     end
   end  
   
