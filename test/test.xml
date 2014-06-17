@@ -18,5 +18,5 @@
     UnitFront="-1 0 0"
     UnitUp="0 0 1"
     ReflectionCoeff="0.6"
-    Vertices="-2.0 -2.0 -2.0 2.0 2.0 2.0 2.0 -2.0"/>
+    Vertices="-2.0 -2.0; 2.0 -2.0; 2.0 2.0; -2.0 2.0"/>
 </scene>

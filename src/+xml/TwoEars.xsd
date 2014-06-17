@@ -106,12 +106,12 @@
   </xs:simpleType>
 
   <xs:simpleType name="vertex_t">
-    <xs:restriction base="decimalList">
-      <xs:minLength value="6"/>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="(\s?\-?\d+(.\d+)?\s\-?\d+(.\d+)?\s?;)*(\s?\-?\d+(.\d+)?\s\-?\d+(.\d+)?\s?)"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- Types for Buffers: -->
+  <!--  Types for Buffers: -->
   <xs:complexType name="buffer_t">
     <xs:attribute name="Type" type="buffer_model_t"/>
     <xs:attribute name="ChannelMapping" type="positiveIntegerList" default="1"/>

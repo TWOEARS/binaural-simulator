@@ -97,11 +97,11 @@ classdef Polygon < simulator.Object
     end
     %% setter, getter
     function set.Vertices(obj, Vertices)
-%       if (size(Vertices,1) ~= 2)
-%         error('%s need to be a matrix with size(%s,1) = 2.', ...
-%           inputname(2), inputname(2));
-%       end
-      obj.Vertices = reshape(Vertices,2,[]);      
+      if (size(Vertices,1) ~= 2)
+        error('%s need to be a matrix with size(%s,1) = 2.', ...
+          inputname(2), inputname(2));
+      end
+      obj.Vertices = Vertices;      
     end
   end
 end
