@@ -22,10 +22,10 @@
           <xs:element ref="source" minOccurs="0"/>
           <xs:element ref="sink" minOccurs="1"/>
         </xs:all>
-        <xs:attribute name="BlockSize" type="xs:positiveInteger">
-        <xs:attribute name="SampleRate" type="xs:positiveInteger">
-        <xs:attribute name="NumberOfThreads" type="xs:positiveInteger">
-        <xs:attribute name="MaximumDelay" type="positiveDecimal">
+        <xs:attribute name="BlockSize" type="xs:positiveInteger"/>
+        <xs:attribute name="SampleRate" type="xs:positiveInteger"/>
+        <xs:attribute name="NumberOfThreads" type="xs:positiveInteger"/>
+        <xs:attribute name="MaximumDelay" type="NonNegativeDecimal"/>
       </xs:complexType>
   </xs:element>
 
@@ -101,7 +101,7 @@
     <xs:attribute name="Type" type="buffer_model_t"/>
     <xs:attribute name="ChannelMapping" type="positiveIntegerList" default="1"/>
     <xs:attribute name="File" type="xs:token" use="optional"/>
-    <xs:attribute name="Variance" type="xs:decimal" default="1.0"/>
+    <xs:attribute name="Variance" type="NonNegativeDecimal" default="1.0"/>
     <xs:attribute name="Mean" type="xs:decimal" default="0.0"/>
     <xs:attribute name="StartPointer" type="positiveIntegerList" use="optional"/>
   </xs:complexType>
@@ -115,9 +115,9 @@
   </xs:simpleType>
 
   <!-- General Types -->
-  <xs:simpleType name="positiveDecimal">
+  <xs:simpleType name="NonNegativeDecimal">
     <xs:restriction base="xs:decimal">
-      <xs:minExclusive value="0.0"/>
+      <xs:minInclusive value="0.0"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="decimalList">

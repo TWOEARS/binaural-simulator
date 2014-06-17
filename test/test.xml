@@ -1,7 +1,12 @@
-<scene BlockSize="4096" SampleRate="44100" MaximumDelay="0.0" NumberOfThreads="1">
+<?xml version="1.0" encoding="utf-8"?>
+<scene xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="TwoEars.xsd"
+    BlockSize="4096"
+    SampleRate="44100"
+    MaximumDelay="0.0"
+    NumberOfThreads="1">
   <source Position="0 -1 0" Mute="false" Type="point">
     <buffer ChannelMapping="1" Type="noise"/>
   </source>
-  <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1">
-  </sink>
+  <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1"/>
 </scene>
