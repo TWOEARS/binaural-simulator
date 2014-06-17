@@ -1,7 +1,7 @@
-classdef (Abstract) Base < hgsetget
+classdef (Abstract) Base < xml.MetaObject
   %AUDIOBUFFERBASE is the base class for all audio buffers. 
 
-  properties (SetAccess=protected)
+  properties
     ChannelMapping;
   end   
   properties (Dependent)
@@ -14,7 +14,10 @@ classdef (Abstract) Base < hgsetget
       if nargin < 1
         mapping = 1;
       end
-      obj.ChannelMapping = mapping;      
+      obj.ChannelMapping = mapping;
+
+      % xml
+      obj.addXMLProperty('ChannelMapping', 'double');
     end
   end
   
@@ -47,4 +50,3 @@ classdef (Abstract) Base < hgsetget
     end
   end  
 end
-

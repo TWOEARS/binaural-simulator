@@ -4,8 +4,9 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
   properties
     BlockSize;  % blocksize for binaural renderer @type uint
     SampleRate;  % sample rate of audio input signals in Hz @type uint
-    NumberOfThreads;  % threads used for computing ear signals @type uint
-    Renderer@function_handle;  % rendering mex-function @type function_handle
+    NumberOfThreads;  % threads used for computing ear signals @type uint    
+    % rendering mex-function @type function_handle
+    Renderer@function_handle = @ssr_binaural;  
     HRIRDataset@simulator.DirectionalIR;  % hrirs @type DirectionalIR
     
     % maximum delay in seconds caused by distance @type double
@@ -18,15 +19,45 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     ReverberationMaxOrder = 0.0;  % order of image source model @type uint
   end  
   
-  %%
+  %% Constructor
   methods
     function obj = SimulatorInterface()
-      obj.addXMLProperty('BlockSize', 'double', false);
-      obj.addXMLProperty('SampleRate', 'double', false);
-      obj.addXMLProperty('NumberOfThreads', 'double', false);
-      obj.addXMLProperty('MaximumDelay', 'double', false);
+      obj.addXMLProperty('BlockSize', 'double');
+      obj.addXMLProperty('SampleRate', 'double');
+      obj.addXMLProperty('NumberOfThreads', 'double');
+      obj.addXMLProperty('MaximumDelay', 'double');
     end
-  end
+  end  
+  
+  %% XML
+  methods (Access=protected)
+    function XMLChilds(obj, xmlnode)
+      % init Buffer
+      sourceList = xmlnode.getElementsByTagName('source');
+      sourceNum = sourceList.getLength;     
+      
+      for idx=1:sourceNum
+        source = sourceList.item(idx-1);
+        attr = (char(source.getAttribute('Type')));
+        switch attr
+          case 'point'
+            type = simulator.AudioSourceType.POINT;
+          case 'plane'
+            type = simulator.AudioSourceType.PLANE;
+          case 'direct'
+            type = simulator.AudioSourceType.DIRECT;
+          otherwise
+            warning('source type not yet implemented for xml parsing');
+        end        
+        obj.Sources(idx) = simulator.AudioSource(type);
+        obj.Sources(idx).XML(source);
+      end
+    
+      sink = xmlnode.getElementsByTagName('sink').item(0);   
+      obj.Sinks = simulator.AudioSink(2);
+      obj.Sinks.XML(sink);     
+    end
+  end  
   
   %% some functionalities for controlling the Simulator
   % this properties can be used to invoke some of the abstract functions

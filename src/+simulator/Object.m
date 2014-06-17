@@ -38,6 +38,15 @@ classdef Object < xml.MetaObject
      GroupRotation;
   end 
   
+  %% Constructor 
+  methods
+    function obj = Object()
+      obj.addXMLProperty('UnitUp', 'double');
+      obj.addXMLProperty('UnitFront', 'double');
+      obj.addXMLProperty('Position', 'double');
+    end
+  end  
+  
   methods
     %% Rotation
     function rotateAroundFront(obj, alpha)

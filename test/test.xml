@@ -1,5 +1,7 @@
-<source
-  Position="1 2 3"
-  UnitFront="0 0 1"
-  UnitUp="0 1 0">  
-</source>
+<scene BlockSize="4096" SampleRate="44100" MaximumDelay="0.0" NumberOfThreads="1">
+  <source Position="0 -1 0" Mute="false" Type="point">
+    <buffer ChannelMapping="1" Type="noise"/>
+  </source>
+  <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1">
+  </sink>
+</scene>

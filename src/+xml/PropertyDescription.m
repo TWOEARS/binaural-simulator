@@ -1,21 +1,16 @@
 classdef PropertyDescription
   
   properties
+    Alias@char;
     Name@char;
     Class@char;
-    Childs@logical;
   end
   
   methods
-    function obj = PropertyDescription(Name, Class, Childs)
-      if nargin < 3
-        Childs = false;
-      end
-      
+    function obj = PropertyDescription(Name, Class, Alias)
       obj.Name = Name;
+      obj.Alias = Alias;
       obj.Class = Class;
-      obj.Childs = Childs;
     end
   end  
 end
-
