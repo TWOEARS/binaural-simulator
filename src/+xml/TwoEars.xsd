@@ -18,10 +18,10 @@
 
   <xs:element name="scene">
       <xs:complexType>
-        <xs:all>
-          <xs:element ref="source" minOccurs="0"/>
+        <xs:sequence>
+          <xs:element ref="source" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element ref="sink" minOccurs="1"/>
-        </xs:all>
+        </xs:sequence>
         <xs:attribute name="BlockSize" type="xs:positiveInteger"/>
         <xs:attribute name="SampleRate" type="xs:positiveInteger"/>
         <xs:attribute name="NumberOfThreads" type="xs:positiveInteger"/>

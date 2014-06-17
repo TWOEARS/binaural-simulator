@@ -5,7 +5,7 @@ test_startup;
 
 %% xml configuration
 
-xml.validate('test/test.xml','src/+xml/TwoEars.xsd');
+xml.validate('test.xml','../src/+xml/TwoEars.xsd');
 
 theDoc = xmlread('test.xml');
 theNode = theDoc.getDocumentElement;
