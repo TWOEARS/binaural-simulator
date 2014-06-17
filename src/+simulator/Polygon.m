@@ -10,6 +10,14 @@ classdef Polygon < simulator.Object
     eps = 1.0e-5;
   end
   
+  %% Constructor
+  methods
+    function obj = Polygon()
+      obj = obj@simulator.Object();
+      obj.addXMLProperty('Vertices', 'double');
+    end
+  end
+  
   methods
     function [p, d] = mirrorPoints(obj, p)
       % function [p, d] = mirrorPoints(obj, p)
@@ -89,11 +97,11 @@ classdef Polygon < simulator.Object
     end
     %% setter, getter
     function set.Vertices(obj, Vertices)
-      if (size(Vertices,1) ~= 2)
-        error('%s need to be a matrix with size(%s,1) = 2.', ...
-          inputname(2), inputname(2));
-      end
-      obj.Vertices = Vertices;      
+%       if (size(Vertices,1) ~= 2)
+%         error('%s need to be a matrix with size(%s,1) = 2.', ...
+%           inputname(2), inputname(2));
+%       end
+      obj.Vertices = reshape(Vertices,2,[]);      
     end
   end
 end

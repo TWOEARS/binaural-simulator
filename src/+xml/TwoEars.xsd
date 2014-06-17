@@ -17,21 +17,24 @@
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 
   <xs:element name="scene">
-      <xs:complexType>
-        <xs:sequence>
-          <xs:element ref="source" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element ref="sink" minOccurs="1"/>
-        </xs:sequence>
-        <xs:attribute name="BlockSize" type="xs:positiveInteger"/>
-        <xs:attribute name="SampleRate" type="xs:positiveInteger"/>
-        <xs:attribute name="NumberOfThreads" type="xs:positiveInteger"/>
-        <xs:attribute name="MaximumDelay" type="NonNegativeDecimal"/>
-        <xs:attribute name="HRIRs" type="xs:token"/>
-      </xs:complexType>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="source" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element ref="sink" minOccurs="1"/>
+        <xs:element ref="wall" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="BlockSize" type="xs:positiveInteger"/>
+      <xs:attribute name="SampleRate" type="xs:positiveInteger"/>
+      <xs:attribute name="NumberOfThreads" type="xs:positiveInteger"/>
+      <xs:attribute name="MaximumDelay" type="nonNegativeDecimal"/>
+      <xs:attribute name="ReverberationMaxOrder" type="xs:positiveInteger"/>
+      <xs:attribute name="HRIRs" type="xs:token"/>
+    </xs:complexType>
   </xs:element>
 
   <xs:element name="source" type="source_t"/>
   <xs:element name="sink" type="sink_t"/>
+  <xs:element name="wall" type="wall_t"/>
 
   <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   TYPE-DEFINITIONS
@@ -45,6 +48,11 @@
   </xs:complexType>
 
   <!-- Type for Coordinates -->
+  <xs:simpleType name="coord2D_t">
+    <xs:restriction base="decimalList">
+      <xs:length value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:simpleType name="coord3D_t">
     <xs:restriction base="decimalList">
       <xs:length value="3"/>
@@ -86,14 +94,20 @@
     <xs:complexContent>
       <xs:extension base="object_t">
         <xs:attribute name="ReflectionCoeff" type="reflection_t" default="1.0"/>
+        <xs:attribute name="Vertices" type="vertex_t"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:simpleType name="reflection_t">
-    <xs:restriction base="xs:decimal">
-      <xs:minExclusive value="0"/>
+    <xs:restriction base="positiveDecimal">
       <xs:maxInclusive value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="vertex_t">
+    <xs:restriction base="decimalList">
+      <xs:minLength value="6"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -102,7 +116,7 @@
     <xs:attribute name="Type" type="buffer_model_t"/>
     <xs:attribute name="ChannelMapping" type="positiveIntegerList" default="1"/>
     <xs:attribute name="File" type="xs:token" use="optional"/>
-    <xs:attribute name="Variance" type="NonNegativeDecimal" default="1.0"/>
+    <xs:attribute name="Variance" type="nonNegativeDecimal" default="1.0"/>
     <xs:attribute name="Mean" type="xs:decimal" default="0.0"/>
     <xs:attribute name="StartPointer" type="positiveIntegerList" use="optional"/>
   </xs:complexType>
@@ -116,7 +130,12 @@
   </xs:simpleType>
 
   <!-- General Types -->
-  <xs:simpleType name="NonNegativeDecimal">
+  <xs:simpleType name="positiveDecimal">
+    <xs:restriction base="nonNegativeDecimal">
+      <xs:minExclusive value="0.0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="nonNegativeDecimal">
     <xs:restriction base="xs:decimal">
       <xs:minInclusive value="0.0"/>
     </xs:restriction>

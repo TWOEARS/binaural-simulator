@@ -5,6 +5,7 @@
     SampleRate="44100"
     MaximumDelay="0.0"
     NumberOfThreads="1"
+    ReverberationMaxOrder="2"
     HRIRs="../../database/impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav">
   <source Position="0 -1 0" Mute="false" Type="point">
     <buffer ChannelMapping="1" Type="noise"/>
@@ -13,4 +14,9 @@
     <buffer ChannelMapping="1" Type="noise"/>
   </source>
   <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1"/>
+  <wall Position="2 0 0"
+    UnitFront="-1 0 0"
+    UnitUp="0 0 1"
+    ReflectionCoeff="0.6"
+    Vertices="-2.0 -2.0 -2.0 2.0 2.0 2.0 2.0 -2.0"/>
 </scene>

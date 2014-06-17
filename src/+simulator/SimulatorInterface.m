@@ -26,16 +26,18 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.addXMLProperty('SampleRate', 'double');
       obj.addXMLProperty('NumberOfThreads', 'double');
       obj.addXMLProperty('MaximumDelay', 'double');
-      obj.addXMLProperty('HRIRDataset', 'simulator.DirectionalIR', 'HRIRs');
+      obj.addXMLProperty('ReverberationMaxOrder', 'double');
+      obj.addXMLProperty('HRIRDataset', 'simulator.DirectionalIR', 'HRIRs');      
     end
   end  
   
   %% XML
   methods (Access=protected)
     function XMLChilds(obj, xmlnode)
-      % init Buffer
+      
+      % Sources
       sourceList = xmlnode.getElementsByTagName('source');
-      sourceNum = sourceList.getLength;     
+      sourceNum = sourceList.getLength;    
       
       for idx=1:sourceNum
         source = sourceList.item(idx-1);
@@ -53,7 +55,17 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         obj.Sources(idx) = simulator.AudioSource(type);
         obj.Sources(idx).XML(source);
       end
+      
+      % Walls
+      wallList = xmlnode.getElementsByTagName('wall');
+      wallNum = wallList.getLength;      
+      for idx=1:wallNum
+        wall = wallList.item(idx-1);
+        obj.Walls(idx) = simulator.Wall();
+        obj.Walls(idx).XML(wall);
+      end
     
+      % Sink
       sink = xmlnode.getElementsByTagName('sink').item(0);   
       obj.Sinks = simulator.AudioSink(2);
       obj.Sinks.XML(sink);     
