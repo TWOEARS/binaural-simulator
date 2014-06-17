@@ -13,7 +13,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     SSROrientationXY;
     SSRMute;
   end
-  properties (SetAccess=private)
+  properties (Access=private, Hidden)
     ImageSources;
     ImageSinks;
     mirroredSourcesDx;  % index for original sources for ism
@@ -204,7 +204,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
               obj.Walls(pdx);
             parentWallsDx(rdx) = pdx;  % set index of Walls
             % set Absorption Weight
-            Images(rdx).Weight = obj.Walls(pdx).rho.*Images(idx).Weight;
+            Images(rdx).Weight = obj.Walls(pdx).ReflectionCoeff.*Images(idx).Weight;
           end
         end
         idx_range = (idx_range(end)+1):rdx;  % set

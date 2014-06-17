@@ -2,7 +2,7 @@ classdef Wall < simulator.Polygon
   % Wall Class
 
   properties
-    rho = 1.0;
+    ReflectionCoeff = 1.0;
   end
   methods
     function prism = createUniformPrism(obj, height, mode)
@@ -40,7 +40,7 @@ classdef Wall < simulator.Polygon
         rot = [obj.UnitRight, obj.UnitUp, obj.UnitFront];
         prism(idx).UnitUp = rot*up;
         prism(idx).UnitFront = rot*(cross(vdiff, up)/vdist);
-        prism(idx).rho = obj.rho;
+        prism(idx).ReflectionCoeff = obj.ReflectionCoeff;
       end      
       
       switch mode
@@ -56,7 +56,7 @@ classdef Wall < simulator.Polygon
          prism(ceiling).UnitFront = -obj.UnitFront;
          prism(ceiling).Vertices = [obj.Vertices(1,:); -obj.Vertices(2,:)];
 
-         prism(ceiling).rho = obj.rho;
+         prism(ceiling).ReflectionCoeff = obj.ReflectionCoeff;
         otherwise
          error('unknown mode');
       end
@@ -97,7 +97,7 @@ classdef Wall < simulator.Polygon
       room = ground.createUniformPrism(diff(3),mode);
       
       for idx=1:length(room)
-        room(idx).rho = rho;
+        room(idx).ReflectionCoeff = rho;
       end
     end
   end

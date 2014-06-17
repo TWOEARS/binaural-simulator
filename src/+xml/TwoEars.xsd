@@ -85,7 +85,7 @@
   <xs:complexType name="wall_t">
     <xs:complexContent>
       <xs:extension base="object_t">
-        <xs:attribute name="rho" type="reflection_t" default="1.0"/>
+        <xs:attribute name="ReflectionCoeff" type="reflection_t" default="1.0"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
