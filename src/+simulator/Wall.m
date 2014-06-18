@@ -9,7 +9,7 @@ classdef Wall < simulator.Polygon
   methods
     function obj = Wall()
       obj = obj@simulator.Polygon();
-      obj.addXMLProperty('ReflectionCoeff', 'double');
+      obj.addXMLAttribute('ReflectionCoeff', 'double');
     end
   end
   

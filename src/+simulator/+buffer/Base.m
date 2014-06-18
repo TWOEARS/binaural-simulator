@@ -17,7 +17,7 @@ classdef (Abstract) Base < xml.MetaObject
       obj.ChannelMapping = mapping;
 
       % xml
-      obj.addXMLProperty('ChannelMapping', 'double');
+      obj.addXMLAttribute('ChannelMapping', 'double');
     end
   end
   

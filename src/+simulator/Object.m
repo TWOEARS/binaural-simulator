@@ -41,9 +41,9 @@ classdef Object < xml.MetaObject
   %% Constructor 
   methods
     function obj = Object()
-      obj.addXMLProperty('UnitUp', 'double');
-      obj.addXMLProperty('UnitFront', 'double');
-      obj.addXMLProperty('Position', 'double');
+      obj.addXMLAttribute('UnitUp', 'double');
+      obj.addXMLAttribute('UnitFront', 'double');
+      obj.addXMLAttribute('Position', 'double');
     end
   end  
   

@@ -14,7 +14,7 @@ classdef Polygon < simulator.Object
   methods
     function obj = Polygon()
       obj = obj@simulator.Object();
-      obj.addXMLProperty('Vertices', 'double');
+      obj.addXMLAttribute('Vertices', 'double');
     end
   end
   

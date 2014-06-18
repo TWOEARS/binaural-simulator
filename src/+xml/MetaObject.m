@@ -4,54 +4,76 @@ classdef (Abstract) MetaObject < hgsetget
   
   properties (SetAccess=protected)
     % Cell-Array of Strings defining Properties which can be configured via XML
-    XMLProperties@xml.PropertyDescription
+    XMLAttributes@xml.PropertyDescription
+    XMLElements@xml.PropertyDescription
   end
   
   methods
     function XML(obj, xmlnode)
-      obj.XMLAttributes(xmlnode);
-      obj.XMLChilds(xmlnode);
+      obj.configureXMLAttributes(xmlnode);
+      obj.configureXMLSpecific(xmlnode);
+      obj.configureXMLElements(xmlnode);
     end
   end
     
-  methods (Access=private)    
-    function XMLAttributes(obj, xmlnode)      
-      for kdx = 1:length(obj.XMLProperties)
-        value = char(xmlnode.getAttribute(obj.XMLProperties(kdx).Alias));
+  methods (Access=protected)    
+    function configureXMLAttributes(obj, xmlnode)      
+      for kdx = 1:length(obj.XMLAttributes)
+        value = char(xmlnode.getAttribute(obj.XMLAttributes(kdx).Alias));
+        
         if ~isempty(value)
-          obj.(obj.XMLProperties(kdx).Name) ...
-            = obj.conversion(value,obj.XMLProperties(kdx).Class);
+          obj.(obj.XMLAttributes(kdx).Name) ...
+            = obj.XMLAttributes(kdx).Constructor(value);
         end
       end
-    end    
-  end
-  
-  methods (Access=protected)
-    function XMLChilds(obj, xmlnode)
     end
-  end
-  
-  methods (Access = protected)
-    function addXMLProperty(obj, Name, Class, Alias)
+    function configureXMLElements(obj, xmlnode)
+      for kdx = 1:length(obj.XMLElements)
+        eleList = xmlnode.getElementsByTagName(obj.XMLElements(kdx).Alias);
+        eleNum = eleList.getLength;
+
+        if eleNum > 0
+          obj.(obj.XMLElements(kdx).Name)(eleNum:end) = [];
+          for idx=1:eleNum;
+            ele = eleList.item(idx-1);
+            obj.(obj.XMLElements(kdx).Name)(idx) ...
+              = obj.XMLElements(kdx).Constructor();
+            obj.(obj.XMLElements(kdx).Name).XML(ele);
+          end
+        end
+      end
+    end
+
+    function configureXMLSpecific(obj, xmlnode)
+    end
+    function addXMLAttribute(obj, Name, Class, Alias, Constructor)
       if nargin < 4
         Alias = Name;
       end
-      obj.XMLProperties = [obj.XMLProperties, ...
-        xml.PropertyDescription(Name, Class, Alias)];
-    end
-    function out = conversion(obj, in, Class)
-      switch Class
-        case 'double'
-          out = str2num(in).';
-        case 'char'
-          out = in;
-        case 'simulator.DirectionalIR'
-          out = simulator.DirectionalIR(in);
-        case 'logical'
-          out = str2num(in);
-        otherwise
-          error('Class(%s) of XMLProperty is not supported', Class);
+      if nargin < 5
+        switch Class
+          case 'char'
+            Constructor = @(x)char(x);
+          case 'logical'
+            Constructor = @(x)str2num(x);
+          case 'double'
+            Constructor = @(x)str2num(x).';
+          otherwise
+            Constructor = str2func(['@(x)' Class '(x)']);
+        end
       end
+      obj.XMLAttributes = [obj.XMLAttributes, ...
+        xml.PropertyDescription(Name, Class, Alias, Constructor)];
+    end
+    function addXMLElement(obj, Name, Class, Alias, Constructor)
+      if nargin < 4
+        Alias = Name;
+      end
+      if nargin < 5
+        Constructor = str2func(['@(x)' Class '()']);
+      end
+      obj.XMLElements = [obj.XMLElements, ...
+        xml.PropertyDescription(Name, Class, Alias, Constructor)];
     end
   end
 end

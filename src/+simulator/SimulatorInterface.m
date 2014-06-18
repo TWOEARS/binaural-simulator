@@ -22,18 +22,21 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
   %% Constructor
   methods
     function obj = SimulatorInterface()
-      obj.addXMLProperty('BlockSize', 'double');
-      obj.addXMLProperty('SampleRate', 'double');
-      obj.addXMLProperty('NumberOfThreads', 'double');
-      obj.addXMLProperty('MaximumDelay', 'double');
-      obj.addXMLProperty('ReverberationMaxOrder', 'double');
-      obj.addXMLProperty('HRIRDataset', 'simulator.DirectionalIR', 'HRIRs');      
+      obj.addXMLAttribute('BlockSize', 'double');
+      obj.addXMLAttribute('SampleRate', 'double');
+      obj.addXMLAttribute('NumberOfThreads', 'double');
+      obj.addXMLAttribute('MaximumDelay', 'double');
+      obj.addXMLAttribute('ReverberationMaxOrder', 'double');
+      obj.addXMLAttribute('HRIRDataset', 'simulator.DirectionalIR', 'HRIRs');
+      
+      obj.addXMLElement('Sinks', 'simulator.AudioSink', 'sink', @(x)simulator.AudioSink(2));
+      obj.addXMLElement('Walls', 'simulator.Wall', 'wall');      
     end
   end  
   
   %% XML
   methods (Access=protected)
-    function XMLChilds(obj, xmlnode)
+    function configureXMLSpecific(obj, xmlnode)
       
       % Sources
       sourceList = xmlnode.getElementsByTagName('source');
@@ -54,21 +57,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         end        
         obj.Sources(idx) = simulator.AudioSource(type);
         obj.Sources(idx).XML(source);
-      end
-      
-      % Walls
-      wallList = xmlnode.getElementsByTagName('wall');
-      wallNum = wallList.getLength;      
-      for idx=1:wallNum
-        wall = wallList.item(idx-1);
-        obj.Walls(idx) = simulator.Wall();
-        obj.Walls(idx).XML(wall);
-      end
-    
-      % Sink
-      sink = xmlnode.getElementsByTagName('sink').item(0);   
-      obj.Sinks = simulator.AudioSink(2);
-      obj.Sinks.XML(sink);     
+      end  
     end
   end  
   
@@ -76,7 +65,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
   % this properties can be used to invoke some of the abstract functions
   
   properties
-    Init;
+    Init = false;
   end
   properties (Dependent, GetAccess=private)
     Refresh;

@@ -15,7 +15,7 @@ classdef AudioSource < simulator.Object & dynamicprops
   methods
     function obj = AudioSource(type, buffer, directions)
       obj = obj@simulator.Object();
-      obj.addXMLProperty('Mute', 'logical');
+      obj.addXMLAttribute('Mute', 'logical');
       
       import simulator.AudioSourceType
       
