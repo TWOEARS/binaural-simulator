@@ -67,7 +67,7 @@
     <xs:attribute name="Position" type="coord3D_t" use="optional"/>
     <xs:attribute name="UnitUp" type="coord3D_t" use="optional"/>
     <xs:attribute name="UnitFront" type="coord3D_t" use="optional"/>
-    <xs:attribute name="Name" type="xs:token" use="required"/>
+    <xs:attribute name="Name" type="xs:ID" use="required"/>
     <xs:attribute name="Labels" type="stringList" use="optional"/>
     <!-- Attributes for visual simulation: -->
     <xs:attribute name="RootPath" type="xs:token" use="optional"/>
