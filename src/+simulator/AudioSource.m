@@ -48,7 +48,7 @@ classdef AudioSource < simulator.Object & dynamicprops
   
   %% XML
   methods (Access=protected)
-    function XMLChilds(obj, xmlnode)
+    function configureXMLSpecific(obj, xmlnode)
       % init Buffer
       buffer = xmlnode.getElementsByTagName('buffer').item(0);
       
@@ -60,6 +60,8 @@ classdef AudioSource < simulator.Object & dynamicprops
           obj.AudioBuffer = simulator.buffer.Ring();
         case 'noise'
           obj.AudioBuffer = simulator.buffer.Noise();
+        otherwise
+          error('source type (%s) not supported',char(buffer.getAttribute('Type')));
       end
       obj.AudioBuffer.XML(buffer);
     end
