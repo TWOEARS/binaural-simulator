@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="tef.xsl"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
 
   <xs:annotation><xs:documentation xml:lang="en">
       This is the first draft for a XML format to describe a virtual audio-visual
@@ -17,6 +19,10 @@
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 
   <xs:element name="scene">
+    <xs:annotation><xs:documentation xml:lang="en">
+      root element of scene description file including parameters for
+      the audio-visual simulation.
+    </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="source" minOccurs="1" maxOccurs="unbounded"/>
@@ -32,9 +38,21 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="source" type="source_t"/>
-  <xs:element name="sink" type="sink_t"/>
-  <xs:element name="wall" type="wall_t"/>
+  <xs:element name="source" type="source_t">
+    <xs:annotation><xs:documentation xml:lang="en">
+      source object
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="sink" type="sink_t">
+    <xs:annotation><xs:documentation xml:lang="en">
+      sink object (head)
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="wall" type="wall_t">
+    <xs:annotation><xs:documentation xml:lang="en">
+      wall object
+    </xs:documentation></xs:annotation>
+  </xs:element>
 
   <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   TYPE-DEFINITIONS
@@ -42,10 +60,14 @@
 
   <!-- Base-Type for Scene Objects: -->
   <xs:complexType name="object_t">
+    <xs:annotation><xs:documentation xml:lang="en">
+      Base type for scene objects (sources, sinks, walls).
+      Every scene object has to have a unique Name.
+    </xs:documentation></xs:annotation>
     <xs:attribute name="Position" type="coord3D_t" use="optional"/>
     <xs:attribute name="UnitUp" type="coord3D_t" use="optional"/>
     <xs:attribute name="UnitFront" type="coord3D_t" use="optional"/>
-    <xs:attribute name="Name" type="xs:token" use="optional"/>
+    <xs:attribute name="Name" type="xs:token" use="required"/>
     <xs:attribute name="Labels" type="stringList" use="optional"/>
     <!-- Attributes for visual simulation: -->
     <xs:attribute name="RootPath" type="xs:token" use="optional"/>

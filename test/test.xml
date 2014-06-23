@@ -6,16 +6,17 @@
     NumberOfThreads="1"
     ReverberationMaxOrder="2"
     HRIRs="../../database/impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav">
-  <source Position="0 -1 0" Mute="false" Type="point">
+  <source Position="0 -1 0" Mute="false" Type="point" Name="FirstSource">
     <buffer ChannelMapping="1" Type="noise"/>
   </source>
-  <source Position="0 1 0" Mute="true" Type="point">
+  <source Position="0 1 0" Mute="true" Type="point" Name="SecondSource">
     <buffer ChannelMapping="1" Type="noise"/>
   </source>
-  <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1"/>
+  <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1" Name="Head"/>
   <wall Position="2 0 0"
     UnitFront="-1 0 0"
     UnitUp="0 0 1"
     ReflectionCoeff="0.6"
-    Vertices="-2.0 -2.0; 2.0 -2.0; 2.0 2.0; -2.0 2.0"/>
+    Vertices="-2.0 -2.0; 2.0 -2.0; 2.0 2.0; -2.0 2.0"
+    Name="Wall"/>
 </scene>
