@@ -10,6 +10,14 @@ classdef Polygon < simulator.Object
     eps = 1.0e-5;
   end
   
+  %% Constructor
+  methods
+    function obj = Polygon()
+      obj = obj@simulator.Object();
+      obj.addXMLAttribute('Vertices', 'double');
+    end
+  end
+  
   methods
     function [p, d] = mirrorPoints(obj, p)
       % function [p, d] = mirrorPoints(obj, p)

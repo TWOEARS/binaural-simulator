@@ -11,3 +11,4 @@ addpath([basepath, '../src']);
 database_path = [basepath, '../../database/'];
 
 import simulator.*
+import xml.*

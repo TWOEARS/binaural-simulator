@@ -1,4 +1,4 @@
-classdef Object < hgsetget
+classdef Object < xml.MetaObject
   % OBJECT Base Class for Scene-Objects
   
   properties (SetObservable, AbortSet)
@@ -37,6 +37,15 @@ classdef Object < hgsetget
      GroupTranslation;
      GroupRotation;
   end 
+  
+  %% Constructor 
+  methods
+    function obj = Object()
+      obj.addXMLAttribute('UnitUp', 'double');
+      obj.addXMLAttribute('UnitFront', 'double');
+      obj.addXMLAttribute('Position', 'double');
+    end
+  end  
   
   methods
     %% Rotation

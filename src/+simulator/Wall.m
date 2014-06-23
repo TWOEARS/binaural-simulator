@@ -1,10 +1,20 @@
 classdef Wall < simulator.Polygon
   % Wall Class
-
+  
   properties
-    rho = 1.0;
+    ReflectionCoeff = 1.0;
   end
+  
+  %% Constructor
   methods
+    function obj = Wall()
+      obj = obj@simulator.Polygon();
+      obj.addXMLAttribute('ReflectionCoeff', 'double');
+    end
+  end
+  
+  %% 
+  methods    
     function prism = createUniformPrism(obj, height, mode)
       % function prism = createUniformPrism(obj, height, mode)
       % extrudes Polygon orthogonaly to a uniform prism
@@ -15,13 +25,13 @@ classdef Wall < simulator.Polygon
       %
       % Return values:
       %  obj:   array of 4('2D') or 6('3D') Walls @type Wall[]
-
+      
       if nargin < 2
         error('too few arguments');
       end
       if nargin < 3
         mode = '2D';
-      end      
+      end
       
       edges = size(obj.Vertices,2);
       v3D = [obj.Vertices; zeros(1,edges)];
@@ -33,32 +43,32 @@ classdef Wall < simulator.Polygon
         next = mod(idx,edges) + 1;
         vdiff = v3D(:,idx) - v3D(:,next);
         vdist = norm(vdiff);
-
+        
         prism(idx).Vertices = [0.0, 0.0, vdist, vdist; 0.0, height, height, 0.0];
         prism(idx).Position = v3D(:,next) + obj.Position;
         
         rot = [obj.UnitRight, obj.UnitUp, obj.UnitFront];
         prism(idx).UnitUp = rot*up;
         prism(idx).UnitFront = rot*(cross(vdiff, up)/vdist);
-        prism(idx).rho = obj.rho;
-      end      
+        prism(idx).ReflectionCoeff = obj.ReflectionCoeff;
+      end
       
       switch mode
         case '2D'
         case '3D'
-         ground = edges+1;
-         ceiling = edges+2;
-         prism(ground) = obj;
-         
-         prism(ceiling) = simulator.Wall();
-         prism(ceiling).Position = obj.Position + obj.UnitFront*height;
-         prism(ceiling).UnitUp = -obj.UnitUp;
-         prism(ceiling).UnitFront = -obj.UnitFront;
-         prism(ceiling).Vertices = [obj.Vertices(1,:); -obj.Vertices(2,:)];
-
-         prism(ceiling).rho = obj.rho;
+          ground = edges+1;
+          ceiling = edges+2;
+          prism(ground) = obj;
+          
+          prism(ceiling) = simulator.Wall();
+          prism(ceiling).Position = obj.Position + obj.UnitFront*height;
+          prism(ceiling).UnitUp = -obj.UnitUp;
+          prism(ceiling).UnitFront = -obj.UnitFront;
+          prism(ceiling).Vertices = [obj.Vertices(1,:); -obj.Vertices(2,:)];
+          
+          prism(ceiling).ReflectionCoeff = obj.ReflectionCoeff;
         otherwise
-         error('unknown mode');
+          error('unknown mode');
       end
       
     end
@@ -97,7 +107,7 @@ classdef Wall < simulator.Polygon
       room = ground.createUniformPrism(diff(3),mode);
       
       for idx=1:length(room)
-        room(idx).rho = rho;
+        room(idx).ReflectionCoeff = rho;
       end
     end
   end

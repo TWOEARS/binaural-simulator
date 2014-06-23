@@ -48,7 +48,7 @@ function isargcoord(varargin)
 %% ===== Checking for vector =============================================
 for ii = 1:nargin
     if ~isnumeric(varargin{ii}) || ~isvector(varargin{ii}) || ...
-        length(varargin{ii})>3
-        error('%s need to be a vector with length <4.',inputname(ii));
+        length(varargin{ii})>3 || size(varargin{ii},2) > 1
+        error('%s need to be a column vector with length <4.',inputname(ii));
     end
 end

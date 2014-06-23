@@ -13,7 +13,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     SSROrientationXY;
     SSRMute;
   end
-  properties (SetAccess=private)
+  properties (Access=private, Hidden)
     ImageSources;
     ImageSinks;
     mirroredSourcesDx;  % index for original sources for ism
@@ -48,7 +48,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       
       % init images of Sinks and Sources
       obj.mirroredSourcesDx = ...
-        find( [obj.Sources.Type] == simulator.AudioSourceType.POINT);      
+        find( [obj.Sources.Type] == simulator.AudioSourceType.POINT);         
       [obj.ImageSources, obj.parentSourcesDx, ~, obj.parentWallsDx] ...
         = obj.ismInit(obj.Sources(obj.mirroredSourcesDx));     
       [obj.ImageSinks, ~, obj.sucSinksDx] = obj.ismInit(obj.Sinks);
@@ -183,31 +183,33 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       sucObjectsDx = zeros(NWalls, NImg);
       parentWallsDx = zeros(1,NImg);            
       
-      for odx=1:obj.ReverberationMaxOrder
-        rdx = idx_range(end);  % image source idx for odx
-        for pdx=1:NWalls
-          % idx selects sources from the previous odx loop (without the
-          % sources which have been mirrored at the current Wall pdx before)
-          for idx=idx_range(parentWallsDx(idx_range) ~= pdx)
-            rdx = rdx + 1;
-            
-            % constructor sets original Source
-            Images(rdx) = constructor(Images(idx).OriginalObject);
-            % set Parent Object
-            Images(rdx).ParentObject = ...
-              Images(idx);
-            parentObjectsDx(rdx) = idx;
-            % set successing Object
-            sucObjectsDx(pdx,idx) = rdx;
-            % set Parent Wall
-            Images(rdx).ParentPolygon = ...
-              obj.Walls(pdx);
-            parentWallsDx(rdx) = pdx;  % set index of Walls
-            % set Absorption Weight
-            Images(rdx).Weight = obj.Walls(pdx).rho.*Images(idx).Weight;
+      if NWalls > 0
+        for odx=1:obj.ReverberationMaxOrder
+          rdx = idx_range(end);  % image source idx for odx
+          for pdx=1:NWalls
+            % idx selects sources from the previous odx loop (without the
+            % sources which have been mirrored at the current Wall pdx before)
+            for idx=idx_range(parentWallsDx(idx_range) ~= pdx)
+              rdx = rdx + 1;
+
+              % constructor sets original Source
+              Images(rdx) = constructor(Images(idx).OriginalObject);
+              % set Parent Object
+              Images(rdx).ParentObject = ...
+                Images(idx);
+              parentObjectsDx(rdx) = idx;
+              % set successing Object
+              sucObjectsDx(pdx,idx) = rdx;
+              % set Parent Wall
+              Images(rdx).ParentPolygon = ...
+                obj.Walls(pdx);
+              parentWallsDx(rdx) = pdx;  % set index of Walls
+              % set Absorption Weight
+              Images(rdx).Weight = obj.Walls(pdx).ReflectionCoeff.*Images(idx).Weight;
+            end
           end
+          idx_range = (idx_range(end)+1):rdx;  % set
         end
-        idx_range = (idx_range(end)+1):rdx;  % set
       end
     end
     function ismPositions(obj, Objects, Images)
