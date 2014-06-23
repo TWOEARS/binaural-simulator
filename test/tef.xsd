@@ -45,6 +45,11 @@
     <xs:attribute name="Position" type="coord3D_t" use="optional"/>
     <xs:attribute name="UnitUp" type="coord3D_t" use="optional"/>
     <xs:attribute name="UnitFront" type="coord3D_t" use="optional"/>
+    <xs:attribute name="Name" type="xs:token" use="optional"/>
+    <xs:attribute name="Labels" type="stringList" use="optional"/>
+    <!-- Attributes for visual simulation: -->
+    <xs:attribute name="RootPath" type="xs:token" use="optional"/>
+    <xs:attribute name="MeshFile" type="xs:token" use="optional"/>
   </xs:complexType>
 
   <!-- Type for Coordinates -->
@@ -148,5 +153,8 @@
   </xs:simpleType>
   <xs:simpleType name="positiveIntegerList">
     <xs:list itemType="xs:positiveInteger"/>
+  </xs:simpleType>
+  <xs:simpleType name="stringList">
+    <xs:list itemType="xs:string"/>
   </xs:simpleType>
 </xs:schema>
