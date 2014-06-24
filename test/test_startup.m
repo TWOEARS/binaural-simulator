@@ -1,7 +1,6 @@
-addpath('../src/');
+root = fileparts(mfilename('fullpath')); 
+addpath([root filesep '..' filesep 'src']);
 startWP1;
-
-database_path = [basepath, '/../../database/'];
 
 import simulator.*
 import xml.*
