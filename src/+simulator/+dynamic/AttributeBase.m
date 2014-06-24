@@ -7,8 +7,6 @@ classdef AttributeBase
   end
   properties (SetAccess = protected)
     Current;
-  end
-  properties (SetAccess = immutable)
     Dimensions;
   end
   properties (Access = protected)
@@ -26,7 +24,7 @@ classdef AttributeBase
   methods (Abstract)
     refresh(obj,T)
   end
-  %% setter, getter    
+  %% setter, getter
   methods
     function obj = set.Target(obj, v)
       obj.Target = v;

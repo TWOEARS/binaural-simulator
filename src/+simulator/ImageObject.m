@@ -2,9 +2,9 @@ classdef ImageObject < simulator.Object
   % IMAGEOBJECT Base Class for Scene-Objects
   
   properties
-    ParentObject@simulator.Object;
-    ParentPolygon@simulator.Polygon;
-    OriginalObject@simulator.Object;
+    ParentObject
+    ParentPolygon
+    OriginalObject
     Valid = true;
     Weight = 1.0;
   end

@@ -1,10 +1,10 @@
 classdef PropertyDescription
   
-  properties (SetAccess=immutable)
-    Alias@char;
-    Name@char;
-    Class@char;
-    Constructor@function_handle;
+  properties (SetAccess=private)
+    Alias;
+    Name;
+    Class;
+    Constructor;
   end
   
   methods

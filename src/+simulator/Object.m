@@ -31,7 +31,7 @@ classdef Object < xml.MetaObject
   
   % Hierarchical Stuff
   properties
-     GroupObject@simulator.Object;
+     GroupObject;
   end
   properties (Dependent, Access=private)
      GroupTranslation;

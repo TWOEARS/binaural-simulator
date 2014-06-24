@@ -26,7 +26,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     
     directSourcesDx;
     
-    inputArray@single;
+    inputArray;
   end  
   %% Initialization
   methods

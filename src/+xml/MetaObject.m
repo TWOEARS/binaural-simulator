@@ -4,8 +4,8 @@ classdef (Abstract) MetaObject < hgsetget
   
   properties (SetAccess=protected)
     % Cell-Array of Strings defining Properties which can be configured via XML
-    XMLAttributes@xml.PropertyDescription
-    XMLElements@xml.PropertyDescription
+    XMLAttributes
+    XMLElements
   end
   
   methods
@@ -76,4 +76,16 @@ classdef (Abstract) MetaObject < hgsetget
         xml.PropertyDescription(Name, Class, Alias, Constructor)];
     end
   end
+  
+  %% getter, setter
+  methods
+    function set.XMLElements(obj, v)
+      isargclass('xml.PropertyDescription',v);
+      obj.XMLElements = v;
+    end
+    function set.XMLAttributes(obj, v)
+      isargclass('xml.PropertyDescription',v);
+      obj.XMLAttributes = v;
+    end
+  end  
 end

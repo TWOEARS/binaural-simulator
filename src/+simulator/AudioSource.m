@@ -4,11 +4,11 @@ classdef AudioSource < simulator.Object & dynamicprops
   
   properties
     Mute = false;
-    AudioBuffer@simulator.buffer.Base;
+    AudioBuffer;
   end
   
-  properties (SetAccess = immutable)
-    Type@simulator.AudioSourceType;
+  properties (SetAccess = private)
+    Type;
     RequiredChannels;    
   end
   
@@ -70,12 +70,17 @@ classdef AudioSource < simulator.Object & dynamicprops
   %% setter/getter
   methods
     function set.AudioBuffer(obj, b)
+      isargclass('simulator.buffer.Base', b);
       import simulator.AudioSourceType
       
       if b.NumberOfOutputs ~= obj.RequiredChannels
         error('Number of outputs of audio buffer does not match source type!');
       end
       obj.AudioBuffer = b;
+    end
+    function set.Type(obj, t)
+      isargclass('simulator.AudioSourceType', t);
+      obj.Type = t;
     end
   end   
   

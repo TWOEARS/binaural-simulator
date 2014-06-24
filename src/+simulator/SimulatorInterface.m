@@ -6,15 +6,15 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     SampleRate;  % sample rate of audio input signals in Hz @type uint
     NumberOfThreads;  % threads used for computing ear signals @type uint    
     % rendering mex-function @type function_handle
-    Renderer@function_handle = @ssr_binaural;  
-    HRIRDataset@simulator.DirectionalIR;  % hrirs @type DirectionalIR
+    Renderer = @ssr_binaural;  
+    HRIRDataset;  % hrirs @type DirectionalIR
     
     % maximum delay in seconds caused by distance @type double
     MaximumDelay = 0.0; %
     
-    Sources@simulator.AudioSource  % array of sources @type AudioSource[]
-    Sinks@simulator.AudioSink;  % sinks @type AudioSink
-    Walls@simulator.Wall;  % array of walls @type Wall[]
+    Sources = simulator.AudioSource.empty; % array of sources @type AudioSource[]
+    Sinks = simulator.AudioSink.empty;  % sinks @type AudioSink
+    Walls = simulator.Wall.empty;  % array of walls @type Wall[]
     
     ReverberationMaxOrder = 0.0;  % order of image source model @type uint
   end  

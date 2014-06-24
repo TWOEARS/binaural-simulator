@@ -1,8 +1,8 @@
 classdef PassThrough < simulator.buffer.Base
   %CHANNELBUFFER selects output channels as input
-
+  
   properties
-    ParentBuffer@simulator.buffer.Base % 
+    ParentBuffer %
   end
   
   methods
@@ -24,6 +24,13 @@ classdef PassThrough < simulator.buffer.Base
         data = obj.ParentBuffer.getData(length);
       end
       data = data(:,obj.ChannelMapping);
+    end
+  end
+  %% setter/getter
+  methods
+    function set.ParentBuffer(obj, v)
+      isargclass('simulator.buffer.Base', v);
+      obj.ParentBuffer = v;
     end
   end
 end
