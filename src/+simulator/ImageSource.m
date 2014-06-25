@@ -1,14 +1,16 @@
 classdef ImageSource < simulator.ImageObject
-  %UNTITLED2 Summary of this class goes here
-  %   Detailed explanation goes here
+  % Class for mirror source objects used for the mirror image model
   
   properties
+    % mute flag to mute source output
+    % @type logical
+    % @default false
     Mute = false;
   end
   
   properties (Access = private)
-    DistanceCorrectionWeight = 1.0; 
-  end   
+    DistanceCorrectionWeight = 1.0;
+  end
   
   methods
     function obj = ImageSource(OriginalSource)
@@ -22,10 +24,13 @@ classdef ImageSource < simulator.ImageObject
       % get weighted data from original source
       %
       % Get audio data from original source, which is weighted by
-      % obj.Weight and obj.DistanceCorrectionWeight
+      % Weight and DistanceCorrectionWeight
       %
       % Parameters:
-      %  length: number of samples @default all @type uint[]
+      %   length: number of samples @default all @type integer
+      % 
+      % Return values:
+      %   data: matrix of source signal @default all @type double[][]
       if nargin < 2
         data = obj.OriginalObject.getData;
       else
@@ -41,7 +46,7 @@ classdef ImageSource < simulator.ImageObject
       % correction of images sources in 3D has to be applied.
       %
       % Parameters:
-      %  RefPosition: reference  @type double[]
+      %   RefPosition: reference  @type double[]
       isargcoord(RefPosition);
       
       RefPosition = (obj.Position - RefPosition).^2;
@@ -49,5 +54,5 @@ classdef ImageSource < simulator.ImageObject
       distanceXYZ = max(0.5, sqrt(sum(RefPosition)));
       obj.DistanceCorrectionWeight = distanceXY./distanceXYZ;
     end
-  end  
+  end
 end
