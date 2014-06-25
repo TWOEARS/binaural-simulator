@@ -1,5 +1,5 @@
 classdef Object < xml.MetaObject
-  % OBJECT Base Class for Scene-Objects
+  % Base class for scene-objects
   
   properties (SetObservable, AbortSet)
     % view-up vector
@@ -11,16 +11,29 @@ classdef Object < xml.MetaObject
     % 3D-Position
     % @type double[]
     % @default [0; 0; 0]
-    Position
+    Position;
     % front vector
     % @type double[]
     % @default [1; 0; 0]
     UnitFront;
-    
-    PositionXY;  % xy-coordinates of Position @type double[]
-    OrientationXY;  % azimuth of UnitFront in degree @type double
-    UnitRight;  % vector resulting of UnitUp x UnitFront  @type double[]
-    RotationMatrix; % 
+  end
+  properties (Dependent, SetAccess=private)
+    % vector resulting of UnitUp x UnitFront
+    % @type double[]
+    % @default [0; 1; 0]
+    UnitRight;
+    % xy-coordinates of Position
+    % @type double[]
+    % @default [0; 0]
+    PositionXY;
+    % azimuth of UnitFront in degree
+    % @type double
+    % @default 0
+    OrientationXY;
+    % RotationMatrix resulting of [obj.UnitRight, obj.UnitUp, obj.UnitFront]
+    % @type double[][]
+    % @default eye(3)
+    RotationMatrix;
   end
   
   % Dynamic Stuff
@@ -31,21 +44,31 @@ classdef Object < xml.MetaObject
   
   % Hierarchical Stuff
   properties
-     GroupObject;
+    % Parent Object used for grouping Objects
+    % @type simulator.Object
+    % using the Grouping Object will lead to the following behaviour:
+    % setting Object.Position or Object.Unit... will define the parameters
+    % inside the coordinates system of the GroupObject:
+    %
+    % Object.Positon := Object.GroupObject.RotationMatrix
+    %   *(Object.Position - Object.GroupObject.Position)
+    %
+    % Object.Unit... := Object.GroupObject.RotationMatrix*Object.Unit...
+    GroupObject;
   end
   properties (Dependent, Access=private)
-     GroupTranslation;
-     GroupRotation;
-  end 
+    GroupTranslation;
+    GroupRotation;
+  end
   
-  %% Constructor 
+  %% Constructor
   methods
     function obj = Object()
       obj.addXMLAttribute('UnitUp', 'double');
       obj.addXMLAttribute('UnitFront', 'double');
       obj.addXMLAttribute('Position', 'double');
     end
-  end  
+  end
   
   methods
     %% Rotation
@@ -54,7 +77,7 @@ classdef Object < xml.MetaObject
       % rotate object around its UnitFront vector
       %
       % Parameters:
-      %   angle:  rotation angle in degree @type double
+      %   alpha:  rotation angle in degree @type double
       obj.rotateAroundAxis(obj.UnitFront, alpha);
     end
     function rotateAroundUp(obj, alpha)
@@ -62,7 +85,7 @@ classdef Object < xml.MetaObject
       % rotate object around its UnitUp vector
       %
       % Parameters:
-      %   angle:  rotation angle in degree @type double
+      %   alpha:  rotation angle in degree @type double
       obj.rotateAroundAxis(obj.UnitUp, alpha);
     end
     function rotateAroundRight(obj, alpha)
@@ -70,9 +93,9 @@ classdef Object < xml.MetaObject
       % rotate object around its UnitRight vector
       %
       % Parameters:
-      %   angle:  rotation angle in degree @type double
+      %   alpha:  rotation angle in degree @type double
       obj.rotateAroundAxis(obj.UnitRight, alpha);
-    end    
+    end
   end
   methods (Access = private)
     function rotateAroundAxis(obj, n, alpha)
@@ -96,21 +119,77 @@ classdef Object < xml.MetaObject
   %% dynamic stuff
   methods
     function refresh(obj, T)
+      % refresh properties with finite-speed modification
+      % 
+      % Parameters:
+      %   T: time difference in seconds @type double
+      %
+      % Properties with finite-speed modification speed will change over time to 
+      % its target value. This functions refreshes this properties to a new
+      % timestamp which has a difference to the old timestamp of T
+      %
+      % See also: simulator.dynamic.AttributeLinear      
       obj.PositionDynamic = obj.PositionDynamic.refresh(T);
       obj.UnitFrontDynamic = obj.UnitFrontDynamic.refresh(T);
+    end
+    % extended setter, getter for dynamic extension
+    function setDynamic(obj, name, prop, value)
+      % set settings of certain property for finite-speed modification
+      % 
+      % Parameters:
+      %   name: name of the property @type char[]
+      %   prop: name of the limited speed parameter @type char[]
+      %   value: value for the limited speed parameter
+      %
+      % supported properties (name)
+      % - Position
+      % - UnitFront
+      %
+      % supported limited speed parameters (prop)
+      % - Velocity
+      %
+      % See also: simulator.dynamic.AttributeLinear
+      isargchar(prop, name);
+      if (~isprop(obj,name))
+        error('unknown property: %s', name);
+      end
+      if (~isprop(obj,[name,'Dynamic']))
+        error('%s is a not dynamic property', name);
+      end
+      obj.([name,'Dynamic']).(prop) = value;
+    end
+    function v = getDynamic(obj, name, prop)
+      % set settings of certain property for limited speed motion
+      % 
+      % Parameters:
+      %   name: name of the property @type char[]
+      %   prop: name of the dynamic property @type char[]
+      %
+      % Return Values:
+      %   v: value for the limited speed parameter 
+      %
+      % See also: setDynamic simulator.dynamic.AttributeLinear
+      isargchar(prop, name);
+      if (~isprop(obj,name))
+        error('unknown property: %s', name);
+      end
+      if (~isprop(obj,[name,'Dynamic']))
+        error('%s is a not dynamic property', name);
+      end
+      v = obj.([name,'Dynamic']).(prop);
     end
   end
   
   %% setter, getter
   methods
-    % 
+    %
     function set.Position(obj,v)
       isargcoord(v);
       obj.PositionDynamic.Target = v;
     end
     function v = get.Position(obj)
       v = obj.PositionDynamic.Current;
-      v = obj.GroupRotation*(v + obj.GroupTranslation);    
+      v = obj.GroupRotation*(v + obj.GroupTranslation);
     end
     %
     function set.UnitUp(obj,v)
@@ -118,7 +197,7 @@ classdef Object < xml.MetaObject
       isargunitvector(v);
       obj.UnitUp = v;
     end
-    % 
+    %
     function set.UnitFront(obj,v)
       isargcoord(v);
       isargunitvector(v);
@@ -126,7 +205,7 @@ classdef Object < xml.MetaObject
     end
     function v = get.UnitFront(obj)
       v = obj.UnitFrontDynamic.Current;
-      v = obj.GroupRotation*v; 
+      v = obj.GroupRotation*v;
     end
     %
     function v = get.UnitRight(obj)
@@ -134,7 +213,7 @@ classdef Object < xml.MetaObject
     end
     %
     function v = get.UnitUp(obj)
-      v = obj.GroupRotation*obj.UnitUp; 
+      v = obj.GroupRotation*obj.UnitUp;
     end
     %
     function v = get.PositionXY(obj)
@@ -154,7 +233,7 @@ classdef Object < xml.MetaObject
       isargclass('simulator.Object', v);
       if (~isempty(v))
         isargequalsize(1,v);
-      end      
+      end
       obj.GroupObject = v;
     end
     function v = get.GroupRotation(obj)
@@ -171,29 +250,5 @@ classdef Object < xml.MetaObject
         v = obj.GroupObject.Position;
       end
     end
-  end  
-  
-  %% extended setter, getter for dynamic extension
-  methods
-    function setDynamic(obj, name, prop, value)
-      isargchar(prop, name);
-      if (~isprop(obj,name))
-        error('unknown property: %s', name);
-      end
-      if (~isprop(obj,[name,'Dynamic']))
-        error('%s is a not dynamic property', name);
-      end
-      obj.([name,'Dynamic']).(prop) = value;
-    end
-    function v = getDynamic(obj, name, prop)
-      isargchar(prop, name);
-      if (~isprop(obj,name))
-        error('unknown property: %s', name);
-      end
-      if (~isprop(obj,[name,'Dynamic']))
-        error('%s is a not dynamic property', name);
-      end
-      v = obj.([name,'Dynamic']).(prop);
-    end
-  end   
+  end
 end
