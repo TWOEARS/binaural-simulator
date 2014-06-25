@@ -1,7 +1,9 @@
 classdef Wall < simulator.Polygon
-  % Wall Class
+  % Class for wall objects used for mirror image model
   
   properties
+    % amount of acoustic pressure which is reflected by wall
+    % @type double
     ReflectionCoeff = 1.0;
   end
   
@@ -91,6 +93,9 @@ classdef Wall < simulator.Polygon
       if nargin < 2
         error('too few arguments');
       end
+      if nargin < 3
+        rho = 1.0;
+      end
       if nargin < 4
         mode = '2D';
       end
@@ -109,6 +114,13 @@ classdef Wall < simulator.Polygon
       for idx=1:length(room)
         room(idx).ReflectionCoeff = rho;
       end
+    end
+  end
+  %% setter/getter
+  methods
+    function set.ReflectionCoeff(obj, v)
+      isargpositivescalar(v);
+      obj.ReflectionCoeff = v;
     end
   end
 end
