@@ -1,15 +1,20 @@
 classdef PassThrough < simulator.buffer.Base
-  %CHANNELBUFFER selects output channels as input
+  % Class uses other buffer object as input and maps it to a new output
   
   properties
-    ParentBuffer %
+    % Input buffer
+    % @type simulator.buffer.Base
+    ParentBuffer
   end
   
   methods
     function obj = PassThrough(mapping, buffer)
-      if nargin < 2
-        mapping = 1;
-      end
+      % function obj = Data(mapping)
+      % constructor
+      %
+      % Parameters:
+      %   mapping: corresponds to ChannelMapping @type integer[]
+      %   buffer: corresponds to ParentBuffer @type simulator.buffer.Base
       obj = obj@simulator.buffer.Base(mapping);
       obj.ParentBuffer = buffer;
     end

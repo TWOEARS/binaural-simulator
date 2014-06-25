@@ -1,18 +1,30 @@
 classdef (Abstract) Data < simulator.buffer.Base
-  %AUDIOBUFFERDATA is the base class for all data-based audio buffers.
+  % Base class for all data-based audio buffers.
   
   properties (Access = protected, Hidden)
+    % data source
+    % @type double[][]
     data = [];
   end
   
   methods
-    function obj = Data(mapping) 
+    function obj = Data(mapping)
+      % function obj = Data(mapping)
+      % constructor
+      %
+      % Parameters:
+      %   mapping: corresponds to ChannelMapping @type integer[] @default 1
       if nargin < 1
         mapping = 1;
       end
-      obj = obj@simulator.buffer.Base(mapping);    
+      obj = obj@simulator.buffer.Base(mapping);
     end
     function b = isEmpty(obj)
+      % function b = isEmpty(obj)
+      % indicates if buffer is empty
+      %
+      % Return values:
+      %   b: indicates if buffer is empty @type logical
       b = isempty(obj.data);
     end
   end
@@ -33,6 +45,10 @@ classdef (Abstract) Data < simulator.buffer.Base
   end
   methods (Abstract)
     removeData(obj, length)
+    % function removeData(obj, length)
+    % update data from buffer according to specified length (Class specific)
+    %
+    % Parameters:
+    %   length: number of samples @type integer @default inf
   end
 end
-

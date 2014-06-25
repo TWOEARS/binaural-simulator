@@ -1,21 +1,32 @@
 classdef (Abstract) Base < xml.MetaObject
-  %AUDIOBUFFERBASE is the base class for all audio buffers. 
-
+  %AUDIOBUFFERBASE is the base class for all audio buffers.
+  
   properties
+    % mapping between input/data channels and output channels
+    % @type integer[]
     ChannelMapping;
-  end   
-  properties (Dependent)
+  end
+  properties (SetAccess=private, Dependent)
+    % Number of input input/data channels
+    % @type integer
     NumberOfInputs;
+    % Number of input input/data channels
+    % @type integer
     NumberOfOutputs;
-  end  
-    
+  end
+  
   methods
-    function obj = Base(mapping) 
+    function obj = Base(mapping)
+      % function obj = Base(mapping)
+      % constructor
+      %
+      % Parameters:
+      %   mapping: corresponds to ChannelMapping @type integer[] @default 1
       if nargin < 1
         mapping = 1;
       end
       obj.ChannelMapping = mapping;
-
+      
       % xml
       obj.addXMLAttribute('ChannelMapping', 'double');
     end
@@ -24,17 +35,15 @@ classdef (Abstract) Base < xml.MetaObject
   %% Abstract Functions
   methods (Abstract)
     data = getData(obj, length)
-  % function data = getData(obj, length)
-  % reads data from buffer of specified length 
-  %
-  % If length is longer than the current buffer content, zero padding is applied
-  %
-  % Parameters:
-  %   length: number of deleted samples @type integer @default inf
-  %
-  % Return values:
-  %   data: @type double[][]
-  end  
+    % function data = getData(obj, length)
+    % reads data from buffer of specified length
+    %
+    % Parameters:
+    %   length: number of samples @type integer @default inf
+    %
+    % Return values:
+    %   data: @type double[][]
+  end
   
   %% Setter, Getter
   methods
@@ -48,5 +57,5 @@ classdef (Abstract) Base < xml.MetaObject
     function v = get.NumberOfInputs(obj)
       v = max(obj.ChannelMapping);
     end
-  end  
+  end
 end

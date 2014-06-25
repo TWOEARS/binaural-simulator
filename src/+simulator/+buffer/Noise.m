@@ -1,17 +1,26 @@
 classdef Noise < simulator.buffer.Data
-  %AUDIONOISEBUFFER is the class for noise sources.
+  % Class basically implements a AWGN buffer
   
   properties
+    % mu of gaussian distribution
+    % @type double
     Mean = 0.0
+    % sigma of gaussian distribution
+    % @type double
     Variance = 1.0
-  end  
+  end
   
   methods
-    function obj = Noise(mapping) 
+    function obj = Noise(mapping)
+      % function obj = Data(mapping)
+      % constructor
+      %
+      % Parameters:
+      %   mapping: corresponds to ChannelMapping @type integer[] @default 1
       if nargin < 1
         mapping = 1;
       end
-      obj = obj@simulator.buffer.Data(mapping);    
+      obj = obj@simulator.buffer.Data(mapping);
     end
   end
   
@@ -30,15 +39,19 @@ classdef Noise < simulator.buffer.Data
       data = data(:,obj.ChannelMapping);
     end
     function removeData(obj, length)
-      % function removeData(obj, length) 
+      % function removeData(obj, length)
       % this function does nothing
+      %
+      % TODO: add some functionality
     end
     function v = isEmpty(obj)
+      % function b = isEmpty(obj)
+      % always false
       v = false;
     end
   end
   
-  %% Setter, Getter  
+  %% Setter, Getter
   methods
     function set.Variance(obj,v)
       isargscalar(v);
@@ -50,4 +63,3 @@ classdef Noise < simulator.buffer.Data
     end
   end
 end
-

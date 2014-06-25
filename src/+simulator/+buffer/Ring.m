@@ -1,11 +1,20 @@
 classdef Ring < simulator.buffer.Data
-  %AUDIORINGBUFFER
-  properties (SetAccess = private)
+  % Class basically implements a loop buffer
+  
+  properties (Access = private)
+    % array of position pointer for each output channel
+    % @type integer[] 
     DataPointer;
   end
   
   methods
     function obj = Ring(mapping, StartPointer)
+      % function obj = Ring(mapping, StartPointer)
+      % constructor
+      %
+      % Parameters:
+      %   mapping: corresponds to ChannelMapping @type integer[] @default 1
+      %   StartPointer: initial value of DataPointer @type integer[] @default [0]  
       if nargin < 1
         mapping = 1;
       end
@@ -17,6 +26,11 @@ classdef Ring < simulator.buffer.Data
       obj.DataPointer = StartPointer;
     end
     function setData(obj, data, StartPointer)
+      % function setData(obj, data)
+      % sets data of buffer (deletes old data)
+      %
+      % Parameters:
+      %   data: data which is stored in buffer @type double[][]
       if nargin < 3
         StartPointer = zeros(1, obj.NumberOfOutputs);
       end
@@ -70,6 +84,4 @@ classdef Ring < simulator.buffer.Data
       obj.DataPointer = v;
     end
   end
-  
-  
 end
