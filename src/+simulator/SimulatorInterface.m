@@ -2,22 +2,43 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
   %SIMULATORINTERFACE is the base class for all configurations for the simulator
   
   properties
-    BlockSize;  % blocksize for binaural renderer @type uint
-    SampleRate;  % sample rate of audio input signals in Hz @type uint
-    NumberOfThreads;  % threads used for computing ear signals @type uint    
-    % rendering mex-function @type function_handle
-    Renderer = @ssr_binaural;  
-    HRIRDataset;  % hrirs @type DirectionalIR
+    % blocksize for binaural renderer
+    % @type integer
+    BlockSize;
+    % sample rate of audio input signals in Hz
+    % @type integer
+    SampleRate;
+    % threads used for computing ear signals
+    % @type integer
+    % @default 1
+    NumberOfThreads = 1;
+    % rendering mex-function
+    % @type function_handle
+    % @default @ssr_binaural
+    Renderer = @ssr_binaural;
+    % HRIR-dataset
+    % @type DirectionalIR
+    HRIRDataset;
     
-    % maximum delay in seconds caused by distance @type double
-    MaximumDelay = 0.0; %
+    % maximum delay in seconds caused by distance and finite sound velocity
+    % @type double
+    MaximumDelay = 0.0;
     
-    Sources = simulator.AudioSource.empty; % array of sources @type AudioSource[]
-    Sinks = simulator.AudioSink.empty;  % sinks @type AudioSink
-    Walls = simulator.Wall.empty;  % array of walls @type Wall[]
+    % array of sources
+    % @type AudioSource[]
+    Sources = simulator.AudioSource.empty;
+    % array of sinks
+    % @type AudioSink[]
+    Sinks = simulator.AudioSink.empty;
+    % array of walls
+    % @type Wall[]
+    Walls = simulator.Wall.empty;
     
-    ReverberationMaxOrder = 0.0;  % order of image source model @type uint
-  end  
+    % order of image source model (number of subsequent reflections)
+    % @type integer
+    % @default 0
+    ReverberationMaxOrder = 0;
+  end
   
   %% Constructor
   methods
@@ -30,17 +51,17 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.addXMLAttribute('HRIRDataset', 'simulator.DirectionalIR', 'HRIRs');
       
       obj.addXMLElement('Sinks', 'simulator.AudioSink', 'sink', @(x)simulator.AudioSink(2));
-      obj.addXMLElement('Walls', 'simulator.Wall', 'wall');      
+      obj.addXMLElement('Walls', 'simulator.Wall', 'wall');
     end
-  end  
+  end
   
   %% XML
   methods (Access=protected)
     function configureXMLSpecific(obj, xmlnode)
-      
-      % Sources
+      % function configureXMLSpecific(obj, xmlnode)
+      % See also: xml.MetaObject.configureXMLSpecific
       sourceList = xmlnode.getElementsByTagName('source');
-      sourceNum = sourceList.getLength;    
+      sourceNum = sourceList.getLength;
       
       for idx=1:sourceNum
         source = sourceList.item(idx-1);
@@ -54,23 +75,34 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
             type = simulator.AudioSourceType.DIRECT;
           otherwise
             warning('source type not yet implemented for xml parsing');
-        end        
+        end
         obj.Sources(idx) = simulator.AudioSource(type);
         obj.Sources(idx).XML(source);
-      end  
+      end
     end
-  end  
+  end
   
   %% some functionalities for controlling the Simulator
   % this properties can be used to invoke some of the abstract functions
   
   properties
+    % flag indicates if the simulator is initialited
+    % @type logical
+    % @default false
     Init = false;
   end
   properties (Dependent, GetAccess=private)
-    Refresh;
+    % set to true to process one frame of ear signals
+    % @type logical
     Process;
+    % set to true to refresh scene geometry
+    % @type logical
+    Refresh;
+    % set to true to clear convolver memory
+    % @type logical
     ClearMemory;
+    % set to true to shut down the simulator
+    % @type logical
     ShutDown;
   end
   
