@@ -1,4 +1,10 @@
 function validate(filename, schema)
+% validate(filename, schema)
+% validate xml-file against schema
+%
+% Parameters:
+%   filename: filename of xml-schema (*.xml)
+%   schema: filename of xml-schema (*.xsd)
   import java.io.*;
   import javax.xml.transform.Source;
   import javax.xml.transform.stream.StreamSource;
