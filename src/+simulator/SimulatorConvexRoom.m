@@ -3,7 +3,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
   
   properties (Access=private, Hidden, Dependent)
     reflect_factor;  %
-    NumberOfSources;    
+    NumberOfSources;
     NumberOfSSRSources;
     NumberOfImageSources;
     NumberOfPWDSubSources;
@@ -19,7 +19,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     mirroredSourcesDx;  % index for original sources for ism
     parentSourcesDx;  % index for 'mother' source of images sources
     parentWallsDx;  % index for 'mother' wall of images sources
-    sucSinksDx;  % index for 'child' images sinks of sinks    
+    sucSinksDx;  % index for 'child' images sinks of sinks
     
     pwdSourcesDx;
     PWDSubSources;
@@ -27,7 +27,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     directSourcesDx;
     
     inputArray;
-  end  
+  end
   %% Initialization
   methods
     function obj = init(obj)
@@ -36,7 +36,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       
       % init direct binaural Sources
       obj.directSourcesDx = ...
-        find( [obj.Sources.Type] == simulator.AudioSourceType.DIRECT);     
+        find( [obj.Sources.Type] == simulator.AudioSourceType.DIRECT);
       
       % init pwd sources
       obj.pwdSourcesDx = ...
@@ -48,9 +48,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       
       % init images of Sinks and Sources
       obj.mirroredSourcesDx = ...
-        find( [obj.Sources.Type] == simulator.AudioSourceType.POINT);         
+        find( [obj.Sources.Type] == simulator.AudioSourceType.POINT);
       [obj.ImageSources, obj.parentSourcesDx, ~, obj.parentWallsDx] ...
-        = obj.ismInit(obj.Sources(obj.mirroredSourcesDx));     
+        = obj.ismInit(obj.Sources(obj.mirroredSourcesDx));
       [obj.ImageSinks, ~, obj.sucSinksDx] = obj.ismInit(obj.Sinks);
       
       % init input array for renderer
@@ -70,7 +70,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       source_types = [source_types, ...
         repmat({'plane'}, 1, length(obj.PWDSubSources))];
       
-      obj.Renderer('source_model', source_types{:});    
+      obj.Renderer('source_model', source_types{:});
       
     end
     %% Processing
@@ -78,8 +78,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       % function process(obj)
       % process next audio block
       %
-      % process next audio block provided by the audio sources of 
-      % obj.Sources. Output will be written to the Buffer of obj.Sinks
+      % process next audio block provided by the audio sources of Sources
+      % Output will be written to the Buffer of Sinks
       
       for idx=1:length(obj.ImageSources)
         obj.inputArray(:,idx) = obj.ImageSources(idx).getData(obj.BlockSize);
@@ -114,14 +114,15 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     %% Refresh
     function refresh(obj)
       % function refresh(obj)
-      % refresh positions of image sources using the image source model 
+      % refresh positions of image sources using the image source model
       
+      % refresh position of Sinks for limited-speed modifications
       obj.Sinks.refresh(obj.BlockSize/obj.SampleRate);
       
       if obj.NumberOfImageSources > 0
         obj.ismPositions(obj.Sources(obj.mirroredSourcesDx), obj.ImageSources);
         obj.ismPositions(obj.Sinks, obj.ImageSinks);
-
+        
         obj.ismVisibility(obj.ImageSources);
         obj.ismAmplitude(obj.ImageSources);
       end
@@ -137,7 +138,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       for idx=1:blocks
         [~] = obj.Renderer('process', input);
       end
-    end    
+    end
     %% Shut Down
     function shutDown(obj)
       % function shutDown(obj)
@@ -148,7 +149,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       delete(obj.ImageSources);
       delete(obj.ImageSinks);
     end
-
+    
   end
   %% Image Source Model
   methods (Access = private)
@@ -181,7 +182,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       idx_range = 1:NObj;
       parentObjectsDx = zeros(1,NImg);
       sucObjectsDx = zeros(NWalls, NImg);
-      parentWallsDx = zeros(1,NImg);            
+      parentWallsDx = zeros(1,NImg);
       
       if NWalls > 0
         for odx=1:obj.ReverberationMaxOrder
@@ -191,7 +192,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
             % sources which have been mirrored at the current Wall pdx before)
             for idx=idx_range(parentWallsDx(idx_range) ~= pdx)
               rdx = rdx + 1;
-
+              
               % constructor sets original Source
               Images(rdx) = constructor(Images(idx).OriginalObject);
               % set Parent Object
@@ -290,7 +291,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     end
   end
   %% PWD
-  methods
+  methods (Access=private)
     function SubSources = pwdInit(obj, PWDSources)
       
       NObj = length(PWDSources);
@@ -308,7 +309,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         end
       end
     end
-  end  
+  end
   
   %% misc.
   methods
@@ -348,10 +349,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         h(3) = plot3(src_pos(1,:), src_pos(2,:), src_pos(3,:),'rx');
         % Draw Active/Valid Sources
         if min(img_mute) == 0
-        h(4) = plot3(img_pos(1,~img_mute), ...
-          img_pos(2,~img_mute), ...
-          img_pos(3,~img_mute),  ...
-          'bo');
+          h(4) = plot3(img_pos(1,~img_mute), ...
+            img_pos(2,~img_mute), ...
+            img_pos(3,~img_mute),  ...
+            'bo');
         end
         % Draw Inactive/Invalid Sources
         if max(img_mute) == 1
@@ -431,6 +432,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         v = [v, [obj.PWDSubSources.Mute]];
       end
       v = logical(v);
-    end 
+    end
   end
 end
