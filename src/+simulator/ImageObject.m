@@ -1,11 +1,22 @@
 classdef ImageObject < simulator.Object
-  % IMAGEOBJECT Base Class for Scene-Objects
+  % Class for mirror image objects used for the mirror image model
   
   properties
+    % parent object from which this object was mirrored
+    % @type simulator.Object
     ParentObject
+    % parent polygon which was used to mirror the ParentObject
+    % @type simulator.Polygon
     ParentPolygon
+    % original object as the root of the mirroring process
+    % @type simulator.Object
     OriginalObject
+    % flag indicating if the image object is valid by means of the mirror image
+    % model
+    % 
+    % @type logical
     Valid = true;
+    % @type double
     Weight = 1.0;
   end
   
@@ -17,8 +28,7 @@ classdef ImageObject < simulator.Object
     end       
     function mirror(obj)
   % function mirror(obj)
-  % mirrors ParentObject at ParentPolygon and modifies the Position
-  % attribute of the object
+  % Compute objects position by mirroring ParentObject at ParentPolygon
       [obj.Position, distance] = ...
         obj.ParentPolygon.mirrorPoints(obj.ParentObject.Position);      
       obj.Valid = (distance >= 0);
