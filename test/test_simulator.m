@@ -8,11 +8,11 @@ test_startup;
 
 % input
 [input{1}] = ...
-  audioread('../../database/stimuli/anechoic/instruments/anechoic_cello.wav');
+  audioread('../../twoears-data/stimuli/anechoic/instruments/anechoic_cello.wav');
 [input{2}, fs] = ...
-  audioread('../../database/stimuli/anechoic/instruments/anechoic_castanets.wav');
+  audioread('../../twoears-data/stimuli/anechoic/instruments/anechoic_castanets.wav');
 [input{3}] = ...
-  audioread('../../database/stimuli/binaural/binaural_forest.wav');
+  audioread('../../twoears-data/stimuli/binaural/binaural_forest.wav');
 
 % SSR works with single-precision
 input{1} = single(input{1}(:,1)./max(abs(input{1}(:,1))));
@@ -40,7 +40,7 @@ source(4).AudioBuffer.set(...
 % HRIRs
 % construct
 hrir = DirectionalIR( ...
-  '../../database/impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav');  
+  '../../twoears-data/impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav');  
 hrir.plot();  % plot hrirs
 
 % Reflectors
