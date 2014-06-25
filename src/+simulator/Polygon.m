@@ -5,6 +5,9 @@ classdef Polygon < simulator.Object
     % array of 2D vertices (ordered)
     % @type double[]
     Vertices = [1.0, 1.0, -0.0, -0.0; 1.0, -0.0, 0.0, 1.0];
+  end
+  
+  properties (Access=private)
     % tolerance criterion for intersectLine
     % @type double
     eps = 1.0e-5;
@@ -29,6 +32,7 @@ classdef Polygon < simulator.Object
       % Return values:
       %  p: 3D coordinate of mirrored point @type double[]
       %  d: orthogonal distance of point to polygon @type double
+      isargcoord(p);
       
       d = zeros(1,size(p,2));
       for i=1:size(p,2)
@@ -48,6 +52,9 @@ classdef Polygon < simulator.Object
       %
       % Return values:
       %  lambda: value of @f$ \lambda @f$ for intersection
+      
+      isargcoord(lo);
+      isargcoord(ld);
       
       % compute lambda parameter of line
       lambda = ((obj.Position-lo)'*obj.UnitFront)./ (ld'*obj.UnitFront);
