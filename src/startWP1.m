@@ -3,4 +3,10 @@
 ones(10)*ones(10);
 
 basepath = fileparts(mfilename('fullpath'));
-addpath(genpath(basepath));
+basepath = [basepath, filesep, '..', filesep, '..', filesep];
+
+addpath(genpath([basepath, 'twoears-wp1', filesep, 'src']));
+addpath(genpath([basepath, 'twoears-wp2', filesep, 'src']));
+addpath(genpath([basepath, 'twoears-wp3', filesep, 'src']));
+addpath(genpath([basepath, 'twoears-wp4', filesep, 'src']));
+addpath([basepath, 'twoears-data']);

@@ -41,7 +41,7 @@ head.set('UnitFront', [1.0; 0.0; 0.0]);  % head is looking to positive x
 
 % HRIRs
 hrir = DirectionalIR( ...
-  fullfile([database_path, 'impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav']));  
+  '../../twoears-data/impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav');  
 hrir.plot();  % plot hrirs
 
 % Simulator
