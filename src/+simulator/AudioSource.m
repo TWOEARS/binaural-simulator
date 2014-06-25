@@ -1,48 +1,53 @@
 classdef AudioSource < simulator.Object & dynamicprops
-  %UNTITLED2 Summary of this class goes here
-  %   Detailed explanation goes here
+  % Class for source-objects in audio scene
   
   properties
+    % mute flag to mute source output
+    % @type logical
+    % @default false
     Mute = false;
+    % audio buffer which contains input signal of source
+    % @type simulator.buffer.Base
     AudioBuffer;
   end
   
   properties (SetAccess = private)
+    % source type
+    % @type simulator.AudioSourceType
     Type;
-    RequiredChannels;    
+  end
+  
+  properties (SetAccess = private, Dependent)
+    % required number of channels of input signal (type dependent)
+    % @type integer
+    %
+    % To set AudioBuffer to the Source object AudioBuffer.NumberOfChannels
+    % has to match RequiredChannels
+    RequiredChannels;
   end
   
   methods
     function obj = AudioSource(type, buffer, directions)
+      % function obj = AudioSource(type, buffer, directions)
+      % 
+      % Parameters:
+      %   type: type of AudioSource @type simulator.AudioSourceType
+      %   buffer: audio buffer as signal source @type simulator.buffer.Base
+      %   directions: directions of plane wave for simulator.AudioSourceType.PWD
+      %      @type double[][]
       obj = obj@simulator.Object();
       obj.addXMLAttribute('Mute', 'logical');
       
-      import simulator.AudioSourceType
+      obj.Type = type;
       
-      if nargin > 1
-        if nargin == 2
-          switch type
-            case AudioSourceType.POINT
-              obj.RequiredChannels = 1;
-            case AudioSourceType.PLANE
-              obj.RequiredChannels = 1;
-            case AudioSourceType.DIRECT
-              obj.RequiredChannels = 2;
-            otherwise
-              error('Number of input Arguments does not match the source type');
-          end
-        elseif nargin == 3 && type == AudioSourceType.PWD           
-          P = addprop(obj,'Directions');
-          P.SetAccess = 'private';
-          %P.SetMethod = @obj.set_Directions;
-          obj.Directions = directions;
-          obj.RequiredChannels = size(obj.Directions,2);
-        else
-          error('Number of input Arguments does not match the source type');
-        end
+      if obj.Type == simulator.AudioSourceType.PWD
+        addprop(obj,'Directions');
+        obj.Directions = directions;
+      end
+      
+      if nargin >= 2
         obj.AudioBuffer = buffer;
-      end      
-      obj.Type = type;     
+      end
     end
   end
   
@@ -65,7 +70,7 @@ classdef AudioSource < simulator.Object & dynamicprops
       end
       obj.AudioBuffer.XML(buffer);
     end
-  end 
+  end
   
   %% setter/getter
   methods
@@ -82,7 +87,23 @@ classdef AudioSource < simulator.Object & dynamicprops
       isargclass('simulator.AudioSourceType', t);
       obj.Type = t;
     end
-  end   
+    function v = get.RequiredChannels(obj)
+      import simulator.AudioSourceType
+      
+      switch obj.Type
+        case AudioSourceType.POINT
+          v = 1;
+        case AudioSourceType.PLANE
+          v = 1;
+        case AudioSourceType.DIRECT
+          v = 2;
+        case AudioSourceType.PWD
+          v = size(obj.Directions,2);
+        otherwise
+          error('Unknown source type!');
+      end
+    end
+  end
   
   %% functionalities of AudioBuffer which have to be encapsulated
   methods
@@ -111,4 +132,3 @@ classdef AudioSource < simulator.Object & dynamicprops
     end
   end
 end
-
