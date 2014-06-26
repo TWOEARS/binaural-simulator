@@ -5,7 +5,7 @@ test_startup
 
 %% xml configuration
 
-xml.validate('test.xml','tef.xsd');
+xml.validate('test.xml');
 
 theDoc = xmlread('test.xml');
 theNode = theDoc.getDocumentElement;

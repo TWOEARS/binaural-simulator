@@ -5,7 +5,7 @@
     MaximumDelay="0.0"
     NumberOfThreads="1"
     ReverberationMaxOrder="2"
-    HRIRs="../../twoears-data/impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav">
+    HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav">
   <source Position="0 -1 0" Mute="false" Type="point" Name="FirstSource">
     <buffer ChannelMapping="1" Type="noise"/>
   </source>

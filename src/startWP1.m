@@ -9,4 +9,4 @@ addpath(genpath([basepath, 'twoears-wp1', filesep, 'src']));
 addpath(genpath([basepath, 'twoears-wp2', filesep, 'src']));
 addpath(genpath([basepath, 'twoears-wp3', filesep, 'src']));
 addpath(genpath([basepath, 'twoears-wp4', filesep, 'src']));
-addpath([basepath, 'twoears-data']);
+addpath([basepath, 'twoears-data', filesep, 'src']);
