@@ -12,11 +12,17 @@
   <source Position="0 1 0" Mute="true" Type="point" Name="SecondSource">
     <buffer ChannelMapping="1" Type="noise"/>
   </source>
-  <sink Position="0 0 0" UnitFront="1 0 0" UnitUp="0 0 1" Name="Head"/>
+  <sink Position="0 0 0"
+    UnitFront="1 0 0"
+    UnitUp="0 0 1"
+    Name="Head"
+    RootPath="some/root/path/"
+    MeshFile="blub.ext"/>
   <wall Position="2 0 0"
     UnitFront="-1 0 0"
     UnitUp="0 0 1"
     ReflectionCoeff="0.6"
     Vertices="-2.0 -2.0; 2.0 -2.0; 2.0 2.0; -2.0 2.0"
-    Name="Wall"/>
+    Name="Wall"
+    Labels="stone red"/>
 </scene>

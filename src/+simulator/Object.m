@@ -1,6 +1,17 @@
-classdef Object < xml.MetaObject
+classdef Object < simulator.vision.Meta & xml.MetaObject
   % Base class for scene-objects
   
+  % Some MetaData
+  properties
+    % unique identifier for this objects
+    % @type char[]
+    Name;
+    % some labels (TODO: define possible labels)
+    % @type char{}
+    Labels;
+  end
+  
+  % Geometry
   properties (SetObservable, AbortSet)
     % view-up vector
     % @type double[]
@@ -64,9 +75,12 @@ classdef Object < xml.MetaObject
   %% Constructor
   methods
     function obj = Object()
+      obj = obj@simulator.vision.Meta();
       obj.addXMLAttribute('UnitUp', 'double');
       obj.addXMLAttribute('UnitFront', 'double');
       obj.addXMLAttribute('Position', 'double');
+      obj.addXMLAttribute('Name', 'char');
+      obj.addXMLAttribute('Labels', 'cell');
     end
   end
   
@@ -120,22 +134,22 @@ classdef Object < xml.MetaObject
   methods
     function refresh(obj, T)
       % refresh properties with finite-speed modification
-      % 
+      %
       % Parameters:
       %   T: time difference in seconds @type double
       %
-      % Properties with finite-speed modification speed will change over time to 
+      % Properties with finite-speed modification speed will change over time to
       % its target value. This functions refreshes this properties to a new
       % timestamp which has a difference to the old timestamp of T
       %
-      % See also: simulator.dynamic.AttributeLinear      
+      % See also: simulator.dynamic.AttributeLinear
       obj.PositionDynamic = obj.PositionDynamic.refresh(T);
       obj.UnitFrontDynamic = obj.UnitFrontDynamic.refresh(T);
     end
     % extended setter, getter for dynamic extension
     function setDynamic(obj, name, prop, value)
       % set settings of certain property for finite-speed modification
-      % 
+      %
       % Parameters:
       %   name: name of the property @type char[]
       %   prop: name of the limited speed parameter @type char[]
@@ -160,13 +174,13 @@ classdef Object < xml.MetaObject
     end
     function v = getDynamic(obj, name, prop)
       % set settings of certain property for limited speed motion
-      % 
+      %
       % Parameters:
       %   name: name of the property @type char[]
       %   prop: name of the dynamic property @type char[]
       %
       % Return Values:
-      %   v: value for the limited speed parameter 
+      %   v: value for the limited speed parameter
       %
       % See also: setDynamic simulator.dynamic.AttributeLinear
       isargchar(prop, name);
