@@ -9,6 +9,10 @@ classdef AudioSource < simulator.Object & dynamicprops
     % audio buffer which contains input signal of source
     % @type simulator.buffer.Base
     AudioBuffer;
+    % volume of sound source (additional weighting of buffer signal)
+    % @type double
+    % @default 1.0
+    Volume = 1.0;
   end
   
   properties (SetAccess = private)
@@ -37,6 +41,7 @@ classdef AudioSource < simulator.Object & dynamicprops
       %      @type double[][]
       obj = obj@simulator.Object();
       obj.addXMLAttribute('Mute', 'logical');
+      obj.addXMLAttribute('Volume', 'double');
       
       obj.Type = type;
       
@@ -89,6 +94,10 @@ classdef AudioSource < simulator.Object & dynamicprops
       isargclass('simulator.AudioSourceType', t);
       obj.Type = t;
     end
+    function set.Volume(obj, v)
+      isargpositivescalar(v);
+      obj.Volume = v;      
+    end
     function v = get.RequiredChannels(obj)
       import simulator.AudioSourceType
       
@@ -118,6 +127,7 @@ classdef AudioSource < simulator.Object & dynamicprops
       else
         d = obj.AudioBuffer.getData(length);
       end
+      d = obj.Volume.*d;
     end
     function removeData(obj, length)
       if nargin < 2
