@@ -21,6 +21,8 @@ classdef Noise < simulator.buffer.Base
         mapping = 1;
       end
       obj = obj@simulator.buffer.Base(mapping);
+      obj.addXMLAttribute('Mean','double');
+      obj.addXMLAttribute('Variance','double');
     end
   end
   
