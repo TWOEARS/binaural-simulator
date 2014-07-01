@@ -1,28 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <scene
-    BlockSize="4096"
-    SampleRate="44100"
-    MaximumDelay="0.0"
-    NumberOfThreads="1"
-    ReverberationMaxOrder="2"
-    HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav">
-  <source Position="0 -1 0" Mute="false" Type="point" Name="FirstSource">
-    <buffer ChannelMapping="1" Type="noise"/>
+  BlockSize="4096"
+  SampleRate="44100"
+  MaximumDelay="0.0"
+  NumberOfThreads="1"
+  ReverberationMaxOrder="2"
+  HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav">
+  <source Position="0 -3 1.75"
+          Type="point" 
+          Name="Cello">
+    <buffer ChannelMapping="1" 
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>    
   </source>
-  <source Position="0 1 0" Mute="true" Type="point" Name="SecondSource">
-    <buffer ChannelMapping="1" Type="noise"/>
+  <source Position="0 1 1.75"  
+          Type="point" 
+          Name="Castanets">
+    <buffer ChannelMapping="1" 
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>            
   </source>
-  <sink Position="0 0 0"
-    UnitFront="1 0 0"
-    UnitUp="0 0 1"
-    Name="Head"
-    RootPath="some/root/path/"
-    MeshFile="blub.ext"/>
+  <source Name="Forest"
+          Type="direct"          
+          Volume="0.1">
+    <buffer ChannelMapping="1 2" 
+            Type="ring"
+            File="stimuli/binaural/binaural_forest.wav"/>            
+  </source>
+  <source Type="direct"
+          Name="Noise">
+    <buffer ChannelMapping="1 2" 
+            Type="noise"
+            Variance="0.02"
+            Mean="0.0"/>            
+  </source>
+  <sink Position="0 0 1.75"
+        UnitFront="1 0 0"
+        UnitUp="0 0 1"
+        Name="Head"
+        RootPath="some/root/path/"
+        MeshFile="blub.ext"/>
   <wall Position="2 0 0"
-    UnitFront="-1 0 0"
-    UnitUp="0 0 1"
-    ReflectionCoeff="0.6"
-    Vertices="-2.0 -2.0; 2.0 -2.0; 2.0 2.0; -2.0 2.0"
-    Name="Wall"
-    Labels="stone red"/>
+        UnitFront="-1 0 0"
+        UnitUp="0 0 1"
+        ReflectionCoeff="0.6"
+        Vertices="-2.0 -2.0; 2.0 -2.0; 2.0 2.0; -2.0 2.0"
+        Name="Wall"
+        Labels="stone red"/>
 </scene>
