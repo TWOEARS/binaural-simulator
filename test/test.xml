@@ -5,34 +5,34 @@
   MaximumDelay="0.0"
   NumberOfThreads="1"
   ReverberationMaxOrder="2"
-  HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.wav">
+  HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
   <source Position="0 -3 1.75"
-          Type="point" 
+          Type="point"
           Name="Cello">
-    <buffer ChannelMapping="1" 
+    <buffer ChannelMapping="1"
             Type="fifo"
-            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>    
+            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
   </source>
-  <source Position="0 1 1.75"  
-          Type="point" 
+  <source Position="0 1 1.75"
+          Type="point"
           Name="Castanets">
-    <buffer ChannelMapping="1" 
+    <buffer ChannelMapping="1"
             Type="fifo"
-            File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>            
+            File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
   </source>
   <source Name="Forest"
-          Type="direct"          
+          Type="direct"
           Volume="0.1">
-    <buffer ChannelMapping="1 2" 
+    <buffer ChannelMapping="1 2"
             Type="ring"
-            File="stimuli/binaural/binaural_forest.wav"/>            
+            File="stimuli/binaural/binaural_forest.wav"/>
   </source>
   <source Type="direct"
           Name="Noise">
-    <buffer ChannelMapping="1 2" 
+    <buffer ChannelMapping="1 2"
             Type="noise"
             Variance="0.02"
-            Mean="0.0"/>            
+            Mean="0.0"/>
   </source>
   <sink Position="0 0 1.75"
         UnitFront="1 0 0"

@@ -148,6 +148,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       % delete ImageSources
       delete(obj.ImageSources);
       delete(obj.ImageSinks);
+      delete(obj.Sources);
+      delete(obj.Sinks);
+      delete(obj.Walls);
+      delete(obj.HRIRDataset);
     end
     
   end

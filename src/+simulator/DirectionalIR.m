@@ -24,6 +24,7 @@ classdef DirectionalIR < hgsetget
   
   properties (Access=private)
     Data = [];
+    TempFile = false;
   end
   
   methods
@@ -38,13 +39,32 @@ classdef DirectionalIR < hgsetget
         obj.open(filename);
       end
     end
+    function delete(obj)
+      if (obj.TempFile)
+        delete(obj.Filename);
+      end
+    end
     function open(obj, filename)
       % function open(obj, filename)
       % open WAV-File for HRTFs
       %
       % Parameters:
       %   filename: name of wav-file (even number of channels) @type char[]
-      [d, fs] = audioread(filename);
+      isargfile(filename);
+   
+      [pathstr,name,ext] = fileparts(filename);
+      if strcmp('.wav', ext)
+        [d, fs] = audioread(filename);
+        obj.TempFile = false;
+      elseif strcmp('.sofa', ext)
+        [d, fs]= obj.convertSOFA(filename);
+        filename = fullfile(pathstr, [name, '_tmp.wav']);
+        wavwrite(d, fs, filename);
+        obj.TempFile = true;
+      else
+        error('file extension (%s) not supported (only .wav and .sofa)', ext);
+      end      
+      
       s = size(d, 2);
       if (mod(s,2) ~= 0)
         error('number of channels of input file has to be an integer of 2!');
@@ -112,6 +132,24 @@ classdef DirectionalIR < hgsetget
       ylabel('time (ms)');
       set(gca,'CLim',[-50 0]);
       colorbar;
+    end
+  end
+  methods (Static)
+    function [d, fs] = convertSOFA(filename)
+      isargfile(filename);
+      warning('SOFA HRTF support is still very experimental');
+      data = SOFAload(filename);
+      if strcmp(data.GLOBAL_SOFAConventions,'SimpleFreeFieldHRIR')
+        [~, ind] = sort(data.SourcePosition(:,1));
+        d = data.Data.IR(ind,:,:);
+        d = permute(d,[3 2 1]);
+        d = reshape(d,size(d,1),[]);
+          
+        fs = data.Data.SamplingRate;
+      else
+        error('SOFA Conventions (%s) not supported', ...
+          data.GLOBAL_SOFAConventions);
+      end
     end
   end
 end
