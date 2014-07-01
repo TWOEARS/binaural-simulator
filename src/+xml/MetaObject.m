@@ -110,6 +110,8 @@ classdef (Abstract) MetaObject < hgsetget
         switch Class
           case 'char'
             Constructor = @(x)char(x);
+          case 'dbfile'
+            Constructor = @(x)xml.getfile(x);
           case 'cell'
             Constructor = @(x)strsplit(x, ' ');
           case 'logical'
