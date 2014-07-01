@@ -57,14 +57,16 @@ classdef AudioSource < simulator.Object & dynamicprops
       % init Buffer
       buffer = xmlnode.getElementsByTagName('buffer').item(0);
       
+      mapping = 1:obj.RequiredChannels;
+      
       import simulator.buffer.*
       switch (char(buffer.getAttribute('Type')))
         case 'fifo'
-          obj.AudioBuffer = simulator.buffer.FIFO();
+          obj.AudioBuffer = simulator.buffer.FIFO(mapping);
         case 'ring'
-          obj.AudioBuffer = simulator.buffer.Ring();
+          obj.AudioBuffer = simulator.buffer.Ring(mapping);
         case 'noise'
-          obj.AudioBuffer = simulator.buffer.Noise();
+          obj.AudioBuffer = simulator.buffer.Noise(mapping);
         otherwise
           error('source type (%s) not supported',char(buffer.getAttribute('Type')));
       end
