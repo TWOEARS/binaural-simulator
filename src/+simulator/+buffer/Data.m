@@ -1,10 +1,17 @@
 classdef (Abstract) Data < simulator.buffer.Base
   % Base class for all data-based audio buffers.
   
-  properties (Access = protected, Hidden)
+  properties (SetAccess = protected, Hidden)
     % data source
     % @type double[][]
     data = [];
+  end
+  properties (GetAccess = private, Dependent)
+    % file for data source (will automatically set by setting property)
+    % @type char[]
+    %
+    % See also: data
+    File;
   end
   
   methods
@@ -18,6 +25,7 @@ classdef (Abstract) Data < simulator.buffer.Base
         mapping = 1;
       end
       obj = obj@simulator.buffer.Base(mapping);
+      obj.addXMLAttribute('File', 'dbfile');
     end
     function b = isEmpty(obj)
       % function b = isEmpty(obj)
@@ -43,12 +51,13 @@ classdef (Abstract) Data < simulator.buffer.Base
       obj.data = data;
     end
   end
-  methods (Abstract)
-    removeData(obj, length)
-    % function removeData(obj, length)
-    % update data from buffer according to specified length (Class specific)
-    %
-    % Parameters:
-    %   length: number of samples @type integer @default inf
+  %% setter/getter
+  methods
+    function set.File(obj, f)
+      isargchar(f);
+      isargfile(f);
+      obj.data = audioread(f);
+      obj.data = single(obj.data./max(abs(obj.data(:))));
+    end
   end
 end

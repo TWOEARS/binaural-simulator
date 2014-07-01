@@ -30,6 +30,12 @@ classdef (Abstract) Base < xml.MetaObject
       % xml
       obj.addXMLAttribute('ChannelMapping', 'double');
     end
+    function removeData(obj, length)
+      % function removeData(obj, length)
+      % this function does nothing
+      %
+      % TODO: add some functionality
+    end
   end
   
   %% Abstract Functions
@@ -43,6 +49,12 @@ classdef (Abstract) Base < xml.MetaObject
     %
     % Return values:
     %   data: @type double[][]
+    b = isEmpty(obj)
+    % function b = isEmpty(obj)
+    % indicates if buffer is empty
+    %
+    % Return values:
+    %   b: indicates if buffer is empty @type logical
   end
   
   %% Setter, Getter

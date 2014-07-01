@@ -30,6 +30,11 @@ classdef PassThrough < simulator.buffer.Base
       end
       data = data(:,obj.ChannelMapping);
     end
+    function b = isEmpty(obj)
+      % function b = isEmpty(obj)
+      % indicates if ParentBuffer is empty
+      b = obj.ParentBuffer.isEmpty(obj);
+    end
   end
   %% setter/getter
   methods

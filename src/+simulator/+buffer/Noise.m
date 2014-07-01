@@ -1,4 +1,4 @@
-classdef Noise < simulator.buffer.Data
+classdef Noise < simulator.buffer.Base
   % Class basically implements a AWGN buffer
   
   properties
@@ -20,7 +20,7 @@ classdef Noise < simulator.buffer.Data
       if nargin < 1
         mapping = 1;
       end
-      obj = obj@simulator.buffer.Data(mapping);
+      obj = obj@simulator.buffer.Base(mapping);
     end
   end
   
@@ -37,12 +37,6 @@ classdef Noise < simulator.buffer.Data
       %   data: @type double[][]
       data = obj.Variance.*randn(length,obj.NumberOfInputs) - obj.Mean;
       data = data(:,obj.ChannelMapping);
-    end
-    function removeData(obj, length)
-      % function removeData(obj, length)
-      % this function does nothing
-      %
-      % TODO: add some functionality
     end
     function v = isEmpty(obj)
       % function b = isEmpty(obj)
