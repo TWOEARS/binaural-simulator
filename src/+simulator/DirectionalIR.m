@@ -1,6 +1,6 @@
 classdef DirectionalIR < hgsetget
   % Class for HRIRs-Datasets
-  
+
   properties (SetAccess=private)
     % Number of directions of HRIR-Dataset
     % @type integer
@@ -21,12 +21,11 @@ classdef DirectionalIR < hgsetget
     % @type char[]
     Filename;
   end
-  
+
   properties (Access=private)
     Data = [];
-    TempFile = false;
   end
-  
+
   methods
     function obj = DirectionalIR(filename)
       % function obj = DirectionalIR(filename)
@@ -40,36 +39,37 @@ classdef DirectionalIR < hgsetget
       end
     end
     function delete(obj)
-      if (obj.TempFile)
-        delete(obj.Filename);
-      end
+      delete(obj.Filename);
     end
     function open(obj, filename)
       % function open(obj, filename)
       % open WAV-File for HRTFs
       %
       % Parameters:
-      %   filename: name of wav-file (even number of channels) @type char[]
+      %   filename: name of WAV- or SOFA-file @type char[]
       isargfile(filename);
-   
-      [pathstr,name,ext] = fileparts(filename);
+
+      [~,name,ext] = fileparts(filename);
       if strcmp('.wav', ext)
         [d, fs] = audioread(filename);
         obj.TempFile = false;
       elseif strcmp('.sofa', ext)
         [d, fs]= obj.convertSOFA(filename);
-        filename = fullfile(pathstr, [name, '_tmp.wav']);
-        wavwrite(d, fs, filename);
-        obj.TempFile = true;
       else
         error('file extension (%s) not supported (only .wav and .sofa)', ext);
-      end      
-      
+      end
+
+      % check whether the number of channels is even
       s = size(d, 2);
       if (mod(s,2) ~= 0)
         error('number of channels of input file has to be an integer of 2!');
       end
-      
+
+      % create local copy of data for the SSR MEX-Code
+      filename = fullfile(fileparts(mfilename('fullpath')), ...
+        [name, '_tmp.wav']);
+      wavwrite(d, fs, filename);
+
       obj.SampleRate = fs;
       obj.Data = d;
       obj.NumberOfDirections = s/2;
@@ -93,7 +93,7 @@ classdef DirectionalIR < hgsetget
       tf.left = obj.Data(:,selector);
       tf.right = obj.Data(:,selector+1);
     end
-    
+
     function plot(obj, id)
       % function plot(obj, id)
       % plot whole HRIR dataset
@@ -105,18 +105,18 @@ classdef DirectionalIR < hgsetget
       else
         figure(id);
       end
-      
+
       azimuth = -180:179;
-      
+
       tf = obj.getImpulseResponses(azimuth);
-      
+
       tfmax = max(max(abs(tf.left(:)),abs(tf.left(:))));
-      
+
       tl = 20*log10(abs(tf.left)/tfmax);
       tr = 20*log10(abs(tf.right)/tfmax);
-      
+
       time = (0:size(tl,1)-1)/obj.SampleRate*1000;
-      
+
       subplot(1,2,1);
       imagesc(azimuth,time, tl);
       title('Left Ear Channel');
@@ -124,7 +124,7 @@ classdef DirectionalIR < hgsetget
       ylabel('time (ms)');
       set(gca,'CLim',[-50 0]);
       colorbar;
-      
+
       subplot(1,2,2);
       imagesc(azimuth,time, tr);
       title('Right Ear Channel');
@@ -144,7 +144,7 @@ classdef DirectionalIR < hgsetget
         d = data.Data.IR(ind,:,:);
         d = permute(d,[3 2 1]);
         d = reshape(d,size(d,1),[]);
-          
+
         fs = data.Data.SamplingRate;
       else
         error('SOFA Conventions (%s) not supported', ...
