@@ -7,13 +7,13 @@ test_startup;
 
 %% input signals
 [input] = ...
-  audioread(xml.getfile('stimuli/anechoic/instruments/anechoic_cello.wav'));
+  audioread(dbGetFile('stimuli/anechoic/instruments/anechoic_cello.wav'));
 
 input = single(input(:,1)./max(abs(input(:,1))));
 
 %% processing parameters
 
-xml.validate('test.xml');
+xml.dbValidate('test.xml');
 
 theDoc = xmlread('test.xml');
 theNode = theDoc.getDocumentElement;

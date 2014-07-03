@@ -11,6 +11,6 @@ if exist('newpath','var')
   CachedPath=newpath;
 elseif isempty(CachedPath)
   basepath=fileparts(mfilename('fullpath'));
-  CachedPath=fullfile(basepath, '..', f, '..', f, 'data', f);
+  CachedPath=fullfile(basepath, '..', f, '..', f, '..', f, 'twoears-data', f);
 end
 newpath=CachedPath;

@@ -52,7 +52,6 @@ classdef DirectionalIR < hgsetget
       [~,name,ext] = fileparts(filename);
       if strcmp('.wav', ext)
         [d, fs] = audioread(filename);
-        obj.TempFile = false;
       elseif strcmp('.sofa', ext)
         [d, fs]= obj.convertSOFA(filename);
       else

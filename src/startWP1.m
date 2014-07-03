@@ -2,17 +2,16 @@
 % 'BLAS loading error: dlopen: cannot load any more object with static TLS'
 ones(10)*ones(10);
 
-basepath = fileparts(mfilename('fullpath'));
-basepath = [basepath, filesep, '..', filesep, '..', filesep];
+wp1path = fileparts(mfilename('fullpath'));
+wp1path = [wp1path, filesep];
+basepath = [wp1path, '..', filesep, '..', filesep];
 
-addpath([basepath, 'twoears-wp1', filesep, 'src']);
-addpath(genpath([basepath, 'twoears-wp1', filesep, 'src', filesep, 'mex']));
-addpath(genpath([basepath, 'twoears-wp1', filesep, 'src', filesep, 'tools']));
-addpath([basepath, 'twoears-wp1', filesep, 'src', filesep, 'SOFA']);
-SOFAdbPath([basepath, 'twoears-data']);
+addpath(wp1path);
+addpath([wp1path, 'mex']);
+addpath([wp1path, 'tools']);
+addpath([wp1path, 'SOFA']);
+
+xml.dbPath([basepath, 'twoears-data']);
+SOFAdbPath(xml.dbPath());
+SOFAdbURL(xml.dbURL());
 SOFAstart;
-
-addpath(genpath([basepath, 'twoears-wp2', filesep, 'src']));
-addpath(genpath([basepath, 'twoears-wp3', filesep, 'src']));
-addpath(genpath([basepath, 'twoears-wp4', filesep, 'src']));
-addpath([basepath, 'twoears-data', filesep, 'src']);
