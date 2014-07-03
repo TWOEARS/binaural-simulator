@@ -5,7 +5,7 @@ close all
 
 test_startup; 
 
-%% processing parameters
+%% Noise Source
 
 % angles of diffuse source (CAUTION: propagation direction is defined)
 angles = (90:5:135);
@@ -17,22 +17,42 @@ directions = [cosd(angles);sind(angles); zeros(1, length(angles))];
 ChannelMapping = 1:length(angles);
 
 % NoiseBuffer with white gaussian noise
-Buffer = buffer.Noise(ChannelMapping);
-Buffer.set(...
+NoiseBuffer = buffer.Noise(ChannelMapping);
+NoiseBuffer.set(...
   'Variance', 0.02, ...
   'Mean', 0.0);
 
 % Source
-source = AudioSource(...        % define AudioSource with .. 
+noise = AudioSource(...         % define AudioSource with .. 
   AudioSourceType.PWD, ...      % PlaneWaveDecomposition Type
-  Buffer, ...                   % Buffer as signal source;
+  NoiseBuffer, ...              % Buffer as signal source;
   directions);                  % directions of PWD
 
 % set orientation of the Source to the unit vectors of the world coordinate
 % system
-source.set(...
+noise.set(...
   'UnitFront', [0.0; 0.0; 1.0], ...
   'UnitUp', [0.0; 1.0; 0.0]);
+
+%% Direct Source
+% angle of direct source
+sourceangle = 60;
+distance = 3;
+
+% SourceBuffer with file
+SourceBuffer = buffer.FIFO();
+input = audioread(xml.dbGetFile( ...
+  'stimuli/anechoic/instruments/anechoic_castanets.wav'));
+SourceBuffer.setData(input);
+
+% Source
+source = AudioSource(...        % define AudioSource with .. 
+  AudioSourceType.POINT, ...    % Point Source Type
+  SourceBuffer);                % Buffer as signal source
+
+source.set('Position', distance*[cosd(sourceangle);sind(sourceangle); 0]); 
+
+%% Other Parameters
 
 % Sinks/Head
 head = AudioSink(2);
@@ -54,9 +74,32 @@ sim.set(...
   'MaximumDelay', 0.0, ...        % maximum distance delay in seconds
   'Renderer', @ssr_binaural, ...  % SSR rendering function (do not change this!)
   'HRIRDataset', hrir, ...        % assign HRIR-Object to Simulator
-  'Sources', source, ...          % assign sources to Simulator
+  'Sources', [source, noise], ... % assign sources to Simulator
   'Sinks', head);                 % assign sinks to Simulator
-%% processing
+%% processing of direct signal
+sim.set('Init',true);
+
+sim.set('Refresh',true);
+sim.draw();
+
+noise.set('Mute', true);
+% 5 seconds processing
+for idx=1:ceil(5*sim.SampleRate/sim.BlockSize)
+  sim.set('Process',true);
+end
+
+out = head.getData();
+out = out/max(abs(out(:))); % normalize
+audiowrite('out_direct.wav',out,sim.SampleRate);
+
+sim.set('ClearMemory',true);
+%% processing of noise source signal
+
+head.removeData();
+
+noise.set('Mute', false);
+source.set('Mute', true);
+
 sim.set('Init',true);
 
 sim.set('Refresh',true);
