@@ -60,7 +60,7 @@ classdef FIFO < simulator.buffer.Data
       if nargin < 2
         data = obj.data;
       elseif length > size(obj.data,1)
-        data = zeros(length, obj.NumberOfInputs);
+        data = zeros(length, size(obj.data,2));
         if size(obj.data,1) > 0
           data(1:size(obj.data,1),:) = obj.data;
         end
