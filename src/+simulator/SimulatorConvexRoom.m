@@ -433,7 +433,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         v = [v, [obj.ImageSources.Mute]];
       end
       if obj.NumberOfPWDSubSources > 0
-        v = [v, [obj.PWDSubSources.Mute]];
+        tmp = [obj.PWDSubSources.GroupObject];
+        v = [v, [tmp.Mute]];
       end
       v = logical(v);
     end
