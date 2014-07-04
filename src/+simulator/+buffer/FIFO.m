@@ -1,6 +1,6 @@
 classdef FIFO < simulator.buffer.Data
   % Class basically implements a FIFO buffer
-  
+
   methods
     function obj = FIFO(mapping)
       % function obj = Data(mapping)
@@ -14,7 +14,7 @@ classdef FIFO < simulator.buffer.Data
       obj = obj@simulator.buffer.Data(mapping);
     end
   end
-  
+
   %% Access-Functionality
   methods
     function appendData(obj, data)
@@ -58,16 +58,19 @@ classdef FIFO < simulator.buffer.Data
       % Return values:
       %   data: @type double[][]
       if nargin < 2
-        data = obj.data;
-      elseif length > size(obj.data,1)
-        data = zeros(length, size(obj.data,2));
         if size(obj.data,1) > 0
-          data(1:size(obj.data,1),:) = obj.data;
+          data = obj.data(:,obj.ChannelMapping);
+        else
+          data = [];
+        end
+      elseif length > size(obj.data,1)
+        data = zeros(length, obj.NumberOfOutputs);
+        if size(obj.data,1) > 0
+          data(1:size(obj.data,1),:) = obj.data(:,obj.ChannelMapping);
         end
       else
-        data = obj.data(1:length,:);
+        data = obj.data(1:length,obj.ChannelMapping);
       end
-      data = data(:,obj.ChannelMapping);
     end
   end
 end
