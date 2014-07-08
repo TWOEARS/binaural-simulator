@@ -139,7 +139,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         obj.SSRPositionXY = [obj.SSRPositionXY, [obj.ImageSources.PositionXY]];
         obj.SSROrientationXY = [obj.SSROrientationXY,  ...
           [obj.ImageSources.OrientationXY]];
-        obj.SSRMute = [obj.SSRMute, [obj.ImageSources.Mute]];
+        obj.SSRMute = logical([obj.SSRMute, [obj.ImageSources.Mute]]);
       end
       if obj.NumberOfPWDSubSources > 0
         obj.SSRPositionXY = [obj.SSRPositionXY, [obj.PWDSubSources.PositionXY]];

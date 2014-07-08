@@ -73,8 +73,8 @@ while ~sim.Sources(1).isEmpty()
   idx = idx + 1;
   pos_idx = floor( (idx-1)*sim.BlockSize/partsize ) + 1;
   sim.Sources(1).set('Position', position(:,:,pos_idx));  % apply new source position
-  sim.set('Refresh',true);  % refresh image sources
-  sim.set('Process',true);  % refresh image sources
+  sim.set('Refresh',true);  % refresh all objects
+  sim.set('Process',true);  % processing 
 end
 
 out = sim.Sinks.getData();
@@ -110,7 +110,7 @@ sim.Sinks.setDynamic('UnitFront', 'Velocity', 10);
 sim.Sinks.set('UnitFront', [cosd(150); sind(150); 0]);
 
 while ~sim.Sources(1).isEmpty()
-  sim.set('Refresh',true);  % refresh image sources
+  sim.set('Refresh',true);  % refresh all objects
   sim.set('Process',true);
 end
 
