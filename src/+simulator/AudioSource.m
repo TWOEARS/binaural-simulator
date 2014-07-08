@@ -3,6 +3,13 @@ classdef AudioSource < simulator.Object & dynamicprops
   
   properties
     % mute flag to mute source output
+    %
+    % Note that toggling Mute will fade in/out the source signal in next block.
+    % There is no instantly switch on/off. If you that behaviour, see
+    % Volume
+    %
+    % See also: Volume
+    %
     % @type logical
     % @default false
     Mute = false;
@@ -10,6 +17,12 @@ classdef AudioSource < simulator.Object & dynamicprops
     % @type simulator.buffer.Base
     AudioBuffer;
     % volume of sound source (additional weighting of buffer signal)
+    %
+    % Note that setting Volume to 0 is different setting Mute to false. 
+    % Changes in Volume will instantly be applied without any cross-fade between
+    % the old and the new value.
+    %
+    % See also: Mute
     % @type double
     % @default 1.0
     Volume = 1.0;
@@ -97,6 +110,18 @@ classdef AudioSource < simulator.Object & dynamicprops
     function set.Volume(obj, v)
       isargpositivescalar(v);
       obj.Volume = v;      
+    end
+    function v = get.Volume(obj)
+      v = obj.Volume;
+      if ~isempty(obj.GroupObject) && isprop(obj.GroupObject,'Volume')
+        v = v * obj.GroupObject.Volume;
+      end
+    end
+    function v = get.Mute(obj)
+      v = obj.Mute;
+      if ~isempty(obj.GroupObject) && isprop(obj.GroupObject,'Mute')
+        v = v || obj.GroupObject.Mute;
+      end
     end
     function v = get.RequiredChannels(obj)
       import simulator.AudioSourceType
