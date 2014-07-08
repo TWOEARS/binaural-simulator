@@ -113,14 +113,16 @@ classdef AudioSource < simulator.Object & dynamicprops
     end
     function v = get.Volume(obj)
       v = obj.Volume;
-      if ~isempty(obj.GroupObject) && isprop(obj.GroupObject,'Volume')
+      try
         v = v * obj.GroupObject.Volume;
+      catch
       end
     end
     function v = get.Mute(obj)
       v = obj.Mute;
-      if ~isempty(obj.GroupObject) && isprop(obj.GroupObject,'Mute')
+      try
         v = v || obj.GroupObject.Mute;
+      catch
       end
     end
     function v = get.RequiredChannels(obj)
@@ -147,12 +149,16 @@ classdef AudioSource < simulator.Object & dynamicprops
       obj.AudioBuffer.setData(data);
     end
     function d = getData(obj,length)
-      if nargin < 2
-        d = obj.AudioBuffer.getData();
+      if obj.Volume ~= 0
+        if nargin < 2
+          d = obj.AudioBuffer.getData();
+        else
+          d = obj.AudioBuffer.getData(length);
+        end
+        d = obj.Volume.*d;
       else
-        d = obj.AudioBuffer.getData(length);
+        d = zeros(length,obj.RequiredChannels);
       end
-      d = obj.Volume.*d;
     end
     function removeData(obj, length)
       if nargin < 2
