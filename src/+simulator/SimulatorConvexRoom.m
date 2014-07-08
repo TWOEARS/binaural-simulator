@@ -8,10 +8,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     NumberOfImageSources;
     NumberOfPWDSubSources;
     NumberOfDirectSources;
-    
-    SSRPositionXY;
-    SSROrientationXY;
-    SSRMute;
   end
   properties (Access=private, Hidden)
     ImageSources;
@@ -26,7 +22,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     
     directSourcesDx;
     
-    inputArray;
+    SSRPositionXY;
+    SSROrientationXY;
+    SSRMute;    
+    SSRInput;
+    SSRReferencePosXY;
+    SSRReferenceOriXY;
   end
   %% Initialization
   methods
@@ -54,7 +55,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       [obj.ImageSinks, ~, obj.sucSinksDx] = obj.ismInit(obj.Sinks);
       
       % init input array for renderer
-      obj.inputArray = single(zeros( obj.BlockSize, obj.NumberOfSSRSources));
+      obj.SSRInput = single(zeros( obj.BlockSize, obj.NumberOfSSRSources));
       
       % SSR initialization
       params.block_size = obj.BlockSize;
@@ -82,22 +83,22 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       % Output will be written to the Buffer of Sinks
       
       for idx=1:length(obj.ImageSources)
-        obj.inputArray(:,idx) = obj.ImageSources(idx).getData(obj.BlockSize);
+        obj.SSRInput(:,idx) = obj.ImageSources(idx).getData(obj.BlockSize);
       end
       
       idx = obj.NumberOfImageSources;
       % PWD sources
       for kdx=1:length(obj.PWDSubSources)
-        obj.inputArray(:,idx+kdx) = obj.PWDSubSources(kdx).getData(obj.BlockSize);
+        obj.SSRInput(:,idx+kdx) = obj.PWDSubSources(kdx).getData(obj.BlockSize);
       end
       
       out = obj.Renderer(...
         'source_position', obj.SSRPositionXY, ...
         'source_orientation', obj.SSROrientationXY, ...
         'source_mute', obj.SSRMute, ...
-        'reference_position', [obj.Sinks.PositionXY],...
-        'reference_orientation', [obj.Sinks.OrientationXY],...
-        'process', obj.inputArray);
+        'reference_position', obj.SSRReferencePosXY,...
+        'reference_orientation', obj.SSRReferenceOriXY,...
+        'process', obj.SSRInput);
       
       % add direct Sources
       for idx=obj.directSourcesDx([obj.Sources(obj.directSourcesDx).Mute] == 0)
@@ -114,11 +115,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     %% Refresh
     function refresh(obj)
       % function refresh(obj)
-      % refresh positions of image sources using the image source model
+      % refresh positions of all scene objects including image source model
       
       % refresh position of Sinks for limited-speed modifications
-      obj.Sinks.refresh(obj.BlockSize/obj.SampleRate);
+      obj.Sinks.refresh(obj.BlockSize/obj.SampleRate);      
       
+      % refresh positions of image sources
       if obj.NumberOfImageSources > 0
         obj.ismPositions(obj.Sources(obj.mirroredSourcesDx), obj.ImageSources);
         obj.ismPositions(obj.Sinks, obj.ImageSinks);
@@ -126,6 +128,25 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         obj.ismVisibility(obj.ImageSources);
         obj.ismAmplitude(obj.ImageSources);
       end
+      
+      % refresh position of sources and head
+      obj.SSRPositionXY = [];
+      obj.SSROrientationXY = [];
+      obj.SSRMute = [];
+      obj.SSRReferencePosXY = [obj.Sinks.PositionXY];
+      obj.SSRReferenceOriXY = [obj.Sinks.OrientationXY];
+      if obj.NumberOfImageSources > 0
+        obj.SSRPositionXY = [obj.SSRPositionXY, [obj.ImageSources.PositionXY]];
+        obj.SSROrientationXY = [obj.SSROrientationXY,  ...
+          [obj.ImageSources.OrientationXY]];
+        obj.SSRMute = [obj.SSRMute, [obj.ImageSources.Mute]];
+      end
+      if obj.NumberOfPWDSubSources > 0
+        obj.SSRPositionXY = [obj.SSRPositionXY, [obj.PWDSubSources.PositionXY]];
+        obj.SSROrientationXY = [obj.SSROrientationXY,  ...
+          [obj.PWDSubSources.OrientationXY]];
+        obj.SSRMute = logical([obj.SSRMute, [obj.PWDSubSources.Mute]]);        
+      end     
     end
     %% Clear Memory
     function clearMemory(obj)
@@ -408,34 +429,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
     end
     function v = get.NumberOfSources(obj)
       v = obj.NumberOfSSRSources + obj.NumberOfDirectSources;
-    end
-    function v = get.SSRPositionXY(obj)
-      v = [];
-      if obj.NumberOfImageSources > 0
-        v = [v, [obj.ImageSources.PositionXY]];
-      end
-      if obj.NumberOfPWDSubSources > 0
-        v = [v, [obj.PWDSubSources.PositionXY]];
-      end
-    end
-    function v = get.SSROrientationXY(obj)
-      v = [];
-      if obj.NumberOfImageSources > 0
-        v = [v, [obj.ImageSources.OrientationXY]];
-      end
-      if obj.NumberOfPWDSubSources > 0
-        v = [v, [obj.PWDSubSources.OrientationXY]];
-      end
-    end
-    function v = get.SSRMute(obj)
-      v = [];
-      if obj.NumberOfImageSources > 0
-        v = [v, [obj.ImageSources.Mute]];
-      end
-      if obj.NumberOfPWDSubSources > 0
-        v = [v, [obj.PWDSubSources.Mute]];
-      end
-      v = logical(v);
     end
   end
 end
