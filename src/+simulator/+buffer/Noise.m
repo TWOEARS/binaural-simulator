@@ -28,17 +28,27 @@ classdef Noise < simulator.buffer.Base
   
   %% Access-Functionality
   methods
-    function data = getData(obj, length)
-      % function data = getData(obj, length)
+    function data = getData(obj, len, channels)
+      % function data = getData(obj, len, channels)
       % reads data from buffer of specified length
       %
       % Parameters:
-      %   length: number of samples @type integer @default inf
+      %   len: number of samples @type integer @default inf
+      %   channels: optional select of outputchannels @type integer[]
       %
       % Return values:
       %   data: @type double[][]
-      data = obj.Variance.*randn(length,obj.NumberOfInputs) - obj.Mean;
-      data = data(:,obj.ChannelMapping);
+      
+      % optional pre-selection of channels
+      if nargin < 3
+        mapping = obj.ChannelMapping;
+      else
+        mapping = obj.ChannelMapping(channels);
+      end
+      [~, kdx, idx] = unique(mapping);      
+      
+      data = randn(len,length(kdx));
+      data = obj.Variance.*data(:,idx) - obj.Mean;
     end
     function v = isEmpty(obj)
       % function b = isEmpty(obj)

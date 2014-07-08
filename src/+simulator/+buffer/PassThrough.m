@@ -22,13 +22,33 @@ classdef PassThrough < simulator.buffer.Base
   
   %% Access-Functionality
   methods
-    function data = getData(obj, length)
+    function data = getData(obj, length, channels)
+      % function data = getData(obj, length, channels)
+      % reads data from FIFO buffer of specified length
+      %
+      % If length is longer than the current buffer content, zero padding is applied
+      %
+      % Parameters:
+      %   length: number of samples @type integer @default inf
+      %   channels: optional select of outputchannels @type integer[] 
+      %
+      % Return values:
+      %   data: @type double[][]      
+      
+      
+      % optional pre-selection of channels
+      if nargin < 3
+        mapping = obj.ChannelMapping;
+      else
+        mapping = obj.ChannelMapping(channels);
+      end
+      
       if nargin < 2
         data = obj.ParentBuffer.getData();
+        data = data(:,mapping);
       else
-        data = obj.ParentBuffer.getData(length);
+        data = obj.ParentBuffer.getData(length, mapping);
       end
-      data = data(:,obj.ChannelMapping);
     end
     function b = isEmpty(obj)
       % function b = isEmpty(obj)

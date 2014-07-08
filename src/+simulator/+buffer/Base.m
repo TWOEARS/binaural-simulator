@@ -1,6 +1,6 @@
 classdef (Abstract) Base < xml.MetaObject
   %AUDIOBUFFERBASE is the base class for all audio buffers.
-  
+
   properties
     % mapping between input/data channels and output channels
     % @type integer[]
@@ -14,7 +14,7 @@ classdef (Abstract) Base < xml.MetaObject
     % @type integer
     NumberOfOutputs;
   end
-  
+
   methods
     function obj = Base(mapping)
       % function obj = Base(mapping)
@@ -26,7 +26,7 @@ classdef (Abstract) Base < xml.MetaObject
         mapping = 1;
       end
       obj.ChannelMapping = mapping;
-      
+
       % xml
       obj.addXMLAttribute('ChannelMapping', 'double');
     end
@@ -37,15 +37,16 @@ classdef (Abstract) Base < xml.MetaObject
       % TODO: add some functionality
     end
   end
-  
+
   %% Abstract Functions
   methods (Abstract)
-    data = getData(obj, length)
+    data = getData(obj, length, channels)
     % function data = getData(obj, length)
     % reads data from buffer of specified length
     %
     % Parameters:
     %   length: number of samples @type integer @default inf
+    %   channels: optional select of outputchannels @type integer[]
     %
     % Return values:
     %   data: @type double[][]
@@ -56,7 +57,7 @@ classdef (Abstract) Base < xml.MetaObject
     % Return values:
     %   b: indicates if buffer is empty @type logical
   end
-  
+
   %% Setter, Getter
   methods
     function set.ChannelMapping(obj,v)

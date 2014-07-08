@@ -37,26 +37,36 @@ classdef Ring < simulator.buffer.Data
       obj.DataPointer = StartPointer;
       obj.setData@simulator.buffer.Data(data);
     end
-    function data = getData(obj, length)
-      % function data = getData(obj, length)
+    function data = getData(obj, length, channels)
+      % function data = getData(obj, length, data)
       % reads data from FIFO buffer of specified length
       %
       % If length is longer than the current buffer content, zero padding is applied
       %
       % Parameters:
       %   length: number of samples @type integer @default inf
+      %   channels: optional select of outputchannels @type integer[] 
+      %   
       %
       % Return values:
       %   data: @type double[][]
+      
+      % optional pre-selection of channels
+      if nargin < 3
+        mapping = obj.ChannelMapping;
+      else
+        mapping = obj.ChannelMapping(channels);
+      end
+      
       if nargin < 2
-        data = obj.data(:,obj.ChannelMapping);
+        data = obj.data(:,mapping);
       else
         data = zeros(length, obj.NumberOfOutputs);
         if size(obj.data,1) ~= 0
           data = zeros(length, obj.NumberOfOutputs);
           for idx=1:obj.NumberOfOutputs
             selector = mod(obj.DataPointer(idx)+(0:length-1),size(obj.data,1));
-            data(:,idx) = obj.data(selector+1,obj.ChannelMapping(idx));
+            data(:,idx) = obj.data(selector+1,mapping(idx));
           end
         end
       end

@@ -40,7 +40,7 @@ classdef (Abstract) Data < simulator.buffer.Base
   %% Access-Functionality
   methods
     function setData(obj, data)
-      % function setData(obj, data)
+      % function setData(obj, data, channels)
       % sets data of buffer (deletes old data)
       %
       % Parameters:

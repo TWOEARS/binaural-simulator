@@ -46,30 +46,39 @@ classdef FIFO < simulator.buffer.Data
         end
       end
     end
-    function data = getData(obj, length)
-      % function data = getData(obj, length)
+    function data = getData(obj, length, channels)
+      % function data = getData(obj, length, channels)
       % reads data from FIFO buffer of specified length
       %
       % If length is longer than the current buffer content, zero padding is applied
       %
       % Parameters:
       %   length: number of samples @type integer @default inf
+      %   channels: optional select of outputchannels @type integer[] 
       %
       % Return values:
-      %   data: @type double[][]
+      %   data: @type double[][]      
+   
+      % optional pre-selection of channels
+      if nargin < 3
+        mapping = obj.ChannelMapping;
+      else
+        mapping = obj.ChannelMapping(channels);
+      end
+      
       if nargin < 2
         if size(obj.data,1) > 0
-          data = obj.data(:,obj.ChannelMapping);
+          data = obj.data(:,mapping);
         else
           data = [];
         end
       elseif length > size(obj.data,1)
         data = zeros(length, obj.NumberOfOutputs);
         if size(obj.data,1) > 0
-          data(1:size(obj.data,1),:) = obj.data(:,obj.ChannelMapping);
+          data(1:size(obj.data,1),:) = obj.data(:,mapping);
         end
       else
-        data = obj.data(1:length,obj.ChannelMapping);
+        data = obj.data(1:length,mapping);
       end
     end
   end
