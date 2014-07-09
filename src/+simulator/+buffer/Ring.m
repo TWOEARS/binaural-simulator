@@ -1,5 +1,5 @@
 classdef Ring < simulator.buffer.Data
-  % Class basically implements a loop buffer
+  % basically implements a loop buffer
   
   properties (Access = private)
     % array of position pointer for each output channel
@@ -45,11 +45,13 @@ classdef Ring < simulator.buffer.Data
       %
       % Parameters:
       %   length: number of samples @type integer @default inf
-      %   channels: optional select of outputchannels @type integer[] 
+      %   channels: optional select of outputchannels @type integer[]
+      %   @default [1:simulator.buffer.Base.NumberOfOutputs]
       %   
-      %
       % Return values:
       %   data: @type double[][]
+      %
+      % See also: simulator.Base.getData
       
       % optional pre-selection of channels
       if nargin < 3

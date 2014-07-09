@@ -1,5 +1,5 @@
 classdef FIFO < simulator.buffer.Data
-  % Class basically implements a FIFO buffer
+  % basically implements a FIFO buffer
 
   methods
     function obj = FIFO(mapping)
@@ -32,7 +32,8 @@ classdef FIFO < simulator.buffer.Data
       % function removeData(obj, length)
       % removes data from FIFO buffer of specified length
       %
-      % If length is longer than the current buffer content, the buffer is flushed
+      % If length is longer than the current buffer content, the buffer
+      % is flushed
       %
       % Parameters:
       %   length: number of deleted samples @type integer @default inf
@@ -50,11 +51,13 @@ classdef FIFO < simulator.buffer.Data
       % function data = getData(obj, length, channels)
       % reads data from FIFO buffer of specified length
       %
-      % If length is longer than the current buffer content, zero padding is applied
+      % If length is longer than the current buffer content, zero padding
+      % is applied. If no length is specified, the whole buffer is read.
       %
       % Parameters:
       %   length: number of samples @type integer @default inf
-      %   channels: optional select of outputchannels @type integer[] 
+      %   channels: optional select of outputchannels @type integer[]
+      %   @default [1:simulator.buffer.Base.NumberOfOutputs]
       %
       % Return values:
       %   data: @type double[][]      

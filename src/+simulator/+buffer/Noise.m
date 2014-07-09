@@ -1,5 +1,5 @@
 classdef Noise < simulator.buffer.Base
-  % Class basically implements a AWGN buffer
+  % basically implements a AWGN buffer
   
   properties
     % mu of gaussian distribution
@@ -35,6 +35,7 @@ classdef Noise < simulator.buffer.Base
       % Parameters:
       %   len: number of samples @type integer @default inf
       %   channels: optional select of outputchannels @type integer[]
+      %   @default [1:simulator.buffer.Base.NumberOfOutputs]
       %
       % Return values:
       %   data: @type double[][]

@@ -1,5 +1,6 @@
 classdef PassThrough < simulator.buffer.Base
-  % Class uses other buffer object as input and maps it to a new output
+  % uses output channels of other buffer object as input and maps it to a new
+  % output
   
   properties
     % Input buffer
@@ -30,11 +31,11 @@ classdef PassThrough < simulator.buffer.Base
       %
       % Parameters:
       %   length: number of samples @type integer @default inf
-      %   channels: optional select of outputchannels @type integer[] 
+      %   channels: optional select of outputchannels @type integer[]
+      %   @default [1:simulator.buffer.Base.NumberOfOutputs]      
       %
       % Return values:
       %   data: @type double[][]      
-      
       
       % optional pre-selection of channels
       if nargin < 3

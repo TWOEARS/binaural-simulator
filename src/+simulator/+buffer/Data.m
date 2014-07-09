@@ -1,5 +1,5 @@
 classdef (Abstract) Data < simulator.buffer.Base
-  % Base class for all data-based audio buffers.
+  % abstract base class for FIFO and Ring buffers.
   
   properties (SetAccess = protected, Hidden)
     % data source
@@ -7,7 +7,11 @@ classdef (Abstract) Data < simulator.buffer.Base
     data = [];
   end
   properties (GetAccess = private, Dependent)
-    % file for data source (will automatically set by setting property)
+    % file for data source
+    %
+    % File is exspected to be a name of an existing File, which can be read
+    % via MATLABs audioread
+    %
     % @type char[]
     %
     % See also: data
