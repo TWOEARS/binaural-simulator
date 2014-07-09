@@ -77,12 +77,11 @@ sim.set(...
   'Sources', [source, noise], ... % assign sources to Simulator
   'Sinks', head);                 % assign sinks to Simulator
 %% processing of direct signal
+noise.set('Mute', true);
+
+% always 'ReInit' AFTER setting the start parameters
 sim.set('Init',true);
 
-sim.set('Refresh',true);
-sim.draw();
-
-noise.set('Mute', true);
 % 5 seconds processing
 for idx=1:ceil(5*sim.SampleRate/sim.BlockSize)
   sim.set('Process',true);
@@ -91,18 +90,15 @@ end
 out = head.getData();
 out = out/max(abs(out(:))); % normalize
 audiowrite('out_direct.wav',out,sim.SampleRate);
-
-sim.set('ClearMemory',true);
 %% processing of noise source signal
-
 head.removeData();
 
 noise.set('Mute', false);
 source.set('Mute', true);
 
-sim.set('Init',true);
+% always 'ReInit' AFTER setting the start parameters
+sim.set('ReInit',true);
 
-sim.set('Refresh',true);
 sim.draw();
 
 % 5 seconds processing

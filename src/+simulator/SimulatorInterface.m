@@ -100,15 +100,30 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
   properties (Dependent, GetAccess=private)
     % set to true to process one frame of ear signals
     % @type logical
+    %
+    % See also: process
     Process;
     % set to true to refresh scene geometry
     % @type logical
+    %
+    % See also: refresh
     Refresh;
-    % set to true to clear convolver memory
+    % set to true to clear history of simulator
     % @type logical
+    %
+    % See also: reinit
+    ReInit;
+    % set to true to clear convolver memory (obsolete)
+    % @type logical
+    %
+    % This functionality will be fully replaced by ReInit in the term
+    %
+    % See also: clearmemory ReInit
     ClearMemory;
     % set to true to shut down the simulator
     % @type logical
+    %
+    % See also: shutdown
     ShutDown;
   end
   
@@ -116,8 +131,9 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     init(obj);
     refresh(obj);
     process(obj);
-    clearMemory(obj);
-    shutDown(obj);
+    reinit(obj);
+    clearmemory(obj);
+    shutdown(obj);
   end
   % special setter and getter for this
   methods
@@ -140,16 +156,22 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         obj.process();
       end
     end
+    function set.ReInit(obj, ReInit)
+      isargclass('logical', ReInit);
+      if (ReInit)
+        obj.reinit();
+      end
+    end
     function set.ClearMemory(obj, ClearMemory)
       isargclass('logical', ClearMemory);
       if (ClearMemory)
-        obj.clearMemory();
+        obj.clearmemory();
       end
     end
     function set.ShutDown(obj, ShutDown)
       isargclass('logical', ShutDown);
       if (ShutDown)
-        obj.shutDown();
+        obj.shutdown();
         obj.Init = false;
       end
     end

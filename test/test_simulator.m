@@ -23,12 +23,13 @@ sim = SimulatorConvexRoom();  % simulator object
 sim.XML(theNode);
 
 %% initialization
+% note that all the parameters including objects' positions have to be
+% defined BEFORE initialization in order to init properly
 sim.set('Init',true);
 
-%% static scene
-
-sim.set('Refresh',true);
 sim.draw();
+
+%% static scene
 
 while ~sim.Sources(2).isEmpty();
   sim.set('Process',true);
@@ -36,19 +37,21 @@ end
 
 out = sim.Sinks.getData();
 out = out/max(abs(out(:))); % normalize
-audiowrite('out_xml.wav',out,sim.SampleRate);
+audiowrite('out_static.wav',out,sim.SampleRate);
 
 %% dynamic scene (dynamic scene, static head)
 position = [];  % reset source position
 
-% the SoundScapeRenderer (core of the Simulator) processes the input signal
-% in a blockwise manner. This implies an internal memory of the renderer.
-% To start a new simulation, you have to clear the memory
-sim.set('ClearMemory',true);
-
 % reset inputbuffer
 sim.Sources(1).AudioBuffer.setData(input);
 sim.Sources(2).set('Mute', true);
+
+% The SoundScapeRenderer (core of the Simulator) processes the input signal
+% in a blockwise manner. This implies an internal memory of the renderer saving
+% a scene history over a certain time. To start a new simulation, you have to 
+% clear the history. Be sure that you have set all the parameters to start with
+% in the new simulation BEFORE running 'ReInit'.
+sim.set('ReInit',true);
 
 % reset outputbuffer
 sim.Sinks.removeData();
@@ -83,11 +86,6 @@ audiowrite('out_dynamic.wav',out,sim.SampleRate);
 
 %% dynamic scene (dynamic head, static scene)
 
-% the SoundScapeRenderer (core of the Simulator) processes the input signal
-% in a blockwise manner. This implies an internal memory of the renderer.
-% To start a new simulation, you have to clear the memory
-sim.set('ClearMemory',true);
-
 % reset outputbuffer
 sim.Sinks.removeData();
 
@@ -99,13 +97,11 @@ sim.Sources(1).set('Mute', false);
 sim.Sources(2).set('Mute', true);
 
 sim.Sinks.set('Position', [0; 0; 1.75]);
-% head should move from left to right
-%head.set('Position', [-2.0; 0.0; 1.75]);
-%head.setDynamic('Position', 'Velocity',[0.4; 0.4; inf]);
-%head.set('Position', [2.0; 0.0; 1.75]);
+sim.Sinks.set('UnitFront', [cosd(30); sind(30); 0]);
+
+sim.set('ReInit',true);
 
 % head should rotate from 30 to 150 degree with 10 degrees per second
-sim.Sinks.set('UnitFront', [cosd(30); sind(30); 0]);
 sim.Sinks.setDynamic('UnitFront', 'Velocity', 10);
 sim.Sinks.set('UnitFront', [cosd(150); sind(150); 0]);
 
