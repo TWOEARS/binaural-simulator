@@ -39,7 +39,11 @@ classdef DirectionalIR < hgsetget
       end
     end
     function delete(obj)
-      delete(obj.Filename);
+      try
+        isargfile(obj.Filename);
+        delete(obj.Filename);
+      catch
+      end      
     end
     function open(obj, filename)
       % function open(obj, filename)
