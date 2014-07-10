@@ -29,15 +29,16 @@ sim.set('Init',true);
 
 sim.draw();
 
-%% static scene
+%% event based scene
 
 while ~sim.Sources(2).isEmpty();
+  sim.set('Refresh',true);
   sim.set('Process',true);
 end
 
 out = sim.Sinks.getData();
 out = out/max(abs(out(:))); % normalize
-audiowrite('out_static.wav',out,sim.SampleRate);
+audiowrite('out_event.wav',out,sim.SampleRate);
 
 %% dynamic scene (dynamic scene, static head)
 position = [];  % reset source position

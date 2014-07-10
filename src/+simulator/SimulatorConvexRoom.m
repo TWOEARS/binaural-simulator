@@ -183,6 +183,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         'reference_orientation', obj.SSRReferenceOriXY);
 
       obj.clearmemory();
+       % init EventHandler
+      if ~isempty(obj.EventHandler)
+        obj.EventHandler.init();
+      end
     end
     %% Clear Memory
     function clearmemory(obj)
