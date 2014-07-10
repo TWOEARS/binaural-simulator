@@ -28,6 +28,7 @@
         <xs:element ref="source" minOccurs="1" maxOccurs="unbounded"/>
         <xs:element ref="sink" minOccurs="1"/>
         <xs:element ref="wall" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="dynamic" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
       <xs:attribute name="BlockSize" type="xs:positiveInteger"/>
       <xs:attribute name="SampleRate" type="xs:positiveInteger"/>
@@ -52,6 +53,16 @@
     <xs:annotation><xs:documentation xml:lang="en">
       wall object
     </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="dynamic">
+    <xs:annotation><xs:documentation xml:lang="en">
+      object for dynamic aspects of the scene
+    </xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="event" type="event_t" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
   </xs:element>
 
   <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,6 +147,21 @@
   <xs:simpleType name="vertex_t">
     <xs:restriction base="xs:token">
       <xs:pattern value="(\s?\-?\d+(.\d+)?\s\-?\d+(.\d+)?\s?;)*(\s?\-?\d+(.\d+)?\s\-?\d+(.\d+)?\s?)"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Types for Events: -->
+  <xs:complexType name="event_t">
+    <xs:attribute name="Name" type="xs:IDREF" use="required"/>
+    <xs:attribute name="Attribute" type="attribute_t" use="required"/>
+    <xs:attribute name="Value" type="xs:token" use="required"/>
+    <xs:attribute name="Start" type="nonNegativeDecimal" use="required"/>
+    <xs:attribute name="End" type="nonNegativeDecimal" use="optional"/>
+  </xs:complexType>
+
+  <xs:simpleType name="attribute_t">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Position" />
     </xs:restriction>
   </xs:simpleType>
 
