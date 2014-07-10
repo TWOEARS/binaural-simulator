@@ -67,12 +67,14 @@ classdef (Abstract) MetaObject < hgsetget
         eleNum = eleList.getLength;
         
         if eleNum > 0
-          obj.(obj.XMLElements(kdx).Name)(eleNum:end) = [];
+          if ~isempty(obj.(obj.XMLElements(kdx).Name))
+            obj.(obj.XMLElements(kdx).Name)(eleNum:end) = [];
+          end
           for idx=1:eleNum;
             ele = eleList.item(idx-1);
             obj.(obj.XMLElements(kdx).Name)(idx) ...
               = obj.XMLElements(kdx).Constructor();
-            obj.(obj.XMLElements(kdx).Name).XML(ele);
+            obj.(obj.XMLElements(kdx).Name)(idx).XML(ele);
           end
         end
       end
