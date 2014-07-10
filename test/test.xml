@@ -47,4 +47,14 @@
         Vertices="-2.0 -2.0; 2.0 -2.0; 2.0 2.0; -2.0 2.0"
         Name="Wall"
         Labels="stone red"/>
+  <dynamic>
+    <event Name="Cello"
+           Attribute="Position"
+           Value="0 3 0"
+           Start="3"/>
+    <event Name="Castanets"
+           Attribute="Position"
+           Value="0 -1 0"
+           Start="2"/>
+  </dynamic>
 </scene>
