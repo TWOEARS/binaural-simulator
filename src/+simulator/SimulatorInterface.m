@@ -38,6 +38,10 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % @type integer
     % @default 0
     ReverberationMaxOrder = 0;
+    
+    % object for eventhandler (for dynamic scenes)
+    % @type simulator.dynamic.SceneEventHandler
+    EventHandler@simulator.dynamic.SceneEventHandler;    
   end
   
   %% Constructor
@@ -58,6 +62,10 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         'sink', ...
         @(x)simulator.AudioSink(2));
       obj.addXMLElement('Walls', 'simulator.Wall', 'wall');
+      obj.addXMLElement('EventHandler', ...
+        'simulator.dynamic.SceneEventHandler', ...
+        'dynamic', ...
+        @(x) simulator.dynamic.SceneEventHandler(obj));
     end
   end
   
@@ -215,6 +223,14 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     function set.ReverberationMaxOrder(obj, ReverberationMaxOrder)
       isargpositivescalar(ReverberationMaxOrder);  % check if positive scalar
       obj.ReverberationMaxOrder = ReverberationMaxOrder;
+    end
+    function set.EventHandler(obj, EventHandler)
+      isargclass('simulator.dynamic.SceneEventHandler',EventHandler);  % check class
+      if numel(EventHandler) ~= 1
+        error('only one eventhandler is allowed');
+      end
+      obj.errorIfInitialized;
+      obj.EventHandler = EventHandler;
     end
   end
   
