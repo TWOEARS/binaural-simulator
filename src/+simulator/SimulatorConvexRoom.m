@@ -1,6 +1,6 @@
 classdef SimulatorConvexRoom < simulator.SimulatorInterface
   %SIMULATORCONVEXROOM is the core class for simulating acoustic room scenarios
-
+  
   properties (Access=private, Hidden, Dependent)
     reflect_factor;  %
     NumberOfSources;
@@ -73,11 +73,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
 
       obj.Renderer('source_model', source_types{:});
 
-      % init EventHandler
-      if ~isempty(obj.EventHandler)
-        obj.EventHandler.init();
-      end
-
+      obj.reinit();
     end
     %% Processing
     function process(obj)
@@ -129,6 +125,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       % refresh position of Sinks for limited-speed modifications
       obj.Sinks.refresh(obj.BlockSize/obj.SampleRate);
 
+      % refresh ism and scene objects
+      obj.refreshStatic();      
+    end
+  end
+  methods (Access = private)
+    function refreshStatic(obj)
       % refresh positions of image sources
       if obj.NumberOfImageSources > 0
         obj.ismPositions(obj.Sources(obj.mirroredSourcesDx), obj.ImageSources);
@@ -154,13 +156,42 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
         obj.SSRPositionXY = [obj.SSRPositionXY, [obj.PWDSubSources.PositionXY]];
         obj.SSROrientationXY = [obj.SSROrientationXY,  ...
           [obj.PWDSubSources.OrientationXY]];
-        obj.SSRMute = logical([obj.SSRMute, [obj.PWDSubSources.Mute]]);
+        obj.SSRMute = logical([obj.SSRMute, [obj.PWDSubSources.Mute]]);        
       end
     end
+  end
+  methods
+    %% reinitialization
+    function reinit(obj)
+      % function reinit(obj)
+      % re-initialize simulator
+      %
+      % Somehow a weak form of init, which clears the memory of the
+      % convolver and clears the history of object positions, orientations
+      % and mutes. However, clearing means that the memory of the convolver
+      % is filled with zeros and the history is filled with current
+      % properties for each object. Be sure, that you have chosen the right
+      % properties BEFORE running reinit.
+      %
+      % See also: simulator.SimulatorInterface.init
+      obj.refreshStatic;
+      obj.Renderer(...
+        'source_position', obj.SSRPositionXY, ...
+        'source_orientation', obj.SSROrientationXY, ...
+        'source_mute', obj.SSRMute, ...
+        'reference_position', obj.SSRReferencePosXY,...
+        'reference_orientation', obj.SSRReferenceOriXY);
+
+      obj.clearmemory();
+    end
     %% Clear Memory
-    function clearMemory(obj)
-      % function clearMemory(obj)
+    function clearmemory(obj)
+      % function clearmemory(obj)
       % clear memory of renderer
+      %
+      % obsolete functionality (will be replaced by reinit in mid-term)
+      %
+      % See also: reinit
       blocks = ceil( (obj.HRIRDataset.NumberOfSamples + ...
         2*obj.MaximumDelay*obj.SampleRate)/obj.BlockSize ...
         );
@@ -170,10 +201,14 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       end
     end
     %% Shut Down
-    function shutDown(obj)
-      % function shutDown(obj)
-      % shut down renderer
-      obj.clearMemory();
+    function shutdown(obj)
+      % function shutdown(obj)
+      obj.SSRPositionXY = [];
+      obj.SSROrientationXY = [];
+      obj.SSRMute = [];
+      obj.SSRReferencePosXY = [];
+      obj.SSRReferenceOriXY = [];
+
       obj.Renderer('clear');
       % delete ImageSources
       delete(obj.ImageSources);
@@ -183,7 +218,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       delete(obj.Walls);
       delete(obj.HRIRDataset);
     end
-
   end
   %% Image Source Model
   methods (Access = private)
