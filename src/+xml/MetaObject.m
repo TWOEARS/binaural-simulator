@@ -67,15 +67,14 @@ classdef (Abstract) MetaObject < hgsetget
         eleNum = eleList.getLength;
         
         if eleNum > 0
-          if ~isempty(obj.(obj.XMLElements(kdx).Name))
-            obj.(obj.XMLElements(kdx).Name)(eleNum:end) = [];
-          end
+          tmpElem = [];
           for idx=1:eleNum;
             ele = eleList.item(idx-1);
-            obj.(obj.XMLElements(kdx).Name)(idx) ...
-              = obj.XMLElements(kdx).Constructor();
-            obj.(obj.XMLElements(kdx).Name)(idx).XML(ele);
+            tmpElem = [tmpElem, ...
+              obj.XMLElements(kdx).Constructor()];
+            tmpElem(idx).XML(ele);
           end
+          obj.(obj.XMLElements(kdx).Name) = tmpElem;
         end
       end
     end
@@ -146,7 +145,7 @@ classdef (Abstract) MetaObject < hgsetget
         Alias = Name;
       end
       if nargin < 5
-        Constructor = str2func(['@(x)' Class '()']);
+        Constructor = str2func(['@()' Class]);
       end
       obj.XMLElements = [obj.XMLElements, ...
         xml.PropertyDescription(Name, Class, Alias, Constructor)];

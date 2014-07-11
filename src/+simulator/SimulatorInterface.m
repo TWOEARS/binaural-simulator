@@ -41,7 +41,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     
     % object for eventhandler (for dynamic scenes)
     % @type simulator.dynamic.SceneEventHandler
-    EventHandler@simulator.dynamic.SceneEventHandler;    
+    EventHandler;    
   end
   
   %% Constructor

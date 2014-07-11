@@ -10,7 +10,7 @@ classdef SceneEventHandler < xml.MetaObject
     Simulator;
     % event queue
     % @type simulator.dynamic.SceneEvent
-    Events@simulator.dynamic.SceneEvent;
+    Events;
   end
   
   properties (SetAccess=private)
