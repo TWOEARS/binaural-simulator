@@ -14,7 +14,7 @@ classdef SceneEventHandler < xml.MetaObject
   end
   
   properties (SetAccess=private)
-    Time;
+    Time = 0;
   end
   
   %% Constructor
@@ -59,7 +59,7 @@ classdef SceneEventHandler < xml.MetaObject
     end
     function refresh(obj, timeinc)
       obj.Time = obj.Time + timeinc;
-      while ~isempty(obj.Events) && obj.Events(1).Start < obj.Time
+      while ~isempty(obj.Events) && obj.Events(1).Start <= obj.Time
         event = obj.Events(1);
         % manipulate attribute of target scene object
         obj.SceneObjects{event.Index}.(event.Attribute) ...
