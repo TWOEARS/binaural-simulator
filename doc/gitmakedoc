@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Create Doxygen documentation and (if on "master" branch) push to git server.
+
+# Prepare your working copy for pushing the documentation to Github:
+#
+# cd doc
+# git clone https://user@github.com/mousbie/twoears-wp1-doc html
+
+set -e
+
+VERSION=$(git describe --always)
+BRANCH=$(git symbolic-ref --short HEAD)
+
+if [ -d html ]
+then
+  cd html
+  if [ -d .git ]
+  then
+    git rm -rf .
+  fi
+  cd ..
+fi
+
+matlab -nojvm -nosplash -r createdoc
+
+cd html
+
+if [ -d .git ]
+then
+  echo -n "Push to Github? [yN] "
+  read ANSWER
+  if [ "$ANSWER" = Y -o "$ANSWER" = y ]
+  then
+    git add . && git commit -m "Doxygen documentation for $VERSION" \
+&& git push --force
+  fi
+fi
