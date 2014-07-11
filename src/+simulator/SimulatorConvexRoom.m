@@ -1,4 +1,4 @@
-classdef SimulatorConvexRoom < simulator.SimulatorInterface
+classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInterface
   %SIMULATORCONVEXROOM is the core class for simulating acoustic room scenarios
   
   properties (Access=private, Hidden, Dependent)
@@ -228,6 +228,33 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface
       delete(obj.HRIRDataset);
     end
   end
+  
+  %% Robot-Interface
+  methods
+    function rotateHead(obj, angleIncDeg, vargin)
+      % function rotateHead(obj, angleIncDeg, vargin)
+      %
+      % See also: simulator.RobotInterface.rotateHead
+      obj.Sinks.rotateAroundUp(angleIncDeg);      
+    end
+    function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
+      % function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
+      %
+      % See also: simulator.RobotInterface.getSignal
+      
+      blocks = ceil(timeIncSec*obj.SampleRate/obj.BlockSize);
+      timeIncSamples = blocks*obj.BlockSize;
+      timeIncSec = timeIncSamples/obj.SampleRate;      
+      
+      for idx=1:blocks
+        obj.refresh();
+        obj.process();
+      end
+      sig = obj.Sinks.getData(timeIncSamples);
+      obj.Sinks.removeData(timeIncSamples);
+    end      
+  end
+  
   %% Image Source Model
   methods (Access = private)
     function [Images, parentObjectsDx, sucObjectsDx, parentWallsDx] ...
