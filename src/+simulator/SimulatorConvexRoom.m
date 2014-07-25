@@ -249,10 +249,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       for idx=1:blocks
         obj.refresh();
         obj.process();
-        % Check if the end of utterance is reached to avoid zero-padding
-        if obj.Sources.isEmpty()
-            break;
-        end
       end
       sig = obj.Sinks.getData();
       obj.Sinks.removeData();
