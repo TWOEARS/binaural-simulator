@@ -142,6 +142,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     reinit(obj);
     clearmemory(obj);
     shutdown(obj);
+    isFinished(obj);
   end
   % special setter and getter for this
   methods

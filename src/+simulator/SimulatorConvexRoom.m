@@ -162,6 +162,16 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     end
   end
   methods
+    %% isFinished?
+    function b = isFinished(obj)
+      b = true;
+      for idx=1:length(obj.Sources)
+        if ~obj.Sources(idx).isEmpty()
+          b = false;
+          return;
+        end
+      end
+    end
     %% reinitialization
     function reinit(obj)
       % function reinit(obj)
@@ -243,16 +253,20 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % See also: simulator.RobotInterface.getSignal
       
       blocks = ceil(timeIncSec*obj.SampleRate/obj.BlockSize);
-      timeIncSamples = blocks*obj.BlockSize;
-      timeIncSec = timeIncSamples/obj.SampleRate;      
-      
-      for idx=1:blocks
+
+      idx = 0;
+      while ~obj.isFinished() && idx < blocks
         obj.refresh();
         obj.process();
+        idx = idx + 1;
       end
-      sig = obj.Sinks.getData();
-      obj.Sinks.removeData();
-    end      
+
+      timeIncSamples = idx*obj.BlockSize;
+      timeIncSec = timeIncSamples/obj.SampleRate; 
+
+      sig = obj.Sinks.getData(timeIncSamples);
+      obj.Sinks.removeData(timeIncSamples);
+    end
   end
   
   %% Image Source Model
