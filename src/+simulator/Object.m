@@ -27,6 +27,19 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % @type double[]
     % @default [1; 0; 0]
     UnitFront;
+    
+    % radius (spherical coordinates) of Position in degree
+    % @type double
+    % @default 0
+    Radius;
+    % azimuth angle (spherical coordinates) of Position in degree
+    % @type double
+    % @default 0
+    Azimuth;
+    % polar angle (spherical coordinates) of Position in degree
+    % @type double
+    % @default 0
+    Polar;
   end
   properties (Dependent, SetAccess=private)
     % vector resulting of UnitUp x UnitFront
@@ -228,12 +241,47 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     %
     function v = get.UnitUp(obj)
       v = obj.GroupRotation*obj.UnitUp;
-    end
+    end    
     %
     function v = get.PositionXY(obj)
       v = obj.Position(1:2,:);
     end
     %
+    function v = get.Radius(obj)
+      x = obj.Position;
+      v = sqrt(sum(x.^2,1));
+    end
+    function set.Radius(obj, r)
+      isargscalar(r);
+      phi = obj.Azimuth;
+      theta = obj.Polar;
+      obj.Position = r.*[cosd(phi).*sind(theta); ...
+        sind(phi).*sind(theta); ...
+        cosd(theta)];
+    end
+    %
+    function v = get.Azimuth(obj)
+      v = atan2d(obj.Position(2,:), obj.Position(1,:));
+    end
+    function set.Azimuth(obj, v)
+      isargscalar(v);
+      x = obj.Position;
+      r = sqrt(x(2).^2 + x(1).^2);
+      obj.Position = [r.*cosd(v); r.*sind(v); x(3)];
+    end
+    %    
+    function v = get.Polar(obj)
+      v = acosd(obj.Position(3,:));
+    end
+    function set.Polar(obj, theta)
+      isargscalar(theta);
+      phi = obj.Azimuth;
+      r = obj.Radius;
+      obj.Position = r.*[cosd(phi).*sind(theta); ...
+        sind(phi).*sind(theta); ...
+        cosd(theta)];
+    end
+    %    
     function v = get.OrientationXY(obj)
       v = atan2d(obj.UnitFront(2,:), obj.UnitFront(1,:));
     end
