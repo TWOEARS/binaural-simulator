@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# Create Doxygen documentation and (if on "master" branch) push to git server.
+# Create Doxygen documentation and push to git server.
 
 # Prepare your working copy for pushing the documentation to Github:
 #
 # cd doc
-# git clone https://user@github.com/mousbie/twoears-wp1-doc html
+# git clone https://user@github.com/twoears/twoears-wp1-doc html
 
 set -e
 
