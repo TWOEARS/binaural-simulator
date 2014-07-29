@@ -76,6 +76,7 @@
       Every scene object has to have a unique Name.
     </xs:documentation></xs:annotation>
     <xs:attribute name="Position" type="coord3D_t" use="optional"/>
+    <xs:attribute name="Radius" type="nonNegativeDecimal" use="optional"/>
     <xs:attribute name="UnitUp" type="coord3D_t" use="optional"/>
     <xs:attribute name="UnitFront" type="coord3D_t" use="optional"/>
     <xs:attribute name="Name" type="xs:ID" use="required"/>

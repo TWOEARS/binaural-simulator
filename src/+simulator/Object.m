@@ -92,6 +92,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       obj.addXMLAttribute('UnitUp', 'double');
       obj.addXMLAttribute('UnitFront', 'double');
       obj.addXMLAttribute('Position', 'double');
+      obj.addXMLAttribute('Radius', 'double');
       obj.addXMLAttribute('Name', 'char');
       obj.addXMLAttribute('Labels', 'cell');
     end
