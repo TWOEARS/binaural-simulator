@@ -14,4 +14,4 @@ addpath([wp1path, 'SOFA']);
 xml.dbPath([basepath, 'twoears-data']);
 SOFAdbPath(xml.dbPath());
 SOFAdbURL(xml.dbURL());
-SOFAstart;
+SOFAstart(0);
