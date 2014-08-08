@@ -13,11 +13,8 @@ input = single(input(:,1)./max(abs(input(:,1))));
 
 %% processing parameters
 
-theNode = dbOpenXML('test.xml');
-
 sim = SimulatorConvexRoom();  % simulator object
-
-sim.XML(theNode);
+sim.loadConfig('test.xml');
 
 %% initialization
 % note that all the parameters including objects' positions have to be

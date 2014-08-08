@@ -1,9 +1,12 @@
-function dbValidate(filename)
+function filename = dbValidate(filename)
 % dbValidate(filename)
 % validate xml-file against schema ('tef.xsd')
 %
 % Parameters:
-%   filename: filename of xml-schema (*.xml)
+%   filename: filename of xml-file (*.xml)
+%
+% Parameters:
+%   filename: absolute path to validated xml-file
 %
 % See also: xml.dbGetFile
 

@@ -18,7 +18,9 @@ function filename = dbGetFile(filename)
 
   try
     isargfile(filename);
-    warning('INFO: local file (%s) found, will not search in db', filename);
+    warning(...
+      'THIS IS JUST AN INFO: local file (%s) found, will not search in db', ...
+      filename);
     filename = which(filename);
   catch
     try

@@ -10,9 +10,7 @@ function [RootNode, DocumentNode] = dbOpenXML(filename)
 %
 % See also: xml.dbGetFile xmlread
 
-  xml.dbValidate(filename);
-
-  filename = xml.dbGetFile(filename);
+  filename = xml.dbValidate(filename);
 
   DocumentNode = xmlread(filename);
   RootNode = DocumentNode.getDocumentElement;
