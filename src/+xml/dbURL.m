@@ -1,7 +1,19 @@
 function url = dbURL(url)
-% function url = dbURL(url) 
+% url = dbURL(url)
 %
-% taken from SOFA acoustics (see SOFAdbURL www.sofacoustics.org)
+% defines url of root directory of remote twoears database.
+%
+% Parameters:
+%   url:  url of root directory of remote twoears database, optional @type char[]
+%
+% Return values:
+%   url:  current url
+%
+% defines root path to local copy of twoears database. Calling this function
+% without an argument just returns the current url. Taken from SOFA
+% (http://www.sofaconventions.org/). 
+%
+% See also: http://sourceforge.net/p/sofacoustics/code/HEAD/tree/trunk/API_MO/SOFAdbURL.m
 
 persistent CachedURL;
 

@@ -4,14 +4,18 @@ function dbValidate(filename)
 %
 % Parameters:
 %   filename: filename of xml-schema (*.xml)
+%
+% See also: xml.dbGetFile
 
   import java.io.*;
   import javax.xml.transform.Source;
   import javax.xml.transform.stream.StreamSource;
   import javax.xml.validation.*;
 
+  % search for xml file (locally and in database)
   filename = xml.dbGetFile(filename);
 
+  % schema file
   thisfilepath = fileparts(mfilename('fullpath'));
   schema = fullfile(thisfilepath, 'tef.xsd');
 
