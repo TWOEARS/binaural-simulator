@@ -60,16 +60,21 @@ classdef Ring < simulator.buffer.Data
         mapping = obj.ChannelMapping(channels);
       end
       
+      % optional length definition
       if nargin < 2
-        data = obj.data(:,mapping);
-      else
+        if size(obj.data,1) <= 0
+          data = [];
+          return;
+        end
+        length = size(obj.data, 1);
+      end
+        
+      data = zeros(length, obj.NumberOfOutputs);
+      if size(obj.data,1) ~= 0
         data = zeros(length, obj.NumberOfOutputs);
-        if size(obj.data,1) ~= 0
-          data = zeros(length, obj.NumberOfOutputs);
-          for idx=1:obj.NumberOfOutputs
-            selector = mod(obj.DataPointer(idx)+(0:length-1),size(obj.data,1));
-            data(:,idx) = obj.data(selector+1,mapping(idx));
-          end
+        for idx=1:obj.NumberOfOutputs
+          selector = mod(obj.DataPointer(idx)+(0:length-1),size(obj.data,1));
+          data(:,idx) = obj.data(selector+1,mapping(idx));
         end
       end
     end

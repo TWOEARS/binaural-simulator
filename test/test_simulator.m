@@ -36,9 +36,7 @@ while ~sim.Sources(2).isEmpty();
   sim.set('Process',true);
 end
 
-out = sim.Sinks.getData();
-out = out/max(abs(out(:))); % normalize
-audiowrite('out_event.wav',out,sim.SampleRate);
+sim.Sinks.saveFile('out_static.wav',sim.SampleRate);
 
 %% dynamic scene (dynamic scene, static head)
 position = [];  % reset source position
@@ -81,9 +79,7 @@ while ~sim.Sources(1).isEmpty()
   sim.set('Process',true);  % processing 
 end
 
-out = sim.Sinks.getData();
-out = out/max(abs(out(:))); % normalize
-audiowrite('out_dynamic.wav',out,sim.SampleRate);
+sim.Sinks.saveFile('out_dynamic1.wav',sim.SampleRate);
 
 %% dynamic scene (dynamic head, static scene)
 
@@ -111,9 +107,7 @@ while ~sim.Sources(1).isEmpty()
   sim.set('Process',true);
 end
 
-out = sim.Sinks.getData();
-out = out/max(abs(out(:))); % normalize
-audiowrite('out_dynamic2.wav',out,sim.SampleRate);
+sim.Sinks.saveFile('out_dynamic2.wav',sim.SampleRate);
 
 %% clean up
 sim.set('ShutDown',true);

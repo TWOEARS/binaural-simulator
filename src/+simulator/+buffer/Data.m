@@ -55,13 +55,51 @@ classdef (Abstract) Data < simulator.buffer.Base
       obj.data = data;
     end
   end
-  %% setter/getter
+  %% File-IO
   methods
-    function set.File(obj, f)
+    function loadFile(obj, f)
+      % function setData(obj, data, channels)
+      % load audio file into buffer (deletes old data)
+      %
+      % Parameters:
+      %   f: name of audio file @type char[]
+      
       isargchar(f);
       isargfile(f);
       obj.data = audioread(f);
-      obj.data = single(obj.data./max(abs(obj.data(:))));
+      obj.data = single(obj.data./max(abs(obj.data(:))));      
+    end
+    function saveFile(obj, f, fs)
+      % function setData(obj, data, channels)
+      % save buffer content to audio file
+      %
+      % Parameters:
+      %   f: name of audio file @type char[]
+      %   fs: optional sampling frequency @type double @default 44100
+      %
+      % This functionality is dependent on the the implementation of the 
+      % 'getData' method of each potential sub-class.  It does not read the raw
+      % data from the buffer matrix. The output content will be normalized to 
+      % the absolute maximum among all samples inside the output.
+      
+      isargchar(f);
+      if nargin < 3
+        fs = 44100;
+      else
+        isargpositivescalar(fs);
+      end
+      
+      tmp = obj.getData();      
+      audiowrite(f, tmp./max(abs(tmp(:))), fs);
+      fprintf('Saved buffer data with %d samples to %s \n', numel(tmp), f);
+    end
+  end
+  
+  
+  %% setter/getter
+  methods
+    function set.File(obj, f)
+      obj.loadFile(f);
     end
   end
 end
