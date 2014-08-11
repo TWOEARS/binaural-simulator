@@ -75,6 +75,15 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
 
       obj.reinit();
     end
+    function loadConfig(obj, filename)
+      % loadConfig(obj, filename)
+      % load XML-Config
+      % 
+      % See also: xml.dbOpenXML xml.dbValidate xml.MetaObject.XML
+      
+      theNode = xml.dbOpenXML(filename);
+      obj.XML(theNode);
+    end
     %% Processing
     function process(obj)
       % function process(obj)

@@ -13,14 +13,8 @@ input = single(input(:,1)./max(abs(input(:,1))));
 
 %% processing parameters
 
-xml.dbValidate('test.xml');
-
-theDoc = xmlread('test.xml');
-theNode = theDoc.getDocumentElement;
-
 sim = SimulatorConvexRoom();  % simulator object
-
-sim.XML(theNode);
+sim.loadConfig('test.xml');
 
 %% initialization
 % note that all the parameters including objects' positions have to be
