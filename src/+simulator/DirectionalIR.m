@@ -141,16 +141,21 @@ classdef DirectionalIR < hgsetget
       isargfile(filename);
       warning('SOFA HRTF support is still very experimental');
       data = SOFAload(filename);
-      if strcmp(data.GLOBAL_SOFAConventions,'SimpleFreeFieldHRIR')
-        [~, ind] = sort(data.SourcePosition(:,1));
-        d = data.Data.IR(ind,:,:);
-        d = permute(d,[3 2 1]);
-        d = reshape(d,size(d,1),[]);
+      
+      switch data.GLOBAL_SOFAConventions
+        case 'SimpleFreeFieldHRIR'
+          % find entries with zero elevation angle
+          select = find(data.SourcePosition(:,2) == 0);
+          % sort remaining with respect to azimuth angle
+          [~, ind] = sort(data.SourcePosition(select,1));
+          d = data.Data.IR(select(ind),:,:);
+          d = permute(d,[3 2 1]);
+          d = reshape(d,size(d,1),[]);
 
-        fs = data.Data.SamplingRate;
-      else
-        error('SOFA Conventions (%s) not supported', ...
-          data.GLOBAL_SOFAConventions);
+          fs = data.Data.SamplingRate;
+        otherwise
+          error('SOFA Conventions (%s) not supported', ...
+            data.GLOBAL_SOFAConventions);
       end
     end
   end
