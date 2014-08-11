@@ -17,7 +17,7 @@ then
   cd html
   if [ -d .git ]
   then
-    git rm -rf .
+    git rm -rf --ignore-unmatch .
   fi
   cd ..
 fi
@@ -34,5 +34,7 @@ then
   then
     git add . && git commit -m "Doxygen documentation for $VERSION" \
 && git push --force
+  else
+    firefox index.html
   fi
 fi
