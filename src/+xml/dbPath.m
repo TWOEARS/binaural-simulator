@@ -1,5 +1,5 @@
 function newpath = dbPath(newpath)
-% newpath = dbPath(newpath) 
+% function newpath = dbPath(newpath) 
 %
 % defines root path to local copy of twoears database.
 %
