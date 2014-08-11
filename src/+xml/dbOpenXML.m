@@ -1,5 +1,5 @@
 function [RootNode, DocumentNode] = dbOpenXML(filename)
-% [RootNode, DocumentNode] = dbOpenXML(filename)
+% function [RootNode, DocumentNode] = dbOpenXML(filename)
 % 
 % Parameters:
 %   filename: filename of the XML-file (either locally or in the database)

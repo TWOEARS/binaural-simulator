@@ -1,5 +1,5 @@
 function url = dbURL(url)
-% url = dbURL(url)
+% function url = dbURL(url)
 %
 % defines url of root directory of remote twoears database.
 %
@@ -20,7 +20,6 @@ persistent CachedURL;
 if exist('url','var')
   CachedURL=url;
 elseif isempty(CachedURL)
-  CachedURL= ['https://dev.qu.tu-berlin.de/projects/twoears-data/' ...
-        'repository/revisions/master/raw/'];
+  CachedURL= ['https://github.com/TWOEARS/data/raw/master/'];
 end
 url=CachedURL;
