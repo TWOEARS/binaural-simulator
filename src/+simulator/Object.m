@@ -124,8 +124,6 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       %   alpha:  rotation angle in degree @type double
       obj.rotateAroundAxis(obj.UnitRight, alpha);
     end
-  end
-  methods (Access = private)
     function rotateAroundAxis(obj, n, alpha)
       isargcoord(n);
       isargunitvector(n);

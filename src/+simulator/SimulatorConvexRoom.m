@@ -16,12 +16,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     parentSourcesDx;  % index for 'mother' source of images sources
     parentWallsDx;  % index for 'mother' wall of images sources
     sucSinksDx;  % index for 'child' images sinks of sinks
-
+    
     pwdSourcesDx;
     PWDSubSources;
-
+    
     directSourcesDx;
-
+    
     SSRPositionXY;
     SSROrientationXY;
     SSRMute;
@@ -34,11 +34,11 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     function obj = init(obj)
       % function init(obj)
       % initialize Simulator
-
+      
       % init direct binaural Sources
       obj.directSourcesDx = ...
         find( [obj.Sources.Type] == simulator.AudioSourceType.DIRECT);
-
+      
       % init pwd sources
       obj.pwdSourcesDx = ...
         find( [obj.Sources.Type] == simulator.AudioSourceType.PWD);
@@ -46,17 +46,17 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         obj.PWDSubSources ...
           = obj.pwdInit(obj.Sources(obj.pwdSourcesDx));
       end
-
+      
       % init images of Sinks and Sources
       obj.mirroredSourcesDx = ...
         find( [obj.Sources.Type] == simulator.AudioSourceType.POINT);
       [obj.ImageSources, obj.parentSourcesDx, ~, obj.parentWallsDx] ...
         = obj.ismInit(obj.Sources(obj.mirroredSourcesDx));
       [obj.ImageSinks, ~, obj.sucSinksDx] = obj.ismInit(obj.Sinks);
-
+      
       % init input array for renderer
       obj.SSRInput = single(zeros( obj.BlockSize, obj.NumberOfSSRSources));
-
+      
       % SSR initialization
       params.block_size = obj.BlockSize;
       params.sample_rate = obj.SampleRate;
@@ -65,20 +65,20 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       params.delayline_size = ceil(obj.MaximumDelay*obj.SampleRate);
       params.initial_delay = ceil(obj.MaximumDelay*obj.SampleRate);
       obj.Renderer('init', obj.NumberOfSSRSources, params);
-
+      
       % define source types
       source_types = repmat({'point'}, 1, obj.NumberOfImageSources);
       source_types = [source_types, ...
         repmat({'plane'}, 1, length(obj.PWDSubSources))];
-
+      
       obj.Renderer('source_model', source_types{:});
-
+      
       obj.reinit();
     end
     function loadConfig(obj, filename)
       % loadConfig(obj, filename)
       % load XML-Config
-      % 
+      %
       % See also: xml.dbOpenXML xml.dbValidate xml.MetaObject.XML
       
       theNode = xml.dbOpenXML(filename);
@@ -91,17 +91,17 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       %
       % process next audio block provided by the audio sources of Sources
       % Output will be written to the Buffer of Sinks
-
+      
       for idx=1:length(obj.ImageSources)
         obj.SSRInput(:,idx) = obj.ImageSources(idx).getData(obj.BlockSize);
       end
-
+      
       idx = obj.NumberOfImageSources;
       % PWD sources
       for kdx=1:length(obj.PWDSubSources)
         obj.SSRInput(:,idx+kdx) = obj.PWDSubSources(kdx).getData(obj.BlockSize);
       end
-
+      
       out = obj.Renderer(...
         'source_position', obj.SSRPositionXY, ...
         'source_orientation', obj.SSROrientationXY, ...
@@ -109,34 +109,34 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         'reference_position', obj.SSRReferencePosXY,...
         'reference_orientation', obj.SSRReferenceOriXY,...
         'process', obj.SSRInput);
-
+      
       % add direct Sources
       for idx=obj.directSourcesDx([obj.Sources(obj.directSourcesDx).Mute] == 0)
         out = out + obj.Sources(idx).getData(obj.BlockSize);
       end
-
+      
       % remove Data for Original Sources
       for idx=1:length(obj.Sources)
         obj.Sources(idx).removeData(obj.BlockSize);
       end
-
+      
       obj.Sinks.appendData(out);  % append Data to Sinks
     end
     %% Refresh
     function refresh(obj)
       % function refresh(obj)
       % refresh positions of all scene objects including image source model
-
+      
       % incorporate new events from the event queue
       if ~isempty(obj.EventHandler)
         obj.EventHandler.refresh(obj.BlockSize/obj.SampleRate);
       end
-
+      
       % refresh position of Sinks for limited-speed modifications
       obj.Sinks.refresh(obj.BlockSize/obj.SampleRate);
-
+      
       % refresh ism and scene objects
-      obj.refreshStatic();      
+      obj.refreshStatic();
     end
   end
   methods (Access = private)
@@ -145,11 +145,11 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       if obj.NumberOfImageSources > 0
         obj.ismPositions(obj.Sources(obj.mirroredSourcesDx), obj.ImageSources);
         obj.ismPositions(obj.Sinks, obj.ImageSinks);
-
+        
         obj.ismVisibility(obj.ImageSources);
         obj.ismAmplitude(obj.ImageSources);
       end
-
+      
       % refresh position of sources and head
       obj.SSRPositionXY = [];
       obj.SSROrientationXY = [];
@@ -166,7 +166,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         obj.SSRPositionXY = [obj.SSRPositionXY, [obj.PWDSubSources.PositionXY]];
         obj.SSROrientationXY = [obj.SSROrientationXY,  ...
           [obj.PWDSubSources.OrientationXY]];
-        obj.SSRMute = logical([obj.SSRMute, [obj.PWDSubSources.Mute]]);        
+        obj.SSRMute = logical([obj.SSRMute, [obj.PWDSubSources.Mute]]);
       end
     end
   end
@@ -209,7 +209,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         'source_mute', obj.SSRMute, ...
         'reference_position', obj.SSRReferencePosXY,...
         'reference_orientation', obj.SSRReferenceOriXY);
-
+      
       obj.clearmemory();
     end
     %% Clear Memory
@@ -236,7 +236,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       obj.SSRMute = [];
       obj.SSRReferencePosXY = [];
       obj.SSRReferenceOriXY = [];
-
+      
       obj.Renderer('clear');
       % delete ImageSources
       delete(obj.ImageSources);
@@ -249,30 +249,42 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
   end
   
   %% Robot-Interface
-  methods
-    function rotateHead(obj, angleIncDeg, vargin)
-      % function rotateHead(obj, angleIncDeg, vargin)
+  methods (Access=protected)
+    function rotateHeadRelative(obj, angleIncDeg)
+      % function rotateHeadRelative(obj, angleIncDeg)
       %
-      % See also: simulator.RobotInterface.rotateHead
-      obj.Sinks.rotateAroundUp(angleIncDeg);      
+      % See also: simulator.RobotInterface.rotateHeadRelative
+      obj.Sinks.rotateAroundUp(angleIncDeg);
     end
+    function rotateHeadAbsolute(obj, angleDeg)
+      % function rotateHeadAbsolute(obj, angleDeg)
+      %
+      % See also: simulator.RobotInterface.rotateHeadAbsolute
+      
+      % get current XY-Orientation
+      azi = obj.Sinks.OrientationXY;
+      % rotate Head around z-axis
+      obj.Sinks.rotateAroundAxis([0; 0; 1], angleDeg - azi);
+    end
+  end
+  methods
     function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
       % function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
       %
       % See also: simulator.RobotInterface.getSignal
       
       blocks = ceil(timeIncSec*obj.SampleRate/obj.BlockSize);
-
+      
       idx = 0;
       while ~obj.isFinished() && idx < blocks
         obj.refresh();
         obj.process();
         idx = idx + 1;
       end
-
+      
       timeIncSamples = idx*obj.BlockSize;
-      timeIncSec = timeIncSamples/obj.SampleRate; 
-
+      timeIncSec = timeIncSamples/obj.SampleRate;
+      
       sig = obj.Sinks.getData(timeIncSamples);
       obj.Sinks.removeData(timeIncSamples);
     end
@@ -290,12 +302,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       else
         error('Class not supported');
       end
-
+      
       % some lengths and sizes
       NObj = length(Objects);
       NWalls = length(obj.Walls);
       NImg = NObj * obj.reflect_factor;
-
+      
       % initialize Images
       if NImg > 0
         Images(NImg) = constructor([]);  % TODO: remove workaround
@@ -305,12 +317,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       for idx=1:NObj
         Images(idx) = constructor(Objects(idx));
       end
-
+      
       idx_range = 1:NObj;
       parentObjectsDx = zeros(1,NImg);
       sucObjectsDx = zeros(NWalls, NImg);
       parentWallsDx = zeros(1,NImg);
-
+      
       if NWalls > 0
         for odx=1:obj.ReverberationMaxOrder
           rdx = idx_range(end);  % image source idx for odx
@@ -319,7 +331,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
             % sources which have been mirrored at the current Wall pdx before)
             for idx=idx_range(parentWallsDx(idx_range) ~= pdx)
               rdx = rdx + 1;
-
+              
               % constructor sets original Source
               Images(rdx) = constructor(Images(idx).OriginalObject);
               % set Parent Object
@@ -351,7 +363,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         DummyObject.ParentObject = Images(idx);
         for pdx=1:length(obj.Walls)
           DummyObject.ParentPolygon = obj.Walls(pdx);
-
+          
           % check whether real source is behind a wall
           DummyObject.mirror;
           if (~DummyObject.Valid)
@@ -368,7 +380,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         Images(idx).Valid = Images(idx).Valid && Images(idx).ParentObject.Valid;
       end
     end
-
+    
     function ismVisibility(obj, Images)
       % initialize visibility
       visible = [Images.Valid];
@@ -388,12 +400,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
             visible(srcdx) = false;
             break;
           end
-
+          
           if ~DummySource.checkVisibility(DummySink.Position)
             visible(srcdx) = false;
             break;
           end
-
+          
           pdx = obj.parentWallsDx(idx);
           DummySource = DummySource.ParentObject;
           idx = obj.parentSourcesDx(idx);
@@ -405,7 +417,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         Images(srcdx).Valid = false;
       end
     end
-
+    
     function ismAmplitude(obj, ImageSources)
       for idx=1:length(ImageSources)
         % mute invalid image sources and sources with muted OriginalObject
@@ -420,9 +432,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
   %% PWD
   methods (Access=private)
     function SubSources = pwdInit(obj, PWDSources)
-
+      
       NObj = length(PWDSources);
-
+      
       wdx = 0;
       for idx=1:NObj
         for kdx=1:PWDSources(idx).RequiredChannels
@@ -437,7 +449,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       end
     end
   end
-
+  
   %% misc.
   methods
     function draw(obj,id)
@@ -448,7 +460,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       else
         figure(id);
       end
-
+      
       head_pos = [obj.Sinks.Position];
       img_head_pos = [obj.ImageSinks.Position];
       src_pos = [obj.Sources(obj.mirroredSourcesDx).Position];
@@ -456,12 +468,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         img_pos = [obj.ImageSources.Position];
         img_mute = [obj.ImageSources.Mute];
       end
-
+      
       % Draw Walls
       for i=1:length(obj.Walls)
         obj.Walls(i).draw(id);
       end
-
+      
       hold on;
       % Draw Head-Position
       h(1) = plot3(head_pos(1), head_pos(2), head_pos(3),'kx');
@@ -470,7 +482,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         img_head_pos(2,:), ...
         img_head_pos(3,:), ...
         'go');
-
+      
       if obj.NumberOfImageSources > 0
         % Draw Source-Position
         h(3) = plot3(src_pos(1,:), src_pos(2,:), src_pos(3,:),'rx');
@@ -489,7 +501,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
             'b.');
         end
       end
-
+      
       hold off;
       axis equal;
       legend(h, ...
@@ -506,7 +518,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     function v = get.reflect_factor(obj)
       q = length(obj.Walls);
       n = obj.ReverberationMaxOrder;
-
+      
       if (n == 0 || q == 0)
         v = 1;
       elseif (q == 1)
