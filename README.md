@@ -1,8 +1,9 @@
-Two!ears binaural simulator
+Two!Ears binaural simulator
 ===========================
 
 Expected sub-project hierarchy in order to things working:
 
+```
 <root>/
   twoears-wp1/
     src/
@@ -20,3 +21,8 @@ Expected sub-project hierarchy in order to things working:
     src/
     test/
   twoears-data/
+```
+
+See the [documentation] for further details.
+
+[documentation]:https://twoears.github.io/twoears-wp1-doc
