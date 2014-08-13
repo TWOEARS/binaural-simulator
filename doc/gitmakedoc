@@ -36,7 +36,7 @@ then
   if [ "$ANSWER" = Y -o "$ANSWER" = y ]
   then
     git add . \
-&& git rm *~ \
+&& git rm --ignore-unmatch ./*~  \
 && git commit -m "Doxygen documentation for $VERSION" \
 && git push --force
   else
