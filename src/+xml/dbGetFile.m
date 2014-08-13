@@ -1,5 +1,4 @@
 function filename = dbGetFile(filename)
-% function filename = dbGetFile(filename)
 % search for file locally and in database
 %
 % Parameters:

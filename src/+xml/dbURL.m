@@ -1,6 +1,4 @@
 function url = dbURL(url)
-% function url = dbURL(url)
-%
 % defines url of root directory of remote twoears database.
 %
 % Parameters:

@@ -1,5 +1,4 @@
 function dbClearTmp()
-% function dbClearTmp()
 % delete content of 'src/tmp'
 
 dir_path = fileparts(mfilename('fullpath'));

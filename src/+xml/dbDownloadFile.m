@@ -1,5 +1,4 @@
 function outfile = dbDownloadFile(filename, outfile)
-% function outfile = dbDownloadFile(filename, outfile)
 % download file from remote database
 %
 % Parameters:
