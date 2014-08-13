@@ -35,9 +35,11 @@ then
   read ANSWER
   if [ "$ANSWER" = Y -o "$ANSWER" = y ]
   then
-    git add . && git commit -m "Doxygen documentation for $VERSION" \
+    git add . \
+&& git rm *~ \
+&& git commit -m "Doxygen documentation for $VERSION" \
 && git push --force
   else
-    firefox index.html
+    xdg-open index.html
   fi
 fi
