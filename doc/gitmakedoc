@@ -23,6 +23,9 @@ then
 fi
 
 matlab -nojvm -nosplash -r createdoc
+# copy xml schema to html output directory
+cp ../src/+xml/tef.xsd ./html/
+cp ../src/+xml/tef.xsl ./html/
 
 cd html
 

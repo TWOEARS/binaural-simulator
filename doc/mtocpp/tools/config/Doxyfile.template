@@ -1097,7 +1097,7 @@ ENUM_VALUES_PER_LINE   = 4
 # JavaScript, DHTML, CSS and frames is required (i.e. any modern browser).
 # Windows users are probably better off using the HTML help feature.
 
-GENERATE_TREEVIEW      = ALL
+GENERATE_TREEVIEW      = NO
 
 # If the treeview is enabled (see GENERATE_TREEVIEW) then this tag can be
 # used to set the initial width (in pixels) of the frame in which the tree
@@ -1797,6 +1797,7 @@ FILE_PATTERNS     = *.m \
                     *.h \
                     *.hh \
                     *.hpp \
+                    *.dox \
 
 # the link between mtoc++ and doxygen (the `' separates the macros)
 FILTER_PATTERNS   = *.m="_MTOCFILTER_"
