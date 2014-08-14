@@ -25,9 +25,7 @@ classdef PassThrough < simulator.buffer.Base
   methods
     function data = getData(obj, length, channels)
       % function data = getData(obj, length, channels)
-      % reads data from FIFO buffer of specified length
-      %
-      % If length is longer than the current buffer content, zero padding is applied
+      % reads data from the parent buffer
       %
       % Parameters:
       %   length: number of samples @type integer @default inf
@@ -35,7 +33,9 @@ classdef PassThrough < simulator.buffer.Base
       %   @default [1:simulator.buffer.Base.NumberOfOutputs]      
       %
       % Return values:
-      %   data: @type double[][]      
+      %   data: @type double[][]
+      %
+      % See also: simulator.buffer.Base.getData
       
       % optional pre-selection of channels
       if nargin < 3
