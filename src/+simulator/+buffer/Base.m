@@ -32,9 +32,10 @@ classdef (Abstract) Base < xml.MetaObject
     end
     function removeData(obj, length)
       % function removeData(obj, length)
-      % this function does nothing
+      % this function does nothing by default
       %
-      % TODO: add some functionality
+      % overload this function for implementing sub-class-specific
+      % functionalities
     end
   end
 
@@ -50,7 +51,7 @@ classdef (Abstract) Base < xml.MetaObject
     %
     % Return values:
     %   data: @type double[][]
-    
+
     b = isEmpty(obj)
     % function b = isEmpty(obj)
     % indicates if buffer is empty

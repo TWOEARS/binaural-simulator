@@ -33,7 +33,7 @@ classdef FIFO < simulator.buffer.Data
       % removes data from FIFO buffer of specified length
       %
       % If length is longer than the current buffer content, the buffer
-      % is flushed
+      % is flushed. Same behavior holds for an undefined length.
       %
       % Parameters:
       %   length: number of deleted samples @type integer @default inf
@@ -60,15 +60,15 @@ classdef FIFO < simulator.buffer.Data
       %   @default [1:simulator.buffer.Base.NumberOfOutputs]
       %
       % Return values:
-      %   data: @type double[][]      
-   
+      %   data: @type double[][]
+
       % optional pre-selection of channels
       if nargin < 3
         mapping = obj.ChannelMapping;
       else
         mapping = obj.ChannelMapping(channels);
       end
-      
+
       if nargin < 2
         if size(obj.data,1) > 0
           data = obj.data(:,mapping);
