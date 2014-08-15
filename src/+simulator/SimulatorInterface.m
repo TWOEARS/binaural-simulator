@@ -15,7 +15,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % rendering mex-function
     % @type function_handle
     % @default @ssr_binaural
-    Renderer = @ssr_binaural;
+    Renderer = @ssr_virtualwfs;
     % HRIR-dataset
     % @type DirectionalIR
     HRIRDataset;

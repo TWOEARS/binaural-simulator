@@ -2,37 +2,23 @@
 <scene
   BlockSize="4096"
   SampleRate="44100"
-  MaximumDelay="0.0"
+  MaximumDelay="0.05"
   NumberOfThreads="1"
   ReverberationMaxOrder="2"
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
-  <source Position="0 -3 1.75"
+  <source Position="0 -1 1.75"
           Type="point"
           Name="Cello">
     <buffer ChannelMapping="1"
             Type="fifo"
             File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
   </source>
-  <source Position="0 1 1.75"
+  <source Position="0 3 1.75"
           Type="point"
           Name="Castanets">
     <buffer ChannelMapping="1"
             Type="fifo"
             File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
-  </source>
-  <source Name="Forest"
-          Type="direct"
-          Volume="0.1">
-    <buffer ChannelMapping="1 2"
-            Type="ring"
-            File="stimuli/binaural/binaural_forest.wav"/>
-  </source>
-  <source Type="direct"
-          Name="Noise">
-    <buffer ChannelMapping="1 2"
-            Type="noise"
-            Variance="0.02"
-            Mean="0.0"/>
   </source>
   <sink Position="0 0 1.75"
         UnitFront="1 0 0"
