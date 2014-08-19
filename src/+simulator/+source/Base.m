@@ -1,11 +1,11 @@
-classdef AudioSource < simulator.Object & dynamicprops
+classdef (Abstract) Base < simulator.Object
   % Class for source-objects in audio scene
-  
+
   properties
     % mute flag to mute source output
     %
     % Note that toggling Mute will fade in/out the source signal in next block.
-    % There is no instantly switch on/off. If you that behaviour, see
+    % There is no instantly switch on/off. If you want that behaviour, see
     % Volume
     %
     % See also: Volume
@@ -18,7 +18,7 @@ classdef AudioSource < simulator.Object & dynamicprops
     AudioBuffer;
     % volume of sound source (additional weighting of buffer signal)
     %
-    % Note that setting Volume to 0 is different setting Mute to false. 
+    % Note that setting Volume to 0 is different setting Mute to false.
     % Changes in Volume will instantly be applied without any cross-fade between
     % the old and the new value.
     %
@@ -26,57 +26,80 @@ classdef AudioSource < simulator.Object & dynamicprops
     % @type double
     % @default 1.0
     Volume = 1.0;
+    % impulse response file for BRS or Generic Renderer
+    %
+    % This File is required for the BRS Renderer, defining the BRIR-Dataset of
+    % the source. This should be a n-channel *.wav file. All other Renderers
+    % will ignore this property
+    %
+    % See also: simulator.xml.dbGetFile()
+    % @type DirectionalIR
+    % @default simulator.DirectionalIR()
+    IRDataset = simulator.DirectionalIR();
   end
-  
-  properties (SetAccess = private)
-    % source type
-    % @type simulator.AudioSourceType
-    Type;
-  end
-  
-  properties (SetAccess = private, Dependent)
-    % required number of channels of input signal (type dependent)
+
+  properties (SetAccess = protected)
+    % required number of channels of input signal
     % @type integer
+    % @default 1
     %
     % To set AudioBuffer to the Source object AudioBuffer.NumberOfChannels
     % has to match RequiredChannels
-    RequiredChannels;
+    RequiredChannels = 1;
   end
-  
+
   methods
-    function obj = AudioSource(type, buffer, directions)
-      % function obj = AudioSource(type, buffer, directions)
-      % 
-      % Parameters:
-      %   type: type of AudioSource @type simulator.AudioSourceType
-      %   buffer: audio buffer as signal source @type simulator.buffer.Base
-      %   directions: directions of plane wave for simulator.AudioSourceType.PWD
-      %      @type double[][]
-      obj = obj@simulator.Object();
+    function obj = Base()
+      % function obj = Base()
+      
       obj.addXMLAttribute('Mute', 'logical');
       obj.addXMLAttribute('Volume', 'double');
-      
-      obj.Type = type;
-      
-      if obj.Type == simulator.AudioSourceType.PWD
-        addprop(obj,'Directions');
-        obj.Directions = directions;
-      end
-      
-      if nargin >= 2
-        obj.AudioBuffer = buffer;
+      obj.addXMLAttribute('IRDataset',  ...
+        'simulator.DirectionalIR', ...
+        'IRs', ...
+        @(x) simulator.DirectionalIR(xml.dbGetFile(x)));
+    end
+  end
+
+  methods
+    function init(obj)
+      if obj.AudioBuffer.NumberOfOutputs ~= obj.RequiredChannels
+        obj.errormsg(...
+          'Number of outputs of obj.AudioBuffer does not match obj.RequiredChannels!');
       end
     end
   end
-  
+
+  %% SSR compatible stuff
+  methods
+    function v = ssrData(obj, BlockSize)
+      v = obj.getData(BlockSize);
+    end
+    function v = ssrChannels(obj)
+      v = obj.RequiredChannels;
+    end
+    function v = ssrMute(obj)
+      v = obj.Mute;
+    end
+    function v = ssrIRFile(obj)
+      v = cell(size(obj));
+      for idx=1:numel(v)
+        v{idx} = obj(idx).IRDataset.Filename;
+      end
+    end
+  end
+  methods (Abstract)
+    v = ssrType(obj);
+  end
+
   %% XML
   methods (Access=protected)
     function configureXMLSpecific(obj, xmlnode)
       % init Buffer
       buffer = xmlnode.getElementsByTagName('buffer').item(0);
-      
+
       mapping = 1:obj.RequiredChannels;
-      
+
       import simulator.buffer.*
       switch (char(buffer.getAttribute('Type')))
         case 'fifo'
@@ -91,25 +114,21 @@ classdef AudioSource < simulator.Object & dynamicprops
       obj.AudioBuffer.XML(buffer);
     end
   end
-  
+
   %% setter/getter
   methods
     function set.AudioBuffer(obj, b)
       isargclass('simulator.buffer.Base', b);
-      import simulator.AudioSourceType
-      
+
       if b.NumberOfOutputs ~= obj.RequiredChannels
-        error('Number of outputs of audio buffer does not match source type!');
+        obj.warnmsg(...
+          'Number of outputs of obj.AudioBuffer does not match obj.RequiredChannels!');
       end
       obj.AudioBuffer = b;
     end
-    function set.Type(obj, t)
-      isargclass('simulator.AudioSourceType', t);
-      obj.Type = t;
-    end
     function set.Volume(obj, v)
       isargpositivescalar(v);
-      obj.Volume = v;      
+      obj.Volume = v;
     end
     function v = get.Volume(obj)
       v = obj.Volume;
@@ -125,24 +144,8 @@ classdef AudioSource < simulator.Object & dynamicprops
       catch
       end
     end
-    function v = get.RequiredChannels(obj)
-      import simulator.AudioSourceType
-      
-      switch obj.Type
-        case AudioSourceType.POINT
-          v = 1;
-        case AudioSourceType.PLANE
-          v = 1;
-        case AudioSourceType.DIRECT
-          v = 2;
-        case AudioSourceType.PWD
-          v = size(obj.Directions,2);
-        otherwise
-          error('Unknown source type!');
-      end
-    end
   end
-  
+
   %% functionalities of AudioBuffer which have to be encapsulated
   methods
     function setData(obj,data)

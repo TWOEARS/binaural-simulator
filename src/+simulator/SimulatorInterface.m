@@ -1,6 +1,6 @@
 classdef (Abstract) SimulatorInterface < xml.MetaObject
   %SIMULATORINTERFACE is the base class for all configurations for the simulator
-  
+
   properties
     % blocksize for binaural renderer
     % @type integer
@@ -19,31 +19,34 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % HRIR-dataset
     % @type DirectionalIR
     HRIRDataset;
-    
+
     % maximum delay in seconds caused by distance and finite sound velocity
     % @type double
     MaximumDelay = 0.0;
-    
+    % pre-delay in seconds to handle non-causality
+    % @type double
+    PreDelay = 0.0;
+
     % array of sources
     % @type AudioSource[]
-    Sources = simulator.AudioSource.empty;
+    Sources
     % array of sinks
     % @type AudioSink[]
     Sinks = simulator.AudioSink.empty;
     % array of walls
     % @type Wall[]
     Walls = simulator.Wall.empty;
-    
+
     % order of image source model (number of subsequent reflections)
     % @type integer
     % @default 0
     ReverberationMaxOrder = 0;
-    
+
     % object for eventhandler (for dynamic scenes)
     % @type simulator.dynamic.SceneEventHandler
-    EventHandler;    
+    EventHandler;
   end
-  
+
   %% Constructor
   methods
     function obj = SimulatorInterface()
@@ -51,12 +54,14 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.addXMLAttribute('SampleRate', 'double');
       obj.addXMLAttribute('NumberOfThreads', 'double');
       obj.addXMLAttribute('MaximumDelay', 'double');
+      obj.addXMLAttribute('PreDelay', 'double');
       obj.addXMLAttribute('ReverberationMaxOrder', 'double');
+      obj.addXMLAttribute('Renderer', 'function_handle');
       obj.addXMLAttribute('HRIRDataset',  ...
         'simulator.DirectionalIR', ...
         'HRIRs', ...
         @(x) simulator.DirectionalIR(xml.dbGetFile(x)));
-      
+
       obj.addXMLElement('Sinks', ...
         'simulator.AudioSink', ...
         'sink', ...
@@ -68,7 +73,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         @(x) simulator.dynamic.SceneEventHandler(obj));
     end
   end
-  
+
   %% XML
   methods (Access=protected)
     function configureXMLSpecific(obj, xmlnode)
@@ -76,29 +81,35 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       % See also: xml.MetaObject.configureXMLSpecific
       sourceList = xmlnode.getElementsByTagName('source');
       sourceNum = sourceList.getLength;
-      
+
+      kdx = 1;
       for idx=1:sourceNum
         source = sourceList.item(idx-1);
         attr = (char(source.getAttribute('Type')));
         switch attr
           case 'point'
-            type = simulator.AudioSourceType.POINT;
+            obj.Sources{kdx} = simulator.source.Point();
+          case 'ism'
+            obj.Sources{kdx} = simulator.source.ISMGroup(obj);
           case 'plane'
-            type = simulator.AudioSourceType.PLANE;
+            obj.Sources{kdx} = simulator.source.Plane();
+          case 'pwd'
+            obj.Sources{kdx} = simulator.source.PWDGroup();
           case 'direct'
-            type = simulator.AudioSourceType.DIRECT;
+            obj.Sources{kdx} = simulator.source.Binaural;
           otherwise
             warning('source type not yet implemented for xml parsing');
+            continue;
         end
-        obj.Sources(idx) = simulator.AudioSource(type);
-        obj.Sources(idx).XML(source);
+        obj.Sources{kdx}.XML(source);
+        kdx = kdx + 1;
       end
     end
   end
-  
+
   %% some functionalities for controlling the Simulator
   % this properties can be used to invoke some of the abstract functions
-  
+
   properties
     % flag indicates if the simulator is initialited
     % @type logical
@@ -134,7 +145,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % See also: shutdown
     ShutDown;
   end
-  
+
   methods (Abstract)
     init(obj);
     refresh(obj);
@@ -185,7 +196,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       end
     end
   end
-  
+
   %% setter, getter
   methods
     function set.BlockSize(obj, BlockSize)
@@ -203,6 +214,9 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     function set.Renderer(obj, Renderer)
       if ~isa(Renderer, 'function_handle')  % check if function_handle
         error('Renderer is not a function handle');
+      end
+      if all(exist(func2str(Renderer)) ~= [2, 3])
+        error('*.m/*.mex file for Renderer function not found');
       end
       obj.errorIfInitialized;
       obj.Renderer = Renderer;
@@ -232,8 +246,8 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.Sinks = Sinks;
     end
     function set.Sources(obj, Sources)
-      isargclass('simulator.AudioSource',Sources);  % check class
-      isargvector(Sources);  % check if vector
+      isargclass('cell', Sources);
+      isargclass('simulator.source.Base', Sources{:});
       obj.errorIfInitialized;
       obj.Sources = Sources;
     end
@@ -256,7 +270,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.EventHandler = EventHandler;
     end
   end
-  
+
   %% Misc
   methods (Access = private)
     function errorIfInitialized(obj)

@@ -1,6 +1,6 @@
 classdef Object < simulator.vision.Meta & xml.MetaObject
   % Base class for scene-objects
-  
+
   % Some MetaData
   properties
     % unique identifier for this objects
@@ -10,7 +10,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % @type char{}
     Labels;
   end
-  
+
   % Geometry
   properties (SetObservable, AbortSet)
     % view-up vector
@@ -27,7 +27,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % @type double[]
     % @default [1; 0; 0]
     UnitFront;
-    
+
     % radius (spherical coordinates) of Position in degree
     % @type double
     % @default 0
@@ -59,13 +59,13 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % @default eye(3)
     RotationMatrix;
   end
-  
+
   % Dynamic Stuff
   properties (SetAccess = private)
     PositionDynamic = simulator.dynamic.AttributeLinear([0; 0; 0]);
     UnitFrontDynamic = simulator.dynamic.AttributeAngular([1; 0; 0]);
   end
-  
+
   % Hierarchical Stuff
   properties
     % Parent Object used for grouping Objects
@@ -84,7 +84,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     GroupTranslation;
     GroupRotation;
   end
-  
+
   %% Constructor
   methods
     function obj = Object()
@@ -97,7 +97,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       obj.addXMLAttribute('Labels', 'cell');
     end
   end
-  
+
   methods
     %% Rotation
     function rotateAroundFront(obj, alpha)
@@ -128,22 +128,24 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       isargcoord(n);
       isargunitvector(n);
       isargscalar(alpha);
-      
+
       c = cosd(alpha);
       omc = 1 - c;
       s = sind(alpha);
-      
+
       R = ((n*n')*omc) + ...
         [ c     , -n(3)*s,  n(2)*s; ...
         n(3)*s,  c     , -n(1)*s; ...
         -n(2)*s,  n(1)*s,  c     ];
-      
+
       obj.UnitFront = R*obj.UnitFront;
       obj.UnitUp = R*obj.UnitUp;
     end
   end
   %% dynamic stuff
   methods
+    function init(obj)
+    end
     function refresh(obj, T)
       % refresh properties with finite-speed modification
       %
@@ -155,6 +157,9 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       % timestamp which has a difference to the old timestamp of T
       %
       % See also: simulator.dynamic.AttributeLinear
+      if nargin < 2
+        return;
+      end
       obj.PositionDynamic = obj.PositionDynamic.refresh(T);
       obj.UnitFrontDynamic = obj.UnitFrontDynamic.refresh(T);
     end
@@ -205,7 +210,29 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       v = obj.([name,'Dynamic']).(prop);
     end
   end
-  
+
+  %% SSR compatible stuff
+  methods
+    function v = ssrPosition(obj)
+      v = obj.PositionXY;
+    end
+    function v = ssrOrientation(obj)
+      v = obj.OrientationXY;
+    end
+  end
+
+  %% MISC
+  methods (Access=protected)
+    function errormsg(obj, msg)
+      isargchar(msg);
+      error(['Scene Object: ', obj.Name, ' | Error: ', msg]);
+    end
+    function warnmsg(obj, msg)
+      isargchar(msg);
+      warning(['Scene Object: ', obj.Name, ' | Warning: ', msg]);
+    end
+  end
+
   %% setter, getter
   methods
     %
@@ -240,7 +267,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     %
     function v = get.UnitUp(obj)
       v = obj.GroupRotation*obj.UnitUp;
-    end    
+    end
     %
     function v = get.PositionXY(obj)
       v = obj.Position(1:2,:);
@@ -268,7 +295,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       r = sqrt(x(2).^2 + x(1).^2);
       obj.Position = [r.*cosd(v); r.*sind(v); x(3)];
     end
-    %    
+    %
     function v = get.Polar(obj)
       v = acosd(obj.Position(3,:));
     end
@@ -280,7 +307,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
         sind(phi).*sind(theta); ...
         cosd(theta)];
     end
-    %    
+    %
     function v = get.OrientationXY(obj)
       v = atan2d(obj.UnitFront(2,:), obj.UnitFront(1,:));
     end
@@ -288,7 +315,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     function v = get.RotationMatrix(obj)
       v = [obj.UnitRight, obj.UnitUp, obj.UnitFront];
     end
-    
+
     %
     function set.GroupObject(obj, v)
       isargclass('simulator.Object', v);

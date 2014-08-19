@@ -21,11 +21,11 @@ sim.loadConfig('test.xml');
 % defined BEFORE initialization in order to init properly
 sim.set('Init',true);
 
-sim.draw();
+% sim.draw();
 
 %% event based scene
 
-while ~sim.Sources(2).isEmpty();
+while ~sim.Sources{2}.isEmpty();
   sim.set('Refresh',true);
   sim.set('Process',true);
 end
@@ -36,8 +36,10 @@ sim.Sinks.saveFile('out_static.wav',sim.SampleRate);
 position = [];  % reset source position
 
 % reset inputbuffer
-sim.Sources(1).AudioBuffer.setData(input);
-sim.Sources(2).set('Mute', true);
+sim.Sources{1}.AudioBuffer.setData(input);
+sim.Sources{1}.set('Mute', true);
+
+sim.Sources{3}.set('Mute', true);
 
 % The SoundScapeRenderer (core of the Simulator) processes the input signal
 % in a blockwise manner. This implies an internal memory of the renderer saving
@@ -65,10 +67,10 @@ position(:,:,1) = [2.0*sin(alpha);-1.0+2.0*cos(alpha); 1.75*ones(size(alpha))];
 position = permute(position,[1 3 2]);
 
 idx = 0;
-while ~sim.Sources(1).isEmpty()
+while ~sim.Sources{1}.isEmpty()
   idx = idx + 1;
   pos_idx = floor( (idx-1)*sim.BlockSize/partsize ) + 1;
-  sim.Sources(1).set('Position', position(:,:,pos_idx));  % apply new source position
+  sim.Sources{1}.set('Position', position(:,:,pos_idx));  % apply new source position
   sim.set('Refresh',true);  % refresh all objects
   sim.set('Process',true);  % processing 
 end
@@ -81,11 +83,11 @@ sim.Sinks.saveFile('out_dynamic1.wav',sim.SampleRate);
 sim.Sinks.removeData();
 
 % source should be in front (distance: 1m)
-sim.Sources(1).set('Position', [0; 1.0; 1.75]);
-sim.Sources(1).AudioBuffer.setData(input);
-sim.Sources(1).set('Mute', false);
+sim.Sources{1}.set('Position', [0; 1.0; 1.75]);
+sim.Sources{1}.AudioBuffer.setData(input);
+sim.Sources{1}.set('Mute', false);
 
-sim.Sources(2).set('Mute', true);
+sim.Sources{2}.set('Mute', true);
 
 sim.Sinks.set('Position', [0; 0; 1.75]);
 sim.Sinks.set('UnitFront', [cosd(30); sind(30); 0]);
@@ -96,7 +98,7 @@ sim.set('ReInit',true);
 sim.Sinks.setDynamic('UnitFront', 'Velocity', 10);
 sim.Sinks.set('UnitFront', [cosd(150); sind(150); 0]);
 
-while ~sim.Sources(1).isEmpty()
+while ~sim.Sources{1}.isEmpty()
   sim.set('Refresh',true);  % refresh all objects
   sim.set('Process',true);
 end

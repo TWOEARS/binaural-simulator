@@ -135,7 +135,7 @@
 		<xsl:for-each select="document($Main/xsd:schema/xsd:include/@schemaLocation)">
 			<xsl:if test="key('type',$type)">
 			<xsl:text> </xsl:text>
-			<a href="#{generate-id(key('type',$type))}">{<xsl:value-of select="$type"/>}</a>
+			<a href="#{generate-id(key('type',$type))}"><xsl:value-of select="$type"/></a>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:when>
@@ -143,7 +143,7 @@
 		<xsl:for-each select="$Main">
 			<xsl:if test="key('type',$type)">
 			<xsl:text> </xsl:text>
-			<a href="#{generate-id(key('type',$type))}">{<xsl:value-of select="$type"/>}</a>
+			<a href="#{generate-id(key('type',$type))}"><xsl:value-of select="$type"/></a>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:otherwise>
@@ -156,13 +156,13 @@
 	<li>
 	<xsl:choose>
 		<xsl:when test="@name">
-				<span style="font-weight:normal; color:darkred;">&lt;<a name="{generate-id()}"><xsl:value-of select="@name"/>&gt;</a></span>
+				<span style="font-weight:bold; color:darkred;">&lt;<a name="{generate-id()}"><xsl:value-of select="@name"/>&gt;</a></span>
 					<xsl:call-template name="howmany"/>
-					<span style="font-weight:bold; color:darkblue">
+					<span style="font-weight:normal; color:darkblue">
 						<xsl:choose>
 							<xsl:when test="@type">
 								<xsl:choose>
-									<xsl:when test="contains(@type,':')">{<xsl:value-of select="@type"/>}</xsl:when>
+									<xsl:when test="contains(@type,':')"><xsl:value-of select="@type"/></xsl:when>
 									<xsl:otherwise>
 										<xsl:call-template name="link2">
 											<xsl:with-param name="Main" select="$Main"/>
@@ -173,7 +173,7 @@
 							</xsl:when>
 							<xsl:when test="@ref">
 								<xsl:choose>
-									<xsl:when test="contains(@ref,':')">{<xsl:value-of select="@ref"/>}</xsl:when>
+									<xsl:when test="contains(@ref,':')"><xsl:value-of select="@ref"/></xsl:when>
 									<xsl:otherwise>
 									<xsl:call-template name="link2">
 										<xsl:with-param name="Main" select="$Main"/>
@@ -191,12 +191,16 @@
 		</xsl:when>
 		<xsl:otherwise>	<!--only @ref-->
 					<xsl:choose>
-						<xsl:when test="contains(@ref,':')">{<xsl:value-of select="@ref"/>}</xsl:when>
+						<xsl:when test="contains(@ref,':')"><xsl:value-of select="@ref"/></xsl:when>
 						<xsl:otherwise>
-							<xsl:call-template name="link2">
-								<xsl:with-param name="Main" select="$Main"/>
-								<xsl:with-param name="type" select="@ref"/>
-							</xsl:call-template>
+							<span style="font-weight:normal; color:darkred;">
+								&lt;
+								<xsl:call-template name="link2">
+									<xsl:with-param name="Main" select="$Main"/>
+									<xsl:with-param name="type" select="@ref"/>
+								</xsl:call-template>
+								&gt;
+							</span>
 						</xsl:otherwise>
 					</xsl:choose>
 					<xsl:if test="xsd:annotation">
@@ -411,19 +415,21 @@ List of
 <ul>
 	<li>
 		<xsl:if test="@name">
-			<span style="font-weight:normal; color:darkgreen;">
+			<span style="font-weight:bold; color:darkgreen;">
 				<xsl:value-of select="@name"/>
 		    <xsl:if test="@use">
-			    (<xsl:value-of select="@use"/>)
+					<span style="font-weight:normal;">
+						(<xsl:value-of select="@use"/>)
+			    </span>
 		    </xsl:if>
         :
 			</span>
 		</xsl:if>
-		<span style="font-weight:bold; color:darkblue">
+		<span style="font-weight:normal; color:darkblue">
 			<xsl:choose>
 				<xsl:when test="@type">
 					<xsl:choose>
-						<xsl:when test="contains(@type,':')">{<xsl:value-of select="@type"/>}</xsl:when>
+						<xsl:when test="contains(@type,':')"><xsl:value-of select="@type"/></xsl:when>
 						<xsl:otherwise>
 							<xsl:call-template name="link2">
 								<xsl:with-param name="Main" select="$Main"/>
@@ -435,7 +441,7 @@ List of
 			</xsl:choose>
 		</span>
     <xsl:if test="@default">
-	    = <xsl:value-of select="@default"/>
+	    <span style="font-family:Courier; color:black"> = <xsl:value-of select="@default"/></span>
     </xsl:if>
 		<xsl:apply-templates select="xsd:annotation"/>
 		<xsl:apply-templates select="xsd:simpleType">
@@ -449,7 +455,7 @@ List of
 <xsl:param name="Main" select="/"/>
 <ul>
 	<li>
-		<span style="font-weight:bold; color:darkblue">Inherited from
+		<span style="font-weight:normal; color:darkred">Inherited from
 		<xsl:choose>
 			<xsl:when test="contains(@base,':')">{<xsl:value-of select="@base"/>}</xsl:when>
 			<xsl:otherwise>
@@ -472,9 +478,13 @@ List of
 <xsl:param name="Main" select="/"/>
 <ul>
 	<li>
-		<span style="font-weight:bold; color:darkblue">Inherited from
+		<span style="font-weight:normal; color:darkred">Inherited from
 		<xsl:choose>
-			<xsl:when test="contains(@base,':')">{<xsl:value-of select="@base"/>}</xsl:when>
+			<xsl:when test="contains(@base,':')">
+				<span style="font-weight:normal; color:darkblue">
+					<xsl:value-of select="@base"/>
+				</span>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:call-template name="link2">
 					<xsl:with-param name="Main" select="$Main"/>
@@ -522,9 +532,32 @@ pattern:<span style="font-weight:normal; color:blue">&#9;
 	</xsl:template>
 
 	<xsl:template match="xsd:documentation">
-		<span style="font-weight:normal; color:black">
-			<xsl:text>&#9; </xsl:text><p><i><xsl:value-of select="text()"/></i></p>
-		</span>
+		<ul style="position:relative; left:-2.5em; margin-bottom:0.5em">
+			<xsl:choose>
+				<xsl:when test="@xml:lang='short'">
+					<span style="font-variant:small-caps; font-weight:bold; color:black;">
+						<xsl:value-of select="text()"/>
+					</span>
+				</xsl:when>
+				<xsl:when test="@xml:lang='matlab'">
+					<xsl:text>MATLAB example: </xsl:text>
+					<span style="font-family:Courier; color:black;">
+						<xsl:value-of select="text()"/>
+					</span>
+				</xsl:when>
+				<xsl:when test="@xml:lang='see'">
+					<xsl:text>See also: </xsl:text>
+					<span style="font-weight:normal; color:darkred;">
+						<xsl:value-of select="text()"/>
+					</span>
+				</xsl:when>
+				<xsl:otherwise>
+					<span style="font-weight:normal; color:black;">
+						<i><xsl:value-of select="text()"/></i>
+					</span>
+				</xsl:otherwise>
+			</xsl:choose>
+		</ul>
 	</xsl:template>
 
 	<xsl:template name="howmany">
@@ -575,8 +608,9 @@ pattern:<span style="font-weight:normal; color:blue">&#9;
 	<body style="font:sans-serif;">
 	<h3><xsl:value-of select="xsd:schema/@id"/> Two!Ears Fileformat XMLSchema <xsl:value-of select="xsd:schema/@version"/></h3>
 	<xsl:apply-templates/>
-	<p style="font-weight:normal;text-align:right">Schema viewer developed by <a href="http://romeo.roua.org">Romeo Anghelache</a>, copyleft <a href="http://www.gnu.org">GNU</a><xsl:text> </xsl:text><a href="http://www.gnu.org/licenses/gpl.html">GPL</a>, 2001, version 1.01 <br></br>
-  Minor modifications for the <a href="http://twoears.eu">Two!Ears</a> project by <a href="http://www.int.uni-rostock.de/Staff-Info.23+B6JmNIYXNoPTYwMDg5ZDU4MDhjMjQ2NzExZDIxYjI2YWI1N2ViYmFiJnR4X2pwc3RhZmZfcGkxJTVCYmFja0lkJTVEPTMmdHhfanBzdGFmZl9waTElNUJzaG93VWlkJTVEPTExOA__.0.html">Fiete Winter</a>, 2014
+		<p style="font-weight:normal;text-align:right">Schema viewer developed by <a href="http://romeo.roua.org">Romeo Anghelache</a>, copyleft <a href="http://www.gnu.org">GNU</a><xsl:text> </xsl:text><a href="http://www.gnu.org/licenses/gpl.html">GPL</a>, 2001, version 1.01
+		<br></br>
+		Minor modifications for the <a href="http://twoears.eu" style="font-variant:small-caps" >Two!Ears</a> project by <a href="http://www.int.uni-rostock.de/Staff-Info.23+B6JmNIYXNoPTYwMDg5ZDU4MDhjMjQ2NzExZDIxYjI2YWI1N2ViYmFiJnR4X2pwc3RhZmZfcGkxJTVCYmFja0lkJTVEPTMmdHhfanBzdGFmZl9waTElNUJzaG93VWlkJTVEPTExOA__.0.html">Fiete Winter</a>, copyleft <a href="http://www.gnu.org">GNU</a><xsl:text> </xsl:text><a href="http://www.gnu.org/licenses/gpl.html">GPLv3</a>, 2014
   </p>
 	</body>
 </html>

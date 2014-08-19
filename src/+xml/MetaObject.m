@@ -1,19 +1,19 @@
 classdef (Abstract) MetaObject < hgsetget
-  % MetaObject implements the parsing funtionality to configure MATLAB-Objects 
+  % MetaObject implements the parsing funtionality to configure MATLAB-Objects
   % with XML-DOM-Nodes.
   %
   % http://www.mathworks.de/de/help/matlab/ref/xmlread.html
-  
+
   properties (SetAccess=protected)
     % array of parseable xml-attributes
     % @type xml.PropertyDescription
     XMLAttributes;
-    
+
     % array of parseable xml-elements
     % @type xml.PropertyDescription
     XMLElements;
   end
-  
+
   methods
     function XML(obj, xmlnode)
       % function XML(obj, xmlnode)
@@ -33,7 +33,7 @@ classdef (Abstract) MetaObject < hgsetget
       obj.configureXMLElements(xmlnode);
     end
   end
-  
+
   methods (Access=protected)
     function configureXMLAttributes(obj, xmlnode)
       % function configureXMLAttributes(obj, xmlnode)
@@ -46,7 +46,7 @@ classdef (Abstract) MetaObject < hgsetget
       % XMLAttributes
       for kdx = 1:length(obj.XMLAttributes)
         value = char(xmlnode.getAttribute(obj.XMLAttributes(kdx).Alias));
-        
+
         if ~isempty(value)
           obj.(obj.XMLAttributes(kdx).Name) ...
             = obj.XMLAttributes(kdx).Constructor(value);
@@ -65,7 +65,7 @@ classdef (Abstract) MetaObject < hgsetget
       for kdx = 1:length(obj.XMLElements)
         eleList = xmlnode.getElementsByTagName(obj.XMLElements(kdx).Alias);
         eleNum = eleList.getLength;
-        
+
         if eleNum > 0
           tmpElem = [];
           for idx=1:eleNum;
@@ -78,7 +78,7 @@ classdef (Abstract) MetaObject < hgsetget
         end
       end
     end
-    
+
     function configureXMLSpecific(obj, xmlnode)
       % function configureXMLSpecific(obj, xmlnode)
       % class specific configuration of object from XML-DOM-Node
@@ -119,6 +119,8 @@ classdef (Abstract) MetaObject < hgsetget
             Constructor = @(x)str2num(x);
           case 'double'
             Constructor = @(x)str2num(x).';
+          case 'function_handle'
+            Constructor = @(x)str2func(char(x));
           otherwise
             Constructor = str2func(['@(x)' Class '(x)']);
         end
@@ -151,7 +153,7 @@ classdef (Abstract) MetaObject < hgsetget
         xml.PropertyDescription(Name, Class, Alias, Constructor)];
     end
   end
-  
+
   %% getter, setter
   methods
     function set.XMLElements(obj, v)
