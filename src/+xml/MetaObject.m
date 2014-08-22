@@ -15,6 +15,16 @@ classdef (Abstract) MetaObject < hgsetget
   end
 
   methods
+    function loadConfig(obj, xmlfile)
+      % load XML-Config
+      %
+      % Parameters:
+      %   xmlfile: name of xmlfile @type char[]
+      %
+      % See also: xml.dbOpenXML xml.dbValidate xml.MetaObject.XML
+      theNode = xml.dbOpenXML(xmlfile);
+      obj.XML(theNode);
+    end
     function XML(obj, xmlnode)
       % function XML(obj, xmlnode)
       % configure object with the information from a XML-DOM-Node

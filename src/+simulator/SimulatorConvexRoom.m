@@ -10,6 +10,25 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     SSRReferencePosXY;
     SSRReferenceOriXY;
   end
+  %% Constructor  
+  methods
+    function obj = SimulatorConvexRoom(xmlfile)
+      % Constructor
+      %
+      % Parameters:
+      %   xmlfile: optional name of xmlfile @type char[] @default ''
+      %
+      % See also: xml.dbOpenXML xml.dbValidate xml.MetaObject.XML
+      
+      obj = obj@simulator.SimulatorInterface();
+      obj = obj@simulator.RobotInterface();
+      
+      if nargin < 1
+        return;
+      end
+      obj.loadConfig(xmlfile);
+    end
+  end
   %% Initialization
   methods
     function obj = init(obj)
@@ -50,15 +69,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
 
       % ensure initial scene to be valid
       obj.reinit();
-    end
-    function loadConfig(obj, filename)
-      % loadConfig(obj, filename)
-      % load XML-Config
-      %
-      % See also: xml.dbOpenXML xml.dbValidate xml.MetaObject.XML
-
-      theNode = xml.dbOpenXML(filename);
-      obj.XML(theNode);
     end
     %% Processing
     function process(obj)
@@ -144,7 +154,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     function b = isFinished(obj)
       b = true;
       for idx=1:length(obj.Sources)
-        if ~obj.Sources(idx).isEmpty()
+        if ~obj.Sources{idx}.isEmpty()
           b = false;
           return;
         end
