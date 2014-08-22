@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene
+  BlockSize="4096"
+  SampleRate="44100"
+  NumberOfThreads="1"
+  Renderer="ssr_brs"
+  HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
+  <source Type="point"
+          Name="Castanets"
+          IRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
+    <buffer ChannelMapping="1"
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
+  </source>
+  <sink Position="0 0 1.75"
+        UnitFront="0 -1 0"
+        UnitUp="0 0 1"
+        Name="Head"
+        RootPath="some/root/path/"
+        MeshFile="blub.ext"/>
+</scene>
