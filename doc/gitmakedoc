@@ -23,6 +23,9 @@ then
 fi
 
 matlab -nojvm -nosplash -r createdoc
+# copy xml schema to html output directory
+cp ../src/+xml/tef.xsd ./html/
+cp ../src/+xml/tef.xsl ./html/
 
 cd html
 
@@ -32,9 +35,11 @@ then
   read ANSWER
   if [ "$ANSWER" = Y -o "$ANSWER" = y ]
   then
-    git add . && git commit -m "Doxygen documentation for $VERSION" \
+    git add . \
+&& git rm --ignore-unmatch ./*~  \
+&& git commit -m "Doxygen documentation for $VERSION" \
 && git push --force
   else
-    firefox index.html
+    xdg-open index.html
   fi
 fi

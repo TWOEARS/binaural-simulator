@@ -1,5 +1,4 @@
 function filename = dbValidate(filename)
-% function filename = dbValidate(filename)
 % validate xml-file against schema ('tef.xsd')
 %
 % Parameters:

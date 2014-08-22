@@ -15,3 +15,7 @@ xml.dbPath([basepath, 'twoears-data']);
 SOFAdbPath(xml.dbPath());
 SOFAdbURL(xml.dbURL());
 SOFAstart(0);
+
+% Clear used variables
+clear wp1path;
+clear basepath;

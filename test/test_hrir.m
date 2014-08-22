@@ -4,7 +4,7 @@ clear all;
 test_startup;
 
 filename = fullfile(...
-  xml.dbGetFile('impulse_responses/mit_kemar_anechoic/MIT_KEMAR_anechoic_normal.sofa'));
+  xml.dbGetFile('impulse_responses/mit_kemar_anechoic/MIT_KEMAR_anechoic_1.7m_normal.sofa'));
 azimuth = 90;  % this should be left
 
 hrtf = simulator.DirectionalIR(filename);
