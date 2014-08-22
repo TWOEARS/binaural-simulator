@@ -5,33 +5,29 @@ close all
 
 test_startup;
 
-%% input signals
-[input] = ...
-  audioread(dbGetFile('stimuli/anechoic/instruments/anechoic_cello.wav'));
-
-input = single(input(:,1)./max(abs(input(:,1))));
-
-%% processing parameters
-
-sim = SimulatorConvexRoom();  % simulator object
-sim.loadConfig('test.xml');
+%% processing paramet
+sim = SimulatorConvexRoom('test_robot.xml');  % simulator object
 
 %% initialization
 % note that all the parameters including objects' positions have to be
 % defined BEFORE initialization in order to init properly
 sim.set('Init',true);
 
-sim.draw();
-
 %% static scene
-
-[sig, actualTime] = sim.getSignal(3);  % get 3 seconds signal
-display(actualTime);  % display length of sig in seconds
-sim.rotateHead(180);  % rotate the head 90 degrees to the left
-[sig] = [sig; sim.getSignal(3)];  % get 3 seconds signal
-
-sig = sig/max(abs(sig(:))); % normalize
-audiowrite('out_robot.wav',sig,sim.SampleRate);
+% get 1.5 seconds signal
+[sig, actualTime] = sim.getSignal(1.5);  
+% display length of sig in seconds
+display(actualTime);
+% rotate the head 90 degrees to the left (relative)
+sim.rotateHead(90);
+% append 2.5 seconds signal
+sig = [sig; sim.getSignal(2.5)];
+% rotate the head degrees to the right (absolute, which is 180 relative)
+sim.rotateHead(-90, 'absolute');
+% append 3 seconds signal
+sig = [sig; sim.getSignal(3)];
+% save normalized signal
+audiowrite('out_robot.wav', sig/max(abs(sig(:))),sim.SampleRate);
 
 %% clean up
 sim.set('ShutDown',true);
