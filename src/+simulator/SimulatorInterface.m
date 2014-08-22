@@ -26,6 +26,13 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % pre-delay in seconds to handle non-causality
     % @type double
     PreDelay = 0.0;
+    % maximum length of simulation in seconds
+    % @type double
+    % @default inf
+    %
+    % Setting this to inf, says that the simulation stops if all sources
+    % are empty (WHICH MAY NEVER HAPPEN!)
+    LengthOfSimulation = inf;
 
     % array of sources
     % @type AudioSource[]
@@ -55,6 +62,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.addXMLAttribute('NumberOfThreads', 'double');
       obj.addXMLAttribute('MaximumDelay', 'double');
       obj.addXMLAttribute('PreDelay', 'double');
+      obj.addXMLAttribute('LengthOfSimulation', 'double');
       obj.addXMLAttribute('ReverberationMaxOrder', 'double');
       obj.addXMLAttribute('Renderer', 'function_handle');
       obj.addXMLAttribute('HRIRDataset',  ...
@@ -230,9 +238,13 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.HRIRDataset = HRIRDataset;
     end
     function set.MaximumDelay(obj, MaximumDelay)
-      isargpositivescalar(MaximumDelay)
+      isargpositivescalar(MaximumDelay);
       obj.errorIfInitialized;
       obj.MaximumDelay = MaximumDelay;
+    end
+    function set.LengthOfSimulation(obj, LengthOfSimulation)
+      isargpositivescalar(LengthOfSimulation);
+      obj.LengthOfSimulation = LengthOfSimulation;
     end
     function set.Sinks(obj, Sinks)
       isargclass('simulator.AudioSink',Sinks);  % check class

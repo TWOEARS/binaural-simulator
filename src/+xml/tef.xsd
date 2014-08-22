@@ -139,7 +139,17 @@
       name of hrir file
           </xs:documentation>
           <xs:documentation xml:lang="matlab">
-      Simulator.HRIRDataset = simulator.DirectionalIR('/cool/HRIRs.sofa')
+      Simulator.HRIRDataset = simulator.DirectionalIR('/cool/HRIRs.sofa');
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="LengthOfSimulation" type="nonNegativeDecimal">
+        <xs:annotation>
+          <xs:documentation xml:lang="short">
+      temporal length of simulation in seconds
+          </xs:documentation>
+          <xs:documentation xml:lang="matlab">
+      Simulator.LengthOfSimulation = 5.2;
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -201,7 +211,7 @@
           <xs:element name="buffer" type="buffer_t" />
         </xs:sequence>
         <xs:attribute name="Mute" type="xs:boolean" use="optional"/>
-        <xs:attribute name="Type" type="source_model_t" default="point"/>
+        <xs:attribute name="Type" type="source_model_t" use="required"/>
         <xs:attribute name="Volume" type="nonNegativeDecimal" default="1.0"/>
         <xs:attribute name="IRs" type="xs:token"/>
         <xs:attribute name="Directions" type="coord3Darray_t" use="optional"/>
@@ -311,7 +321,7 @@
   </xs:simpleType>
 
   <xs:simpleType name="positiveDecimal">
-    <xs:restriction base="nonNegativeDecimal">
+    <xs:restriction base="xs:decimal">
       <xs:minExclusive value="0.0"/>
     </xs:restriction>
   </xs:simpleType>

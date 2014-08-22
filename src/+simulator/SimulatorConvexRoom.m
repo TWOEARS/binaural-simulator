@@ -9,8 +9,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     SSRMute;
     SSRReferencePosXY;
     SSRReferenceOriXY;
+
+    Time = 0.0;
   end
-  %% Constructor  
+  %% Constructor
   methods
     function obj = SimulatorConvexRoom(xmlfile)
       % Constructor
@@ -19,10 +21,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       %   xmlfile: optional name of xmlfile @type char[] @default ''
       %
       % See also: xml.dbOpenXML xml.dbValidate xml.MetaObject.XML
-      
+
       obj = obj@simulator.SimulatorInterface();
       obj = obj@simulator.RobotInterface();
-      
+
       if nargin < 1
         return;
       end
@@ -127,6 +129,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       end
 
       obj.updateSSRarrays;
+
+      % increase the time
+      obj.Time = obj.Time + obj.BlockSize/obj.SampleRate;
     end
   end
   methods (Access = private)
@@ -153,6 +158,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     %% isFinished?
     function b = isFinished(obj)
       b = true;
+      if obj.Time >= obj.LengthOfSimulation
+        return;
+      end
       for idx=1:length(obj.Sources)
         if ~obj.Sources{idx}.isEmpty()
           b = false;
@@ -197,6 +205,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
 
       % clear convolver memory by processing some zeros
       obj.clearmemory();
+
+      % reset global time
+      obj.Time = 0.0;
     end
     %% Clear Memory
     function clearmemory(obj)
