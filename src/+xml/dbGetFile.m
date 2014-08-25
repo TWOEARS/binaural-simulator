@@ -3,7 +3,8 @@ function filename = dbGetFile(filename)
 %
 % Parameters:
 %   filename: filename
-% Parameters:
+%
+% Return values:
 %   filename: filename of file found locally or in database
 %
 % search for file specified by filename relative to current directory.
@@ -29,12 +30,12 @@ catch
     isargfile(fullfile(dbPath(),filename));
     filename = fullfile(dbPath(),filename);
   catch
-    fprintf(['INFO: file (%s) not found in local database (dbPath=%s),', ... 
+    fprintf(['INFO: file (%s) not found in local database (dbPath=%s),', ...
       'trying remote database\n'], filename, dbPath());
-    
+
     % try cache of remote database
     try
-      tmppath = fileparts(mfilename('fullpath')); 
+      tmppath = fileparts(mfilename('fullpath'));
       tmppath = [tmppath, filesep, '..', filesep, 'tmp'];
       isargfile(fullfile(tmppath,filename));
       filename = fullfile(tmppath,filename);
@@ -42,6 +43,6 @@ catch
     catch
       % try download from remote database
       filename = dbDownloadFile(filename);
-    end      
-  end    
+    end
+  end
 end

@@ -4,7 +4,7 @@ function filename = dbValidate(filename)
 % Parameters:
 %   filename: filename of xml-file (*.xml)
 %
-% Parameters:
+% Return values:
 %   filename: absolute path to validated xml-file
 %
 % See also: xml.dbGetFile
