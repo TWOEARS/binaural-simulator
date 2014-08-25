@@ -114,7 +114,7 @@ classdef DirectionalIR < hgsetget
 
       tf = obj.getImpulseResponses(azimuth);
 
-      tfmax = max(max(abs(tf.left(:)),abs(tf.left(:))));
+      tfmax = max(max(abs(tf.left(:)),abs(tf.right(:))));
 
       tl = 20*log10(abs(tf.left)/tfmax);
       tr = 20*log10(abs(tf.right)/tfmax);
@@ -153,7 +153,7 @@ classdef DirectionalIR < hgsetget
         case 'SingleRoomDRIR'
           % convert to spherical coordinates
           data.ListenerView = SOFAconvertCoordinates(...
-            data.ListenerView ,data.ListenerView_Type,'spherical');
+            data.ListenerView, data.ListenerView_Type,'spherical');
           % find entries with zero elevation angle
           select = find(data.ListenerView(:,2) == 0);
           % sort remaining with respect to azimuth angle
