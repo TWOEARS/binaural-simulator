@@ -1,0 +1,57 @@
+// THIS FILE CONTAINS SOME DOXYGEN DOCUMENTATION:
+
+/// @file
+/// Some Doxygen documentation
+
+// MAIN PAGE
+/** @mainpage
+
+Website: http://twoears.eu/
+
+This documentation: http://twoears.github.io/twoears-wp1-doc/
+
+Development pages: https://github.com/TWOEARS/twoears-wp1
+
+Blog: http://spatialaudio.net
+
+Components:
+
+- central simulation framework: simulator.SimulatorConvexRoom
+
+- several audio source classes: simulator.source
+
+- buffers as input for audio sources: simulator.buffer
+
+- handle scene dynamics: simulator.dynamic
+
+- XML schema for the definition of audio-visual scenarios: <a href="tef.xsd">Link to XML schema</a>
+
+- XML parsing and access to Two!Ears database: @ref xml
+
+Copyright (c) 2013-2014 Institut für Nachrichtentechnik, Universität Rostock
+
+**/
+// EXAMPLES
+/**
+@example test_brs.m
+@example test_binaural.m
+@example test_robot.m
+@example test_hrir.m
+**/
+
+// NAMESPACES
+/**
+@namespace simulator
+@brief package contains several acoustic source types
+@namespace simulator.buffer
+@brief package contains buffers as input for audio sources
+@namespace simulator.source
+@brief package contains several audio source classes
+@namespace simulator.dynamic
+@brief contains event handler and tools to modify attributes of scene objects
+over time
+@namespace xml
+@brief package contains functionalities for parsing xml files for scene
+scene description and accessing necessary additional files from the
+database
+**/

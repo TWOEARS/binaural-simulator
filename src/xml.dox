@@ -1,5 +1,0 @@
-/** @namespace xml
- * @brief package contains functionalities for parsing xml files for scene
- *   scene description and accessing necessary additional files from the
- *   database.
- */

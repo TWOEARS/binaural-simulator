@@ -1,4 +1,0 @@
-/** @namespace simulator
- * @brief package contains functionalities for parsing simulating acoustic
- *   scenes using HRTF datasets.
- */
