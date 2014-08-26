@@ -3,20 +3,25 @@
   BlockSize="4096"
   SampleRate="44100"
   MaximumDelay="0.05"
-  PreDelay="0.0"
-  LengthOfSimulation="5.0"
+  LengthOfSimulation="7.0"
   NumberOfThreads="1"
   Renderer="ssr_binaural"
+  ReverberationMaxOrder="2"
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
-  <source Position="1 2 1.75"
-          Type="point"
-          Name="Cello">
+  <source Position="0 1 1.75"
+          Type="ism"
+          Name="Castanets">
     <buffer ChannelMapping="1"
             Type="fifo"
-            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
+            File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
   </source>
   <sink Position="0 0 1.75"
         UnitFront="1 0 0"
         UnitUp="0 0 1"
         Name="Head"/>
+  <wall Position="4 0 1.75"
+        UnitFront="-1 0 0"
+        UnitUp="0 0 1"
+        Vertices="3 -3; 3 3; -3 3; -3 -3"
+        Name="Wall"/>
 </scene>

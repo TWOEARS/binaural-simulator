@@ -1,5 +1,3 @@
-% Script for testing the MEX file for the Binaural renderer
-
 clear all
 close all
 

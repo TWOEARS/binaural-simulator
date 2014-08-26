@@ -1,0 +1,14 @@
+clc;
+test_hrir;
+clc;
+test_binaural;
+clc;
+test_imagesource;
+clc;
+test_diffuse;
+clc;
+test_direct;
+clc;
+test_brs;
+clc;
+test_robot;

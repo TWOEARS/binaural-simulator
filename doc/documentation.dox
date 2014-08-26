@@ -32,7 +32,11 @@ Test Scripts:
 
 - HRIR renderer: @ref test_binaural.m
 
+- image source model: @ref test_imagesource.m
+
 - diffuse sound sources: @ref test_diffuse.m
+
+- direct binaural input: @ref test_direct.m
 
 - BRIR renderer: @ref test_brs.m
 

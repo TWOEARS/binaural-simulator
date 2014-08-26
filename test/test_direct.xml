@@ -8,12 +8,11 @@
   NumberOfThreads="1"
   Renderer="ssr_binaural"
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
-  <source Position="1 2 1.75"
-          Type="point"
-          Name="Cello">
-    <buffer ChannelMapping="1"
+  <source Type="direct"
+          Name="Forest">
+    <buffer ChannelMapping="1 2"
             Type="fifo"
-            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
+            File="stimuli/binaural/binaural_forest.wav"/>
   </source>
   <sink Position="0 0 1.75"
         UnitFront="1 0 0"

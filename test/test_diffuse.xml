@@ -2,18 +2,19 @@
 <scene
   BlockSize="4096"
   SampleRate="44100"
-  MaximumDelay="0.05"
+  MaximumDelay="0.0"
   PreDelay="0.0"
   LengthOfSimulation="5.0"
   NumberOfThreads="1"
   Renderer="ssr_binaural"
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
-  <source Position="1 2 1.75"
-          Type="point"
-          Name="Cello">
-    <buffer ChannelMapping="1"
-            Type="fifo"
-            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
+  <source Type="pwd"
+          Name="Noise"
+          Azimuths="120 105 90 75 60">
+    <buffer ChannelMapping="1 2 3 4 5"
+            Type="noise"
+            Variance="0.02"
+            Mean="0.0"/>
   </source>
   <sink Position="0 0 1.75"
         UnitFront="1 0 0"
