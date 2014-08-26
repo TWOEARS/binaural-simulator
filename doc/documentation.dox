@@ -28,17 +28,23 @@ Components:
 
 - XML parsing and access to Two!Ears database: @ref xml
 
+Test Scripts:
+
+- HRIR renderer: @ref test_binaural.m
+
+- diffuse sound sources: @ref test_diffuse.m
+
+- BRIR renderer: @ref test_brs.m
+
+- Robot Interface: @ref test_robot.m
+
+- Impulse Response Interface: @ref test_hrir.m
+
+
+
 Copyright (c) 2013-2014 Institut für Nachrichtentechnik, Universität Rostock
 
 **/
-// EXAMPLES
-/**
-@example test_brs.m
-@example test_binaural.m
-@example test_robot.m
-@example test_hrir.m
-**/
-
 // NAMESPACES
 /**
 @namespace simulator
