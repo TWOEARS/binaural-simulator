@@ -288,67 +288,36 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     end
   end
 
-%   %% misc.
-%   methods
-%     function draw(obj,id)
-%       % function draw(obj)
-%       % plot walls, sources, sinks + image sources/sinks
-%       if nargin < 2
-%         id = figure;
-%       else
-%         figure(id);
-%       end
-%
-%       head_pos = [obj.Sinks.Position];
-%       img_head_pos = [obj.ImageSinks.Position];
-%       src_pos = [obj.Sources(obj.mirroredSourcesDx).Position];
-%       if obj.NumberOfImageSources > 0
-%         img_pos = [obj.ImageSources.Position];
-%         img_mute = [obj.ImageSources.Mute];
-%       end
-%
-%       % Draw Walls
-%       for i=1:length(obj.Walls)
-%         obj.Walls(i).draw(id);
-%       end
-%
-%       hold on;
-%       % Draw Head-Position
-%       h(1) = plot3(head_pos(1), head_pos(2), head_pos(3),'kx');
-%       % Draw Image-Head-Positions
-%       h(2) = plot3(img_head_pos(1,:), ...
-%         img_head_pos(2,:), ...
-%         img_head_pos(3,:), ...
-%         'go');
-%
-%       if obj.NumberOfImageSources > 0
-%         % Draw Source-Position
-%         h(3) = plot3(src_pos(1,:), src_pos(2,:), src_pos(3,:),'rx');
-%         % Draw Active/Valid Sources
-%         if min(img_mute) == 0
-%           h(4) = plot3(img_pos(1,~img_mute), ...
-%             img_pos(2,~img_mute), ...
-%             img_pos(3,~img_mute),  ...
-%             'bo');
-%         end
-%         % Draw Inactive/Invalid Sources
-%         if max(img_mute) == 1
-%           h(5) = plot3(img_pos(1,img_mute), ...
-%             img_pos(2,img_mute), ...
-%             img_pos(3,img_mute), ...
-%             'b.');
-%         end
-%       end
-%
-%       hold off;
-%       axis equal;
-%       legend(h, ...
-%         {'Head', ...
-%         'Image-Heads', ...
-%         'Sources', ...
-%         'Active Image-Sources', ...
-%         'Inactive Image-Sources'} ...
-%         );
-%     end
-%   end
+  %% MISC
+  methods
+    function plot(obj, id)
+      % function plot(obj, id)
+      % plot walls, sources, sinks + image sources/sinks
+      if nargin < 2
+        id = figure;
+      else
+        figure(id);
+      end
+
+      h = [];
+      leg = {};
+      hold on;
+      for idx=1:length(obj.Sources)
+        [htmp, legtmp] = obj.Sources{idx}.plot(id);
+        h = [h, htmp];
+        leg = [leg, legtmp];
+      end
+      [htmp, legtmp] = obj.Sinks.plot(id);
+      h = [h, htmp];
+      leg = [leg, legtmp];
+      for idx=1:length(obj.Walls)
+        [htmp, legtmp] = obj.Walls(idx).plot(id);
+        h = [h, htmp];
+        leg = [leg, legtmp];
+      end
+      hold off;
+      axis equal;
+      legend(h, leg);
+    end
+  end
 end

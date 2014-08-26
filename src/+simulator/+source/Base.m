@@ -51,7 +51,7 @@ classdef (Abstract) Base < simulator.Object
   methods
     function obj = Base()
       % function obj = Base()
-      
+
       obj.addXMLAttribute('Mute', 'logical');
       obj.addXMLAttribute('Volume', 'double');
       obj.addXMLAttribute('IRDataset',  ...
@@ -112,6 +112,23 @@ classdef (Abstract) Base < simulator.Object
           error('source type (%s) not supported',char(buffer.getAttribute('Type')));
       end
       obj.AudioBuffer.XML(buffer);
+    end
+  end
+
+  %% MISC
+  methods
+    function [h, leg] = plot(obj, figureid)
+      if nargin < 2
+        figure;
+      else
+        figure(figureid);
+      end
+
+      [h, leg] = obj.plot@simulator.Object(figureid);
+      set(h,'MarkerEdgeColor', [0, 0, 0]);
+      if (~obj.Mute)
+        set(h,'MarkerFaceColor', [1.0, 0, 0]);
+      end
     end
   end
 

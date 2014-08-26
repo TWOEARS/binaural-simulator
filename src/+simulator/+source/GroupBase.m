@@ -32,6 +32,28 @@ classdef GroupBase < simulator.source.Base
     end
   end
 
+  %% MISC
+  methods
+    function [h, leg] = plot(obj, figureid)
+      if nargin < 2
+        figure;
+      else
+        figure(figureid);
+      end
+
+      [h, leg] = obj.plot@simulator.source.Base(figureid);
+      set(h, 'MarkerFaceColor', 'none');
+      set(h, 'MarkerSize', 10);
+
+      for idx=1:length(obj.SubSources)
+        [htmp, legtmp] = obj.SubSources(idx).plot(figureid);
+        set(htmp, 'MarkerFaceColor', 0.5*get(htmp, 'MarkerFaceColor'));
+        h = [h, htmp];
+        leg = [leg, legtmp];
+      end
+    end
+  end
+
   %% setter/getter
   methods
     function set.SubSources(obj, v)

@@ -233,6 +233,20 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     end
   end
 
+  methods
+    function [h, leg] = plot(obj, figureid)
+      if nargin < 2
+        figure;
+      else
+        figure(figureid);
+      end
+      % Draw Head-Position
+      pos = obj.Position;
+      h = plot3(pos(1), pos(2), pos(3),'k.');
+      leg = {[obj.Name, ' (', class(obj), ')']};
+    end
+  end
+
   %% setter, getter
   methods
     %

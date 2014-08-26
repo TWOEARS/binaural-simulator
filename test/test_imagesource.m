@@ -18,7 +18,9 @@ while ~sim.isFinished()
   sim.set('Process',true);
 end
 
+sim.plot();
+
 % save file
 sim.Sinks.saveFile('out_imagesource.wav',sim.SampleRate);
 %% clean up
-% sim.set('ShutDown',true);
+sim.set('ShutDown',true);

@@ -1,7 +1,7 @@
 clear all
 close all
 
-test_startup; 
+test_startup;
 
 %% processing paramet
 sim = SimulatorConvexRoom('test_diffuse.xml');  % simulator object
@@ -17,6 +17,8 @@ while ~sim.isFinished()
   sim.set('Refresh',true);  % refresh all objects
   sim.set('Process',true);
 end
+
+sim.plot();
 
 % save file
 sim.Sinks.saveFile('out_diffuse.wav',sim.SampleRate);

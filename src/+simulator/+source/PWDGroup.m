@@ -41,6 +41,21 @@ classdef PWDGroup < simulator.source.GroupBase
       v = repmat(obj.Mute, 1, obj.RequiredChannels);
     end
   end
+
+  %% MISC
+  methods
+    function [h, leg] = plot(obj, figureid)
+      if nargin < 2
+        figure;
+      else
+        figure(figureid);
+      end
+
+      [h, leg] = obj.plot@simulator.source.GroupBase(figureid);
+      set(h(1),'Marker','^');
+    end
+  end
+
   %% getter/setter
   methods
     function v = get.Directions(obj)

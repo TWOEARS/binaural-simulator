@@ -22,6 +22,8 @@ while ~sim.isFinished()
   sim.set('Process',true);
 end
 
+sim.plot();
+
 % save file
 sim.Sinks.saveFile('out_binaural.wav',sim.SampleRate);
 %% clean up
