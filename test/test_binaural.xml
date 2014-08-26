@@ -10,13 +10,13 @@
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
   <source Position="1 2 1.75"
           Type="point"
-          Name="Cello">
+          Name="Cello"
+          Volume="0.4">
     <buffer ChannelMapping="1"
             Type="fifo"
             File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
   </source>
   <source Position="1 -2 1.75"
-          Mute="true"
           Type="point"
           Name="Castanets">
     <buffer ChannelMapping="1"

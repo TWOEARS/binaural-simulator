@@ -27,6 +27,9 @@ classdef GroupBase < simulator.source.Base
     function v = ssrMute(obj)
       v = obj.Mute | [obj.SubSources.Mute];
     end
+    function v = ssrGain(obj)
+      v = obj.Volume .* [obj.SubSources.Volume];
+    end
     function v = ssrIRFile(obj)
       v = obj.SubSources.ssrIRFile;
     end

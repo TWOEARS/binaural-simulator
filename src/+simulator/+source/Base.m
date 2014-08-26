@@ -4,28 +4,28 @@ classdef (Abstract) Base < simulator.Object
   properties
     % mute flag to mute source output
     %
-    % Note that toggling Mute will fade in/out the source signal in next block.
-    % There is no instantly switch on/off. If you want that behaviour, see
-    % Volume
+    % Note that toggling Mute will fade in/out the source signal in the next
+    % block. There is no instant switch on/off.
     %
     % See also: Volume
     %
     % @type logical
     % @default false
     Mute = false;
-    % audio buffer which contains input signal of source
-    % @type simulator.buffer.Base
-    AudioBuffer;
-    % volume of sound source (additional weighting of buffer signal)
+    % volume of sound source
     %
-    % Note that setting Volume to 0 is different setting Mute to false.
-    % Changes in Volume will instantly be applied without any cross-fade between
-    % the old and the new value.
+    % Linear factor (0.0 == silence). Note that changing the Volume will result
+    % in a cross-fade between the old and new volume value in the next block.
+    % There is no instant switch between the two values.
     %
     % See also: Mute
+    %
     % @type double
     % @default 1.0
     Volume = 1.0;
+    % audio buffer which contains input signal of source
+    % @type simulator.buffer.Base
+    AudioBuffer;
     % impulse response file for BRS or Generic Renderer
     %
     % This File is required for the BRS Renderer, defining the BRIR-Dataset of
@@ -81,6 +81,9 @@ classdef (Abstract) Base < simulator.Object
     function v = ssrMute(obj)
       v = obj.Mute;
     end
+    function v = ssrGain(obj)
+      v = obj.Volume;
+    end
     function v = ssrIRFile(obj)
       v = cell(size(obj));
       for idx=1:numel(v)
@@ -127,7 +130,8 @@ classdef (Abstract) Base < simulator.Object
       [h, leg] = obj.plot@simulator.Object(figureid);
       set(h,'MarkerEdgeColor', [0, 0, 0]);
       if (~obj.Mute)
-        set(h,'MarkerFaceColor', [1.0, 0, 0]);
+        white = 1.0 - min(1.0, abs(obj.Volume));
+        set(h,'MarkerFaceColor', [1.0, white, white]);
       end
     end
   end

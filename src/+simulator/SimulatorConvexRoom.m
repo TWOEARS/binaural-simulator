@@ -7,6 +7,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     SSRPositionXY;
     SSROrientationXY;
     SSRMute;
+    SSRGain;
     SSRReferencePosXY;
     SSRReferenceOriXY;
 
@@ -55,6 +56,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       obj.SSRReferencePosXY = zeros(2, 1);
       obj.SSRReferenceOriXY = zeros(1, 1);
       obj.SSRMute = false(1, obj.NumberOfSSRSources);
+      obj.SSRGain = ones(1, obj.NumberOfSSRSources);
       obj.SSRInput = single(zeros(obj.BlockSize, obj.NumberOfSSRSources));
 
       % SSR initialization parameters
@@ -146,6 +148,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
 
         obj.SSRPositionXY(:, range) = obj.Sources{idx}.ssrPosition();
         obj.SSROrientationXY(:, range) = obj.Sources{idx}.ssrOrientation();
+        obj.SSRGain(:, range) = obj.Sources{idx}.ssrGain();
         obj.SSRMute(:, range) = obj.Sources{idx}.ssrMute();
 
         begin = range(end) + 1;
@@ -232,6 +235,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       obj.SSROrientationXY = [];
       obj.SSRReferencePosXY = [];
       obj.SSRReferenceOriXY = [];
+      obj.SSRGain = [];
       obj.SSRMute = [];
       obj.SSRInput = [];
 
