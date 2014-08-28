@@ -48,11 +48,13 @@ classdef GroupBase < simulator.source.Base
       set(h, 'MarkerFaceColor', 'none');
       set(h, 'MarkerSize', 10);
 
-      for idx=1:length(obj.SubSources)
-        [htmp, legtmp] = obj.SubSources(idx).plot(figureid);
-        if ~obj.SubSources(idx).Mute
-          set(htmp, 'MarkerFaceColor', 0.5*get(htmp, 'MarkerFaceColor'));
-        end        
+      for src = obj.SubSources
+        [htmp, legtmp] = src.plot(figureid);
+        if ~src.Mute
+          white = 1.0 - min(1.0, src.Volume);
+          color = min(get(htmp, 'MarkerFaceColor') + white, 1.0);
+          set(htmp, 'MarkerFaceColor', color);
+        end
         h = [h, htmp];
         leg = [leg, legtmp];
       end
