@@ -50,7 +50,9 @@ classdef GroupBase < simulator.source.Base
 
       for idx=1:length(obj.SubSources)
         [htmp, legtmp] = obj.SubSources(idx).plot(figureid);
-        set(htmp, 'MarkerFaceColor', 0.5*get(htmp, 'MarkerFaceColor'));
+        if ~obj.SubSources(idx).Mute
+          set(htmp, 'MarkerFaceColor', 0.5*get(htmp, 'MarkerFaceColor'));
+        end        
         h = [h, htmp];
         leg = [leg, legtmp];
       end
