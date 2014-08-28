@@ -173,15 +173,10 @@ classdef (Abstract) Base < simulator.Object
       obj.AudioBuffer.setData(data);
     end
     function d = getData(obj,length)
-      if obj.Volume ~= 0
-        if nargin < 2
-          d = obj.AudioBuffer.getData();
-        else
-          d = obj.AudioBuffer.getData(length);
-        end
-        d = obj.Volume.*d;
+      if nargin < 2
+        d = obj.AudioBuffer.getData();
       else
-        d = zeros(length,obj.RequiredChannels);
+        d = obj.AudioBuffer.getData(length);
       end
     end
     function removeData(obj, length)
