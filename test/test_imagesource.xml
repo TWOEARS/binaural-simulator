@@ -19,9 +19,12 @@
         UnitFront="1 0 0"
         UnitUp="0 0 1"
         Name="Head"/>
-  <wall Position="4 0 1.75"
-        UnitFront="-1 0 0"
-        UnitUp="0 0 1"
+  <wall Position="0 0 0"
+        UnitFront="0 0 1"
+        UnitUp="0 1 0"
         Vertices="3 -3; 3 3; -3 3; -3 -3"
-        Name="Wall"/>
+        Room="2D"
+        RoomHeight="2.50"
+        Name="Room"
+        ReflectionCoeff="0.8"/>
 </scene>

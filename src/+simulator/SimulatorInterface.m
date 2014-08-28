@@ -74,11 +74,12 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         'simulator.AudioSink', ...
         'sink', ...
         @(x)simulator.AudioSink(2));
-      obj.addXMLElement('Walls', 'simulator.Wall', 'wall');
       obj.addXMLElement('EventHandler', ...
         'simulator.dynamic.SceneEventHandler', ...
         'dynamic', ...
         @(x) simulator.dynamic.SceneEventHandler(obj));
+      % sources and walls do not occur here because they have to be handled
+      % in a different way. See configureXMLSpecific.
     end
   end
 
@@ -87,6 +88,8 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     function configureXMLSpecific(obj, xmlnode)
       % function configureXMLSpecific(obj, xmlnode)
       % See also: xml.MetaObject.configureXMLSpecific
+
+      % special handling of source objects
       sourceList = xmlnode.getElementsByTagName('source');
       sourceNum = sourceList.getLength;
 
@@ -111,6 +114,44 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         end
         obj.Sources{kdx}.XML(source);
         kdx = kdx + 1;
+      end
+
+      % special handling of wall objects
+      wallList = xmlnode.getElementsByTagName('wall');
+      wallNum = wallList.getLength;
+      kdx = 1;
+      for idx=1:wallNum
+        wall = wallList.item(idx-1);
+
+        % create new wall object and do the xml-parsing for the wall
+        wallObj = simulator.Wall();
+        wallObj.XML(wall);
+
+        % try to get the room informations
+        roomtype = (char(wall.getAttribute('Room')));
+
+        % try to get the room height
+        roomheight = str2num(wall.getAttribute('RoomHeight'));
+
+        % distinguish the number of walls which will be generated
+        switch roomtype
+          case ''
+            range = kdx;
+            obj.Walls(kdx) = wallObj;
+          case '2D'
+            range = kdx+3;
+            obj.Walls(kdx:range) = ...
+              wallObj.createUniformPrism(roomheight, roomtype);
+            delete(wallObj);
+          case '3D'
+            range = kdx+5;
+            obj.Walls(kdx:range) = ...
+              wallObj.createUniformPrism(roomheight, roomtype);
+          otherwise
+            error('room type not yet supported for xml parsing');
+        end
+
+        kdx = range + 1;
       end
     end
   end
