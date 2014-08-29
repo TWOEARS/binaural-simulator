@@ -28,7 +28,7 @@ classdef GroupBase < simulator.source.Base
       v = obj.Mute | [obj.SubSources.Mute];
     end
     function v = ssrGain(obj)
-      v = obj.Volume .* [obj.SubSources.Volume];
+      v = [obj.SubSources.Volume];
     end
     function v = ssrIRFile(obj)
       v = obj.SubSources.ssrIRFile;
@@ -50,11 +50,6 @@ classdef GroupBase < simulator.source.Base
 
       for src = obj.SubSources
         [htmp, legtmp] = src.plot(figureid);
-        if ~src.Mute
-          white = 1.0 - min(1.0, src.Volume);
-          color = min(get(htmp, 'MarkerFaceColor') + white, 1.0);
-          set(htmp, 'MarkerFaceColor', color);
-        end
         h = [h, htmp];
         leg = [leg, legtmp];
       end

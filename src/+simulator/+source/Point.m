@@ -56,7 +56,7 @@ classdef Point < simulator.source.Base & dynamicprops
   methods
     function [h, leg] = plot(obj, figureid)
       if nargin < 2
-        figure;
+        figureid = figure;
       else
         figure(figureid);
       end
