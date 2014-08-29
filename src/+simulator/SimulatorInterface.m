@@ -100,8 +100,10 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         switch attr
           case 'point'
             obj.Sources{kdx} = simulator.source.Point();
-          case 'ism'
-            obj.Sources{kdx} = simulator.source.ISMGroup(obj);
+          case 'ism_shoebox'
+            obj.Sources{kdx} = simulator.source.ISMShoeBox(obj);
+          case 'ism_convex'
+            obj.Sources{kdx} = simulator.source.ISMConvex(obj);
           case 'plane'
             obj.Sources{kdx} = simulator.source.Plane();
           case 'pwd'

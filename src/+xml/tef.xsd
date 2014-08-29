@@ -226,7 +226,8 @@
       <xs:enumeration value="point"/>
       <xs:enumeration value="direct"/>
       <xs:enumeration value="pwd"/>
-      <xs:enumeration value="ism"/>
+      <xs:enumeration value="ism_shoebox"/>
+      <xs:enumeration value="ism_convex"/>
     </xs:restriction>
   </xs:simpleType>
 

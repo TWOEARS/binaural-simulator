@@ -6,7 +6,7 @@ classdef Image < simulator.ImageObject & simulator.source.Point
       if nargin < 1
         OriginalSource = [];
       else
-        isargclass('simulator.source.ISMGroup', OriginalSource);
+        isargclass('simulator.source.ISMGroupBase', OriginalSource);
       end
       obj = obj@simulator.ImageObject();
       obj = obj@simulator.source.Point();
