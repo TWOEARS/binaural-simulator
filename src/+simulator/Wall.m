@@ -2,9 +2,18 @@ classdef Wall < simulator.Polygon
   % Class for wall objects used for mirror image model
 
   properties
-    % amount of acoustic pressure which is reflected by wall
+    % amount of acoustic pressure which is reflected by the wall
     % @type double
+    % @default 1.0
     ReflectionCoeff = 1.0;
+  end
+
+  properties (Dependent)
+    % amount of acoustic energy which is absorbed by the wall
+    %
+    % @default 0.0
+    % @type double
+    AbsorptionCoeff;
   end
 
   %% Constructor
@@ -12,6 +21,7 @@ classdef Wall < simulator.Polygon
     function obj = Wall()
       obj = obj@simulator.Polygon();
       obj.addXMLAttribute('ReflectionCoeff', 'double');
+      obj.addXMLAttribute('AbsorptionCoeff', 'double');
     end
   end
 
@@ -126,8 +136,21 @@ classdef Wall < simulator.Polygon
   %% setter/getter
   methods
     function set.ReflectionCoeff(obj, v)
-      isargpositivescalar(v);
+      isargscalar(v);
+      if abs(v) > 1
+        error('ReflectionCoeff must be between -1 and +1');
+      end
       obj.ReflectionCoeff = v;
+    end
+    function v = get.AbsorptionCoeff(obj)
+      v = 1 - obj.ReflectionCoeff.^2;
+    end
+    function set.AbsorptionCoeff(obj, v)
+      isargpositivescalar(v);
+      if v > 1
+        error('AbsorptionCoeff must be smaller equal 1');
+      end
+      obj.ReflectionCoeff = - sqrt(1 - v);
     end
   end
 end

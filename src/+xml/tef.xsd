@@ -243,6 +243,7 @@
     <xs:complexContent>
       <xs:extension base="object_t">
         <xs:attribute name="ReflectionCoeff" type="reflection_t" default="1.0"/>
+        <xs:attribute name="AbsorptionCoeff" type="absorption_t" use="optional"/>
         <xs:attribute name="Vertices" type="coord2Darray_t" use="required"/>
         <xs:attribute name="Room" type="room_t" use="optional"/>
         <xs:attribute name="RoomHeight" type="positiveDecimal" use="optional"/>
@@ -251,6 +252,13 @@
   </xs:complexType>
 
   <xs:simpleType name="reflection_t">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="-1"/>
+      <xs:maxInclusive value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="absorption_t">
     <xs:restriction base="positiveDecimal">
       <xs:maxInclusive value="1"/>
     </xs:restriction>

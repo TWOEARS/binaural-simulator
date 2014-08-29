@@ -148,7 +148,7 @@ classdef (Abstract) Base < simulator.Object
       obj.AudioBuffer = b;
     end
     function set.Volume(obj, v)
-      isargpositivescalar(v);
+      isargscalar(v);
       obj.Volume = v;
     end
     function v = get.Volume(obj)
