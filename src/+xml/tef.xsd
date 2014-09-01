@@ -33,32 +33,37 @@
       of the scene element.
       </xs:documentation>
       <xs:documentation xml:lang="matlab">
-      Simulator = simulator.SimulatorConvexRoom();
+      simObject = simulator.SimulatorConvexRoom();
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="source" minOccurs="1" maxOccurs="unbounded">
-          <xs:annotation><xs:documentation xml:lang="matlab">
-      Simulator.Sources{2} = simulator.source.PlaneWave();
-          </xs:documentation>
-          <xs:documentation xml:lang="see">
-      source
-          </xs:documentation></xs:annotation>
-        </xs:element>
+        <xs:element ref="source" minOccurs="1" maxOccurs="unbounded"/>
         <xs:element ref="sink" minOccurs="1"/>
         <xs:element ref="wall" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="dynamic" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
       <xs:attribute name="BlockSize" type="xs:positiveInteger" default="8192">
-        <xs:annotation><xs:documentation xml:lang="short">
+        <xs:annotation>
+          <xs:documentation xml:lang="short">
       number of samples inside one processing frame
-        </xs:documentation></xs:annotation>
+          </xs:documentation>
+          <xs:documentation>
+      The blocksize should be a power of 2
+          </xs:documentation>
+          <xs:documentation xml:lang="matlab">
+      simObject.BlockSize = 2^12;
+          </xs:documentation>
+        </xs:annotation>
       </xs:attribute>
       <xs:attribute name="SampleRate" type="xs:positiveInteger" default="44100">
         <xs:annotation><xs:documentation xml:lang="short">
       sample rate in hertz
-        </xs:documentation></xs:annotation>
+        </xs:documentation>
+        <xs:documentation xml:lang="matlab">
+      simObject.SampleRate = 48000;
+        </xs:documentation>
+      </xs:annotation>
       </xs:attribute>
       <xs:attribute name="NumberOfThreads" type="xs:positiveInteger" default="1">
         <xs:annotation>
@@ -69,9 +74,9 @@
       Multithreading is only supported on LINUX and MAC OS.
           </xs:documentation>
           <xs:documentation xml:lang="matlab">
-      Simulator.NumberOfThreads = 3;
+      simObject.NumberOfThreads = 3;
           </xs:documentation>
-          </xs:annotation>
+        </xs:annotation>
       </xs:attribute>
       <xs:attribute name="MaximumDelay" type="nonNegativeDecimal" default="0.0">
         <xs:annotation>
@@ -79,7 +84,7 @@
       maximum delay in seconds caused by distance and finite sound velocity
           </xs:documentation>
           <xs:documentation xml:lang="matlab">
-      Simulator.MaximumDelay = 0.04
+      simObject.MaximumDelay = 0.04
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -126,7 +131,7 @@
       is IGNORED. This renderer does ONLY take head rotations into account.
           </xs:documentation>
           <xs:documentation xml:lang="matlab">
-      Simulator.Renderer = @ssr_binaural;
+      simObject.Renderer = @ssr_binaural;
           </xs:documentation>
           <xs:documentation xml:lang="see">
       source
@@ -139,7 +144,7 @@
       name of hrir file
           </xs:documentation>
           <xs:documentation xml:lang="matlab">
-      Simulator.HRIRDataset = simulator.DirectionalIR('/cool/HRIRs.sofa');
+      simObject.HRIRDataset = simulator.DirectionalIR('/cool/HRIRs.sofa');
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -148,8 +153,12 @@
           <xs:documentation xml:lang="short">
       temporal length of simulation in seconds
           </xs:documentation>
+          <xs:documentation>
+      The simulation is finished if either the LengthOfSimulation is reached or
+      all source input buffers are empty.
+          </xs:documentation>
           <xs:documentation xml:lang="matlab">
-      Simulator.LengthOfSimulation = 5.2;
+      simObject.LengthOfSimulation = 5.2;
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -157,24 +166,58 @@
   </xs:element>
 
   <xs:element name="source" type="source_t">
-    <xs:annotation><xs:documentation xml:lang="en">
+    <xs:annotation><xs:documentation xml:lang="short">
       source object
+    </xs:documentation>
+    <xs:documentation xml:lang="matlab">
+      simObject.Sources{2} = simulator.source.PlaneWave();
+          </xs:documentation>
+    <xs:documentation xml:lang="see">
+      source_t object_t
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:element name="sink" type="sink_t">
-    <xs:annotation><xs:documentation xml:lang="en">
+    <xs:annotation><xs:documentation xml:lang="short">
       sink object (head)
+    </xs:documentation>
+    <xs:documentation>
+      At the moment only one Sink object is supported. It represents the
+      head/torso and must have two input channels for the two
+      ears signals.
+    </xs:documentation>
+    <xs:documentation xml:lang="matlab">
+      simObject.Sinks = simulator.AudioSink(2);  % 2 channels
+    </xs:documentation>
+    <xs:documentation xml:lang="see">
+      sink_t object_t
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:element name="wall" type="wall_t">
     <xs:annotation><xs:documentation xml:lang="en">
       wall object
+    </xs:documentation>
+    <xs:documentation>
+      Wall objects can either define a single wall or a whole room. Walls are
+      important for the image source model. If you chose to define all wall
+      objects separately, you have to ensure the consistency of the resulting
+      room. The ISM only supports Shoebox or arbitrary convex rooms.
+    </xs:documentation>
+    <xs:documentation xml:lang="matlab">
+      simObject.Walls(5) = simulator.Wall;
+    </xs:documentation>
+    <xs:documentation xml:lang="see">
+      wall_t object_t
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:element name="dynamic">
-    <xs:annotation><xs:documentation xml:lang="en">
-      object for dynamic aspects of the scene
-    </xs:documentation></xs:annotation>
+    <xs:annotation>
+      <xs:documentation xml:lang="short">
+        object for dynamic aspects of the scene
+      </xs:documentation>
+      <xs:documentation xml:lang="matlab">
+        simObject.EventHandler = simulator.dynamic.SceneEventHandler(simObject);
+      </xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element name="event" type="event_t" minOccurs="1" maxOccurs="unbounded"/>
