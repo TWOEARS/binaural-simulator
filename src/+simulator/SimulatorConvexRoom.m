@@ -246,13 +246,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       obj.SSRInput = [];
 
       obj.Renderer('clear');
-
-      for idx=1:length(obj.Sources)
-        delete(obj.Sources{idx});
-      end
-      delete(obj.Sinks);
-      delete(obj.Walls);
-      delete(obj.HRIRDataset);
     end
   end
 
