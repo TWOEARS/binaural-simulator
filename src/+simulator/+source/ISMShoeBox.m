@@ -75,8 +75,16 @@ classdef ISMShoeBox < simulator.source.ISMGroupBase
   methods
     function v = NumberOfSubSources(obj)
       n = obj.Simulator.ReverberationMaxOrder;
-      tmp = triu(ones(n));
-      v = (2*n + 1).^2 - 4*sum(tmp(:));
+      
+      switch length(obj.Simulator.Walls)
+        case 4
+          tmp = triu(ones(n));
+          v = (2*n + 1).^2 - 4*sum(tmp(:));
+        case 6
+          error('3D is not yet supported for shoebox rooms');
+        otherwise
+          error('unsupported number of walls!');
+      end
     end
   end
 end
