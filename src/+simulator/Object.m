@@ -220,13 +220,15 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     %
     function set.UnitUp(obj,v)
       isargcoord(v);
-      isargunitvector(v);
+      v = isargunitvectorOrCorrect(v);
+      v = v{1};
       obj.UnitUp = v;
     end
     %
     function set.UnitFront(obj,v)
       isargcoord(v);
-      isargunitvector(v);
+      v = isargunitvectorOrCorrect(v);
+      v = v{1};
       obj.UnitFrontDynamic.Target = v;
     end
     function v = get.UnitFront(obj)
