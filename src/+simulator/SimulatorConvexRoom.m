@@ -69,7 +69,11 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
 
       % initialize SSR
       obj.Renderer('init', source_irfiles, params);
-      obj.Renderer('source_model', source_types);
+      
+      if ~isempty(source_types)
+        % TODO: remove this workaround and handle this inside the SSR
+        obj.Renderer('source_model', source_types);
+      end
 
       % ensure initial scene to be valid
       obj.reinit();
