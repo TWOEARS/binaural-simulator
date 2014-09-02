@@ -9,7 +9,7 @@
   ReverberationMaxOrder="8"
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
   <source Position="2.5 2.5 1.75"
-          Type="ism_shoebox"
+          Type="ism"
           Name="Castanets">
     <buffer ChannelMapping="1"
             Type="fifo"

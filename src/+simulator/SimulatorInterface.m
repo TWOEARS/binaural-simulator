@@ -44,6 +44,10 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % @type Wall[]
     Walls = simulator.Wall.empty;
 
+    % assumed room type for image source model
+    % @type char[]
+    % @default shoebox
+    ReverberationRoomType = 'shoebox';
     % order of image source model (number of subsequent reflections)
     % @type integer
     % @default 0
@@ -100,10 +104,12 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         switch attr
           case 'point'
             obj.Sources{kdx} = simulator.source.Point();
-          case 'ism_shoebox'
-            obj.Sources{kdx} = simulator.source.ISMShoeBox(obj);
-          case 'ism_convex'
-            obj.Sources{kdx} = simulator.source.ISMConvex(obj);
+          case 'ism'
+            if strcmp(obj.ReverberationRoomType, 'shoebox')
+              obj.Sources{kdx} = simulator.source.ISMShoeBox(obj);
+            elseif strcmp(obj.ReverberationModel, 'convex')
+              obj.Sources{kdx} = simulator.source.ISMConvex(obj);
+            end
           case 'plane'
             obj.Sources{kdx} = simulator.source.Plane();
           case 'pwd'
@@ -311,6 +317,13 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       isargvector(Walls);  % check if vector
       obj.errorIfInitialized;
       obj.Walls = Walls;
+    end
+    function set.ReverberationRoomType(obj, v)
+      isargchar(v);  % check if string
+      if ~any(strcmp(v, 'shoebox', 'convex'))
+        error('"%s" is not a supported room type', v);
+      end
+      obj.ReverberationRoomType = v;
     end
     function set.ReverberationMaxOrder(obj, ReverberationMaxOrder)
       isargpositivescalar(ReverberationMaxOrder);  % check if positive scalar

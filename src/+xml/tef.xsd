@@ -102,10 +102,37 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="ReverberationRoomType" type="reverb_t" default="shoebox">
+        <xs:annotation>
+          <xs:documentation xml:lang="short">
+      assumed room shape for image source model
+          </xs:documentation>
+          <xs:documentation>
+      "shoebox" expects a room of pairwise orthogonal/parallel walls building a
+      cuboid.
+          </xs:documentation>
+          <xs:documentation>
+      "convex" expects a arbitraly convex room.
+          </xs:documentation>
+          <xs:documentation xml:lang="see">
+      reverb_t ReverberationMaxOrder
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="ReverberationMaxOrder" type="nonNegativeInteger" default="0">
-        <xs:annotation><xs:documentation xml:lang="short">
-          number of subsequent reflections in image source model
-        </xs:documentation></xs:annotation>
+        <xs:annotation>
+          <xs:documentation xml:lang="short">
+      number of subsequent reflections in image source model
+          </xs:documentation>
+          <xs:documentation>
+      Determines the number of image source. Due to the computional complexity
+      a value higher than 8 for shoebox rooms and higher than 3 for convex rooms
+      is NOT recommended.
+          </xs:documentation>
+          <xs:documentation xml:lang="see">
+      ReverberationModel
+          </xs:documentation>
+        </xs:annotation>
       </xs:attribute>
       <xs:attribute name="Renderer" type="renderer_t" default="ssr_binaural">
         <xs:annotation>
@@ -193,20 +220,20 @@
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:element name="wall" type="wall_t">
-    <xs:annotation><xs:documentation xml:lang="en">
+    <xs:annotation><xs:documentation xml:lang="short">
       wall object
     </xs:documentation>
     <xs:documentation>
       Wall objects can either define a single wall or a whole room. Walls are
       important for the image source model. If you chose to define all wall
       objects separately, you have to ensure the consistency of the resulting
-      room. The ISM only supports Shoebox or arbitrary convex rooms.
+      room. The ISM only supports shoebox or arbitrary convex rooms.
     </xs:documentation>
     <xs:documentation xml:lang="matlab">
       simObject.Walls(5) = simulator.Wall;
     </xs:documentation>
     <xs:documentation xml:lang="see">
-      wall_t object_t
+      wall_t object_t ReverberationMaxOrder ReverberationRoomType
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:element name="dynamic">
@@ -269,8 +296,7 @@
       <xs:enumeration value="point"/>
       <xs:enumeration value="direct"/>
       <xs:enumeration value="pwd"/>
-      <xs:enumeration value="ism_shoebox"/>
-      <xs:enumeration value="ism_convex"/>
+      <xs:enumeration value="ism"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -381,6 +407,15 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!--  Type for Reverberation Model -->
+  <xs:simpleType name="reverb_t">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="shoebox"/>
+      <xs:enumeration value="convex"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!--  numerical Types  -->
   <xs:simpleType name="positiveDecimal">
     <xs:restriction base="xs:decimal">
       <xs:minExclusive value="0.0"/>
