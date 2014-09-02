@@ -27,7 +27,7 @@ classdef Wall < simulator.Polygon
 
   %%
   methods
-    function prism = createUniformPrism(obj, height, mode)
+    function prism = createUniformPrism(obj, height, mode, RT60)
       % function prism = createUniformPrism(obj, height, mode)
       % extrudes Polygon orthogonaly to a uniform prism
       %
@@ -38,15 +38,32 @@ classdef Wall < simulator.Polygon
       % Return values:
       %  obj:   array of 4('2D') or 6('3D') Walls @type Wall[]
 
-      if nargin < 2
+      if nargin < 2 || isempty(height)
         error('too few arguments');
       else
         isargpositivescalar(height);
       end
-      if nargin < 3
+      if nargin < 3 || isempty(mode)
         mode = '2D';
       else
         isargchar(mode);
+      end
+      if nargin >= 4 && ~isempty(RT60)
+        isargpositivescalar(RT60);
+        if size(obj.Vertices, 2) ~=4
+          error('RT60 can only be defined for a rectangular room');
+        end
+        a = norm(obj.Vertices(:,1) - obj.Vertices(:,2));
+        b = norm(obj.Vertices(:,2) - obj.Vertices(:,3));
+        c = height;
+
+        V = a*b*c;
+        A = 2*( a*c + b*c );
+        if strcmp(mode, '3D')
+          A = A + 2*a*b;
+        end
+        % Sabine formula for the reverberation time of rectangular rooms
+        obj.AbsorptionCoeff = 24*log(10.0)*V / (343*A*RT60);
       end
 
       edges = size(obj.Vertices,2);
@@ -89,7 +106,6 @@ classdef Wall < simulator.Polygon
         otherwise
           error('unknown mode');
       end
-
     end
   end
 

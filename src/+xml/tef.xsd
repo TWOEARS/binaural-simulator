@@ -317,6 +317,7 @@
         <xs:attribute name="Vertices" type="coord2Darray_t" use="required"/>
         <xs:attribute name="Room" type="room_t" use="optional"/>
         <xs:attribute name="RoomHeight" type="positiveDecimal" use="optional"/>
+        <xs:attribute name="RoomRT60" type="nonNegativeDecimal" use="optional"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

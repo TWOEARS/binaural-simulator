@@ -141,6 +141,9 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         % try to get the room height
         roomheight = str2num(wall.getAttribute('RoomHeight'));
 
+        % try to get the room height
+        RT60 = str2num(wall.getAttribute('RoomRT60'));
+
         % distinguish the number of walls which will be generated
         switch roomtype
           case ''
@@ -149,12 +152,12 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
           case '2D'
             range = kdx+3;
             obj.Walls(kdx:range) = ...
-              wallObj.createUniformPrism(roomheight, roomtype);
+              wallObj.createUniformPrism(roomheight, roomtype, RT60);
             delete(wallObj);
           case '3D'
             range = kdx+5;
             obj.Walls(kdx:range) = ...
-              wallObj.createUniformPrism(roomheight, roomtype);
+              wallObj.createUniformPrism(roomheight, roomtype, RT60);
           otherwise
             error('room type not yet supported for xml parsing');
         end

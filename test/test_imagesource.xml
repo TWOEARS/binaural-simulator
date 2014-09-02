@@ -25,6 +25,6 @@
         Vertices="3 -3; 3 3; -3 3; -3 -3"
         Room="2D"
         RoomHeight="2.50"
-        Name="Room"
-        AbsorptionCoeff="0.1536"/>
+        RoomRT60="2.3"
+        Name="Room"/>
 </scene>
