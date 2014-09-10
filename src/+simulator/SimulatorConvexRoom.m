@@ -268,6 +268,14 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     end
   end
   methods
+    function azimuth = getCurrentHeadOrientation(obj)
+      % function azimuth = getCurrentHeadOrientation(obj)
+      % get current head orientation in degrees
+      %
+      % See also: simulator.RobotInterface.getCurrentHeadOrientation
+      azimuth = obj.Sinks.OrientationXY;
+    end
+    
     function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
       % function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
       %

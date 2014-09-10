@@ -47,6 +47,19 @@ classdef (Abstract) RobotInterface < hgsetget
     % vary from specified signal length. This is indicated by the 2nd and
     % 3rd return value.
   end
+  methods (Abstract)
+    azimuth = getCurrentHeadOrientation(obj)
+    % function azimuth = getCurrentHeadOrientation(obj)
+    % get current head orientation in degrees
+    %
+    % Parameters:
+    %
+    % look directions:
+    %   0/ 360 degree = positive x-axis
+    %  90/-270 degrees = positive y-axis
+    % 180/-180 degrees = negative x-axis
+    % 270/- 90 degrees = negative y-axis
+  end
   methods (Abstract, Access=protected)
     rotateHeadAbsolute(obj, angleDeg)
     % function rotateHeadAbsolute(obj, angleDeg)
