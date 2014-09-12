@@ -46,6 +46,8 @@ try
 		dimid(ii) = netcdf.defDim(ncid,Dims(ii),Obj.API.(var)); 
 		dimsize(ii)=Obj.API.(var);
   end
+  Sdim=strfind(Dims,'S'); % find the index with string dimension
+  if isempty(Sdim), Sdim=-1, end; % mark as -1 if not existing
 
 %% Define metadata variables and their attributes
 Dimensions=rmfield(Obj.API.Dimensions,'Data');
@@ -55,7 +57,11 @@ fv=fieldnames(Dimensions);
 		var=fv{ii};
 		if isempty(strfind(var,'_')) % skip all attributes
 			ids=cell2mat(regexp(Dims,cellstr((Dimensions.(var))')));
-			varId(ii) = netcdf.defVar(ncid,var,netcdf.getConstant('NC_DOUBLE'),fliplr(dimid(ids)));	
+      if find(ids==Sdim) % array of strings or numerics?
+        varId(ii) = netcdf.defVar(ncid,var,netcdf.getConstant('NC_CHAR'),fliplr(dimid(ids)));	
+      else
+        varId(ii) = netcdf.defVar(ncid,var,netcdf.getConstant('NC_DOUBLE'),fliplr(dimid(ids)));	
+      end
 			netcdf.defVarDeflate(ncid,varId(ii),true,true,Compression);
 			for jj=1:length(f)
 				if ~isempty(strfind(f{jj},[var '_']))
@@ -73,7 +79,11 @@ fod=fieldnames(Obj.Data);
 		var=fd{ii};
 		if isempty(strfind(var,'_'))	% skip all attributes				
 			ids=cell2mat(regexp(Dims,cellstr((Obj.API.Dimensions.Data.(var))')));
-			varIdD(ii) = netcdf.defVar(ncid,['Data.' var],netcdf.getConstant('NC_DOUBLE'),fliplr(dimid(ids)));	
+      if find(ids==Sdim) % array of strings or numerics?
+        varIdD(ii) = netcdf.defVar(ncid,['Data.' var],netcdf.getConstant('NC_CHAR'),fliplr(dimid(ids)));	
+      else
+        varIdD(ii) = netcdf.defVar(ncid,['Data.' var],netcdf.getConstant('NC_DOUBLE'),fliplr(dimid(ids)));	
+      end
 			netcdf.defVarDeflate(ncid,varIdD(ii),true,true,Compression);
 			for jj=1:length(fod)
 				if ~isempty(strfind(fod{jj},[var '_']))
@@ -95,9 +105,17 @@ fv=fieldnames(Dimensions);
 		if isempty(strfind(var,'_')) % skip all attributes
 			ids=cell2mat(regexp(Dims,cellstr((Dimensions.(var))')));
 			if length(ids)>1
-				netcdf.putVar(ncid,varId(ii),permute(Obj.(var),length(ids):-1:1)); % we need to reverse the dimension order because Matlab netcdf API saves data in the reverse order
-			else
-				netcdf.putVar(ncid,varId(ii),Obj.(var));
+        if iscell(Obj.(var))
+          netcdf.putVar(ncid,varId(ii),char(permute(Obj.(var),length(ids):-1:1)));
+        else  
+          netcdf.putVar(ncid,varId(ii),permute(Obj.(var),length(ids):-1:1)); % we need to reverse the dimension order because Matlab netcdf API saves data in the reverse order
+        end
+      else
+        if iscell(Obj.(var))
+          netcdf.putVar(ncid,varId(ii),char(Obj.(var)));  
+        else
+          netcdf.putVar(ncid,varId(ii),Obj.(var));
+        end
 			end
 		end
 	end
@@ -111,9 +129,17 @@ fod=fieldnames(Obj.Data);
 		if isempty(strfind(var,'_'))	% skip all attributes				
 			ids=cell2mat(regexp(Dims,cellstr((Obj.API.Dimensions.Data.(var))')));
 			if length(ids)>1
-				netcdf.putVar(ncid,varIdD(ii),permute(Obj.Data.(var),length(ids):-1:1)); % we need to reverse the dimension order because Matlab netcdf API saves data in the reverse order
-			else
-				netcdf.putVar(ncid,varIdD(ii),Obj.Data.(var));
+        if iscell(Obj.Data.(var))
+          netcdf.putVar(ncid,varIdD(ii),char(permute(Obj.Data.(var),length(ids):-1:1))); % we need to reverse the dimension order because Matlab netcdf API saves data in the reverse order
+        else
+          netcdf.putVar(ncid,varIdD(ii),permute(Obj.Data.(var),length(ids):-1:1)); % we need to reverse the dimension order because Matlab netcdf API saves data in the reverse order
+        end
+      else
+        if iscell(Obj.Data.(var))
+          netcdf.putVar(ncid,varIdD(ii),char(Obj.Data.(var)));
+        else
+          netcdf.putVar(ncid,varIdD(ii),Obj.Data.(var));
+        end
 			end
 		end
 	end
