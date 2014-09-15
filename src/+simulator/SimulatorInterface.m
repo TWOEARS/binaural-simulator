@@ -4,10 +4,12 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
   properties
     % blocksize for binaural renderer
     % @type integer
-    BlockSize;
+    % @default 8192
+    BlockSize = 8192;
     % sample rate of audio input signals in Hz
     % @type integer
-    SampleRate;
+    % @default 44100
+    SampleRate = 44100;
     % threads used for computing ear signals
     % @type integer
     % @default 1
