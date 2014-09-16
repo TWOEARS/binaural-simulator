@@ -261,13 +261,23 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     %
     function set.UnitUp(obj,v)
       isargcoord(v);
-      isargunitvector(v);
+      try
+        isargunitvector(v);
+      catch
+        warning('re-normalization of non-unit vector');
+        v = v./norm(v,2);
+      end
       obj.UnitUp = v;
     end
     %
     function set.UnitFront(obj,v)
       isargcoord(v);
-      isargunitvector(v);
+      try
+        isargunitvector(v);
+      catch
+        warning('re-normalization of non-unit vector');
+        v = v./norm(v,2);
+      end
       obj.UnitFrontDynamic.Target = v;
     end
     function v = get.UnitFront(obj)
