@@ -1,4 +1,4 @@
-function APV = SOFAcalculateAPV(Obj)
+function ApparentPositionVector = SOFAcalculateAPV(Obj)
 %SOFAcalculateAPV
 %   APV = SOFAcalculateAPV(Obj) calculates the apparent position vector
 %   (APV) which represents the position of the source relative to the
@@ -20,17 +20,37 @@ function APV = SOFAcalculateAPV(Obj)
 ListenerPosition = ...
     SOFAconvertCoordinates(Obj.ListenerPosition,Obj.ListenerPosition_Type,'cartesian');
 ListenerView = ...
-    SOFAconvertCoordinates(Obj.ListenerView,Obj.ListenerPosition_Type,'spherical');
+    SOFAconvertCoordinates(Obj.ListenerView,Obj.ListenerView_Type,'spherical');
 % source position
 SourcePosition = ...
     SOFAconvertCoordinates(Obj.SourcePosition,Obj.SourcePosition_Type,'cartesian');
 % get distance in cartesian coordinates between listener and source
-APV = bsxfun(@minus, SourcePosition, ListenerPosition);
+Distance = bsxfun(@minus, SourcePosition, ListenerPosition);
 % convert to spherical and include head movements of the listener
-APV = SOFAconvertCoordinates(APV,'cartesian','spherical');
-APV(:,1) = bsxfun(@minus, APV(:,1),ListenerView(:,1));%spherical
-% convert to horizontal-polar coordinates FIXME: why?
-APV = SOFAconvertCoordinates(APV,'spherical','horizontal-polar');
-APV(:,2) = bsxfun(@minus, APV(:,2),ListenerView(:,2));%horizontal-polar
+Distance = SOFAconvertCoordinates(Distance,'cartesian','spherical');
+ApparentPositionVector = correctAzimuth(bsxfun(@minus, Distance(:,1),ListenerView(:,1)));%spherical
+% convert to horizontal-polar coordinates FIXME: this breaks the azimuth angle,
+% it is disabled temporarly. The correct inclusion of elevation is still
+% missing.
+%APV = SOFAconvertCoordinates(APV,'spherical','horizontal-polar');
+%APV(:,2) = bsxfun(@minus, APV(:,2),ListenerView(:,2));%horizontal-polar
 % convert back to spherical
-APV = SOFAconvertCoordinates(APV,'horizontal-polar','spherical');
+%APV = SOFAconvertCoordinates(APV,'horizontal-polar','spherical');
+end
+
+function phi = correctAzimuth(phi)
+    % Ensure -360 <= phi <= 360
+    phi = rem(phi,360);
+    % Ensure -180 <= phi < 180
+    phi(phi<-180) = phi(phi<-180) + 360;
+    phi(phi>=180) = phi(phi>=180) - 360;
+end
+
+% TODO: check what convetion we are using for delta!
+function delta = correctElevation(delta)
+    % Ensure -180 <= delta <= 180
+    delta = correct_azimuth(delta);
+    % Ensure -90 <= delta <= 90
+    delta(delta<-90) = -delta(delta<-90) - 180;
+    delta(delta>90) = -delta(delta>90) + 180;
+end
