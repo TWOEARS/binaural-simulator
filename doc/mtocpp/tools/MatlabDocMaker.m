@@ -142,7 +142,7 @@ classdef MatlabDocMaker
             
             % error('Please replace this by returning your project name as string.');
             % Example:
-            name = 'Two!Ears WP1 - Head-Torso-Simulator';
+            name = 'Two!Ears - Binaural-Simulator';
         end
     end
     
