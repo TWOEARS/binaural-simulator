@@ -15,7 +15,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
   end
   %% Constructor
   methods
-    function obj = SimulatorConvexRoom(xmlfile)
+    function obj = SimulatorConvexRoom(xmlfile, init)
       % Constructor
       %
       % Parameters:
@@ -26,10 +26,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       obj = obj@simulator.SimulatorInterface();
       obj = obj@simulator.RobotInterface();
 
-      if nargin < 1
-        return;
-      end
-      obj.loadConfig(xmlfile);
+      if nargin >= 1, obj.loadConfig(xmlfile); end;
+      if nargin >= 2 && init, obj.init(); end;
     end
   end
   %% Initialization
