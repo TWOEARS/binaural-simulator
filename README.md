@@ -48,6 +48,6 @@ Explain how to use BRS files used with the SoundScape Renderer.
 [GNU General Public License, version 2]
 
 
-[API documentation]:https://twoears.github.io/twoears-binaural-simulator-doc
+[API documentation]:https://twoears.github.io/binaural-simulator-doc
 [Two!Ears data]:https://gitlab.tubit.tu-berlin.de/twoears/data/tree/master
 [GNU General Public License, version 2]:http://www.gnu.org/licenses/gpl-2.0.html
