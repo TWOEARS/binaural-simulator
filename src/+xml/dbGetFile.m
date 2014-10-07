@@ -35,7 +35,7 @@ catch
 
     % try cache of remote database
     try
-      tmppath = xml.dbTmp()
+      tmppath = xml.dbTmp();
       isargfile(fullfile(tmppath,filename));
       filename = fullfile(tmppath,filename);
       fprintf('INFO: file (%s) found in cache of remote database\n', filename);

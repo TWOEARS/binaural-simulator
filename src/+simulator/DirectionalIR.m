@@ -72,6 +72,7 @@ classdef DirectionalIR < hgsetget
 
       % create local copy of data for the SSR MEX-Code
       filename = [name, '_tmp.wav'];
+      filename = fullfile(xml.dbTmp(), filename);
       wavwrite(d, fs, filename);
 
       obj.SampleRate = fs;

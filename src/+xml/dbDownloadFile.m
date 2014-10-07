@@ -23,10 +23,8 @@ if nargin < 2
   end
   outfile = [dir_path, filesep, dirs{end}];
 end
-filename
 url = fullfile(xml.dbURL(), filename);
 fprintf('Downloading file %s\n', url);
-outfile
 [~, status] = urlwrite(url, outfile);
 
 if ~status
