@@ -1,8 +1,7 @@
 function dbClearTmp()
 % delete content of 'src/tmp'
 
-dir_path = fileparts(mfilename('fullpath'));
-dir_path = [dir_path, filesep, '..', filesep, 'tmp', filesep];
+dir_path = xml.dbTmp();
 
 dirData = dir(dir_path);
 dirIndex = [dirData.isdir];
