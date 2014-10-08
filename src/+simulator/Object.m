@@ -150,6 +150,10 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
   %% dynamic stuff
   methods
     function init(obj)
+      % initialize scene object
+      %
+      % By default, this function does nothing. It can be overloaded in sub-
+      % classes in order to implement custom initialization functionality.
     end
     function refresh(obj, T)
       % refresh properties with finite-speed modification
