@@ -1,6 +1,6 @@
-root = fileparts(mfilename('fullpath')); 
-addpath([root filesep '..' filesep 'src']);
-startWP1;
+root = fileparts(mfilename('fullpath'));
+addpath([root filesep '..']);
+startBinauralSimulator;
 
 import simulator.*
 import xml.*
