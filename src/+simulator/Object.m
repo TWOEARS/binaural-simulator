@@ -1,6 +1,5 @@
 classdef Object < simulator.vision.Meta & xml.MetaObject
   % Base class for scene-objects
-
   % Some MetaData
   properties
     % unique identifier for this objects
@@ -28,7 +27,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % @default [1; 0; 0]
     UnitFront;
 
-    % radius (spherical coordinates) of Position in degree
+    % radius (spherical coordinates) of Position in meter
     % @type double
     % @default 0
     Radius;
@@ -125,6 +124,12 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       obj.rotateAroundAxis(obj.UnitRight, alpha);
     end
     function rotateAroundAxis(obj, n, alpha)
+      % function rotateAroundAxis(obj, n, alpha)
+      % rotate object around unit vector
+      %
+      % Parameters:
+      %   n: unit vector defining the rotation axis @type double[]
+      %   alpha:  rotation angle in degree @type double
       isargcoord(n);
       isargunitvector(n);
       isargscalar(alpha);
