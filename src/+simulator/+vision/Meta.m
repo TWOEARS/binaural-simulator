@@ -1,15 +1,12 @@
 classdef (Abstract) Meta < xml.MetaObject
   % MetaObject implements the funtionalities necessary for visual simulation
-  % 
-  % http://www.mathworks.de/de/help/matlab/ref/xmlread.html
-  
   properties
     % directory which contains files for the visual representation
     %
     % See also: MeshFile
     %
     % @type char[]
-    RootPath;    
+    RootPath;
     % name of mesh file used for graphical processing
     % @type char[]
     %

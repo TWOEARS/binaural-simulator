@@ -52,13 +52,15 @@ Copyright (c) 2013-2014 Institut für Nachrichtentechnik, Universität Rostock
 // NAMESPACES
 /**
 @namespace simulator
-@brief package contains several acoustic source types
+@brief core simulation framework
 @namespace simulator.buffer
 @brief package contains buffers as input for audio sources
 @namespace simulator.source
 @brief package contains several audio source classes
 @namespace simulator.dynamic
 @brief contains event handler and tools to modify attributes of scene objects
+@namespace simulator.vision
+@brief contains additional stuff for visual simulation
 over time
 @namespace xml
 @brief package contains functionalities for parsing xml files for scene

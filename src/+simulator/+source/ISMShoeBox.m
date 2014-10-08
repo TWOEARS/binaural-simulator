@@ -77,6 +77,8 @@ classdef ISMShoeBox < simulator.source.ISMGroupBase
       n = obj.Simulator.ReverberationMaxOrder;
       
       switch length(obj.Simulator.Walls)
+        case 0
+          v = 1;
         case 4
           tmp = triu(ones(n));
           v = (2*n + 1).^2 - 4*sum(tmp(:));
