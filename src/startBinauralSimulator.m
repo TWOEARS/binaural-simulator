@@ -3,11 +3,9 @@
 ones(10)*ones(10);
 
 BinauralSimulatorPath = fileparts(mfilename('fullpath'));
-BinauralSimulatorPath = [BinauralSimulatorPath filesep 'src' filesep];
+BinauralSimulatorPath = [BinauralSimulatorPath filesep];
 
-addpath(BinauralSimulatorPath);
 addpath([BinauralSimulatorPath 'mex']);
-addpath([BinauralSimulatorPath 'tools']);
 
 % Clear used variables
 clear BinauralSimulatorPath;
