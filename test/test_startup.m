@@ -1,6 +1,4 @@
-root = fileparts(mfilename('fullpath'));
-addpath([root filesep '..']);
-startBinauralSimulator;
+startTwoEars('../BinauralSimulator.xml');
 
 import simulator.*
 import xml.*

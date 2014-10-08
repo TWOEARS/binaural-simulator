@@ -5,7 +5,7 @@
 # Prepare your working copy for pushing the documentation to Github:
 #
 # cd doc
-# git clone https://user@github.com/twoears/twoears-wp1-doc html
+# git clone https://user@github.com/twoears/twoears-binaural-simulator-doc html
 
 set -e
 
