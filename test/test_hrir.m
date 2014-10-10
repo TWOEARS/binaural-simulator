@@ -1,6 +1,3 @@
-close all;
-clear all;
-
 test_startup;
 
 filename = fullfile(...
