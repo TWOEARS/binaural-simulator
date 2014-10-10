@@ -71,8 +71,11 @@ classdef DirectionalIR < hgsetget
       end
 
       % create local copy of data for the SSR MEX-Code
-      filename = [name, '_tmp.wav'];
-      filename = fullfile(xml.dbTmp(), filename);
+      % TODO: include SOFA support into the SSR
+      [tmpdir, tmpname] = fileparts(tempname(xml.dbTmp()));
+      filename = fullfile(tmpdir, [name, '_', tmpname, '.wav'])
+      % MATLAB proposes to replace wavwrite with audiowrite, but this does not
+      % work for a high number of channels like in HRTF datasets
       wavwrite(d, fs, filename);
 
       obj.SampleRate = fs;
