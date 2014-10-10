@@ -176,6 +176,11 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % flag indicates if the simulator is initialited
     % @type logical
     % @default false
+    %
+    % Set this to true to start the initialization. Set this to false to
+    % shutdown the simulator (equal to ShutDown=true).
+    %
+    % See also: simulator.SimulatorInterface.ShutDown init
     Init = false;
   end
   properties (Dependent, GetAccess=private)
@@ -223,6 +228,8 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       isargclass('logical', Init);
       if (Init)
         obj.init();
+      else
+        obj.shutdown();
       end
       obj.Init = Init;
     end
@@ -325,7 +332,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     end
     function set.ReverberationRoomType(obj, v)
       isargchar(v);  % check if string
-      if ~any(strcmp(v, 'shoebox', 'convex'))
+      if ~any(strcmp(v, {'shoebox', 'convex'}))
         error('"%s" is not a supported room type', v);
       end
       obj.ReverberationRoomType = v;

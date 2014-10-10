@@ -57,7 +57,9 @@ classdef DirectionalIR < hgsetget
       if strcmp('.wav', ext)
         [d, fs] = audioread(filename);
       elseif strcmp('.sofa', ext)
-        [d, fs]= obj.convertSOFA(filename);
+        warning('SOFA HRTF support is still very experimental');
+        data = SOFAload(filename);
+        [d, fs]= obj.convertSOFA(data);
       else
         error('file extension (%s) not supported (only .wav and .sofa)', ext);
       end
@@ -69,7 +71,11 @@ classdef DirectionalIR < hgsetget
       end
 
       % create local copy of data for the SSR MEX-Code
-      filename = [name, '_tmp.wav'];
+      % TODO: include SOFA support into the SSR
+      [tmpdir, tmpname] = fileparts(tempname(xml.dbTmp()));
+      filename = fullfile(tmpdir, [name, '_', tmpname, '.wav'])
+      % MATLAB proposes to replace wavwrite with audiowrite, but this does not
+      % work for a high number of channels like in HRTF datasets
       wavwrite(d, fs, filename);
 
       obj.SampleRate = fs;
@@ -112,7 +118,7 @@ classdef DirectionalIR < hgsetget
 
       tf = obj.getImpulseResponses(azimuth);
 
-      tfmax = max(max(abs(tf.left(:)),abs(tf.left(:))));
+      tfmax = max(max(abs(tf.left(:)),abs(tf.right(:))));
 
       tl = 20*log10(abs(tf.left)/tfmax);
       tr = 20*log10(abs(tf.right)/tfmax);
@@ -137,42 +143,52 @@ classdef DirectionalIR < hgsetget
     end
   end
   methods (Static)
-    function [d, fs] = convertSOFA(filename)
-      isargfile(filename);
-      warning('SOFA HRTF support is still very experimental');
-      data = SOFAload(filename);
+    function [d, fs] = convertSOFA(data)
 
       switch data.GLOBAL_SOFAConventions
         case 'SimpleFreeFieldHRIR'
+          % convert to spherical coordinates
+          data.SourcePosition = SOFAconvertCoordinates(...
+            data.SourcePosition,data.SourcePosition_Type,'spherical');
           % find entries with zero elevation angle
-          select = find(data.SourcePosition(:,2) == 0);          
-          d = data.Data.IR(select,:,:);          
+          select = find(data.SourcePosition(:,2) == 0);
           % sort remaining with respect to azimuth angle
           [azimuths, ind] = sort(data.SourcePosition(select,1));
-          d = d(ind,:,:);          
-          % get the minimum distance between two measurements          
-          resolution = min(...
-            simulator.DirectionalIR.angularDistanceMeasure( ...
-              azimuths, circshift(azimuths,1)...
-            ) ...
-          );          
-          % create regular grid with this distance          
-          nangle = round(360/resolution);
-          azimuth_grid = (0:nangle-1)./nangle*360;          
-          % determine nearest neighbor between grid and measurements           
-          knd = ...
-            simulator.DirectionalIR.nearestNeighbor(azimuth_grid, azimuths);
-          % select nearest neightbor measurements for grid
-          d = d(knd, :, :);          
-          % reshape the array
-          d = permute(d,[3 2 1]);
-          d = reshape(d,size(d,1),[]);
-          % get sampling frequency
-          fs = data.Data.SamplingRate;
+        case 'SingleRoomDRIR'
+          % convert to spherical coordinates
+          data.ListenerView = SOFAconvertCoordinates(...
+            data.ListenerView, data.ListenerView_Type,'spherical');
+          % find entries with zero elevation angle
+          select = find(data.ListenerView(:,2) == 0);
+          % sort remaining with respect to azimuth angle
+          [azimuths, ind] = sort(data.ListenerView(select,1));
         otherwise
           error('SOFA Conventions (%s) not supported', ...
             data.GLOBAL_SOFAConventions);
       end
+      % select data
+      d = data.Data.IR(select,:,:);
+      % sort data
+      d = d(ind,:,:);
+      % get the minimum distance between two measurements
+      resolution = min(...
+        simulator.DirectionalIR.angularDistanceMeasure( ...
+        azimuths, circshift(azimuths,1)...
+        ) ...
+        );
+      % create regular grid with this distance
+      nangle = round(360/resolution);
+      azimuth_grid = (0:nangle-1)./nangle*360;
+      % determine nearest neighbor between grid and measurements
+      knd = ...
+        simulator.DirectionalIR.nearestNeighbor(azimuth_grid, azimuths);
+      % select nearest neightbor measurements for grid
+      d = d(knd, :, :);
+      % reshape the array
+      d = permute(d,[3 2 1]);
+      d = reshape(d,size(d,1),[]);
+      % get sampling frequency
+      fs = data.Data.SamplingRate;
     end
     function res = angularDistanceMeasure(a, b)
       res = abs(mod(abs(a - b) + 180, 360) - 180);
@@ -180,7 +196,6 @@ classdef DirectionalIR < hgsetget
     function [idx, diff] = nearestNeighbor(grid, b)
       [grid, b] = meshgrid(grid, b);
       diff = simulator.DirectionalIR.angularDistanceMeasure(grid, b);
-      
       [diff, idx] = min(diff,[],1);
     end
   end

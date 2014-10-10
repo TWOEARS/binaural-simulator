@@ -7,7 +7,7 @@
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
   <source Type="point"
           Name="Castanets"
-          IRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
+          IRs="impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src3_xs+2.20_ys-1.94.sofa">
     <buffer ChannelMapping="1"
             Type="fifo"
             File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
