@@ -1,6 +1,3 @@
-clear all
-close all
-
 test_startup; 
 
 %% processing paramet

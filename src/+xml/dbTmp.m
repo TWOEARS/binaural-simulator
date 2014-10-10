@@ -13,14 +13,12 @@ function newpath = dbTmp(newpath)
 %
 % See also: http://sourceforge.net/p/sofacoustics/code/HEAD/tree/trunk/API_MO/SOFAdbPath.m
 
-f=filesep;
-
 persistent CachedPath;
 
 if exist('newpath','var')
-  CachedPath=newpath;
+  CachedPath=fullfile(newpath);
 elseif isempty(CachedPath)
   basepath=fileparts(mfilename('fullpath'));
-  CachedPath=fullfile(basepath, '..', f, '..', f, 'tmp');
+  CachedPath=fullfile(basepath, '..', '..', 'tmp', filesep);
 end
 newpath=CachedPath;
