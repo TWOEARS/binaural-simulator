@@ -325,7 +325,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     end
     function set.ReverberationRoomType(obj, v)
       isargchar(v);  % check if string
-      if ~any(strcmp(v, 'shoebox', 'convex'))
+      if ~any(strcmp(v, {'shoebox', 'convex'}))
         error('"%s" is not a supported room type', v);
       end
       obj.ReverberationRoomType = v;
