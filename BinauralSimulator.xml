@@ -5,8 +5,8 @@
      startTwoEars('BinauralSimulator.xml'); -->
 
 <requirements>
-    <TwoEarsPart branch="scenario1" sub="src"    startup="startBinauralSimulator">binaural-simulator</TwoEarsPart>
+    <TwoEarsPart branch="renaming" sub="src"    startup="startBinauralSimulator">binaural-simulator</TwoEarsPart>
     <TwoEarsPart                    sub="API_MO" startup="SOFAstart">sofa</TwoEarsPart>
-    <TwoEarsPart branch="scenario1" sub="src"    startup="startData" >data</TwoEarsPart>
-    <TwoEarsPart branch="scenario1" sub="src"    startup="startTools" >tools</TwoEarsPart>
+    <TwoEarsPart branch="renaming" sub="src"    startup="startData" >data</TwoEarsPart>
+    <TwoEarsPart branch="renaming" sub="src"    startup="startTools" >tools</TwoEarsPart>
 </requirements>
