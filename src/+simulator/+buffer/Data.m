@@ -77,11 +77,9 @@ classdef (Abstract) Data < simulator.buffer.Base
       % resampling of the audio signal provided in 'filename'. If 'fs' is
       % not defined, the original sampling frequency of the audio file is
       % kept.
-
-      isargchar(filename);
-      isargfile(filename);
-
-      [obj.data, fsorig] = audioread(filename);  % read audio data from file
+      
+      % read audio data from file
+      [obj.data, fsorig] = audioread(xml.dbGetFile(filename));
       % optional resampling
       if nargin > 2
         isargpositivescalar(fs);
