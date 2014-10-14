@@ -43,7 +43,7 @@ in the [Two!Ears data] repository.
 #### Linux/Mac
 
 ##### Alternative 1
-* use the pre-compiled binaries provided inside `MAT_DIR/src/mex`
+* use the pre-compiled binaries provided inside `src/mex`
 
 ##### Alternative 2
 * switch to directory containing the mex-files
@@ -68,7 +68,7 @@ in the [Two!Ears data] repository.
 #### Windows 7 64bit
 
 ##### Alternative 1
-* use the pre-compiled binaries provided inside `MAT_DIR/src/mex`
+* use the pre-compiled binaries provided inside `src/mex`
 
 ##### Alternative 2
 * edit `SSR_DIR/mex/win64/Makefile` and set the `MATLABROOT` to the location of your systems MATLAB
