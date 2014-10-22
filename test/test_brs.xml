@@ -3,8 +3,7 @@
   BlockSize="4096"
   SampleRate="44100"
   NumberOfThreads="1"
-  Renderer="ssr_brs"
-  HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
+  Renderer="ssr_brs">
   <source Type="point"
           Name="Castanets"
           IRs="impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src3_xs+2.20_ys-1.94.sofa">

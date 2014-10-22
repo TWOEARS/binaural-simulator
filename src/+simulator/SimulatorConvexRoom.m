@@ -60,7 +60,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % SSR initialization parameters
       params.block_size = obj.BlockSize;
       params.sample_rate = obj.SampleRate;
-      params.hrir_file = obj.HRIRDataset.Filename;
+      % HOTFIX for SSR bug
+      if ~isempty(obj.HRIRDataset.Filename)
+        params.hrir_file = obj.HRIRDataset.Filename;
+      end
       params.threads = obj.NumberOfThreads;
       params.delayline_size = ceil(obj.MaximumDelay*obj.SampleRate);
       params.initial_delay = ceil(obj.PreDelay*obj.SampleRate);

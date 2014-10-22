@@ -44,6 +44,7 @@ in the [Two!Ears data] repository.
 
 ##### Alternative 1
 * use the pre-compiled binaries provided inside `MAT_DIR/src/mex`
+
 ##### Alternative 2
 * switch to directory containing the mex-files
 	<pre>
@@ -68,6 +69,7 @@ in the [Two!Ears data] repository.
 
 ##### Alternative 1
 * use the pre-compiled binaries provided inside `MAT_DIR/src/mex`
+
 ##### Alternative 2
 * edit `SSR_DIR/mex/win64/Makefile` and set the `MATLABROOT` to the location of your systems MATLAB
 * edit or create `MSYS_DIR\etc\fstab` and add mounts for `MINGW_DIR` and `SSR_DIR`
