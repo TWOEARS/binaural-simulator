@@ -9,8 +9,7 @@
                 startup="startBinauralSimulator">binaural-simulator</TwoEarsPart>
   <TwoEarsPart  sub="API_MO"
                 startup="SOFAstart">sofa</TwoEarsPart>
-  <TwoEarsPart  branch="renaming"
-                sub="src"
+  <TwoEarsPart  sub="src"
                 startup="startData" >data</TwoEarsPart>
   <TwoEarsPart  sub="src"
                 startup="startTools" >tools</TwoEarsPart>
