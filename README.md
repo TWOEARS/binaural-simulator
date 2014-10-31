@@ -87,10 +87,13 @@ in the [Two!Ears data] repository.
 
 ## Usage
 
-If you want to use the Two!Ears Binaural Simulator without any other part of the
-Two!Ears Auditory model you can start it as a single module with the
-`startTwoEars` function which is part of the main
-[Two!Ears](https://github.com/TWOEARS/TwoEars) repository.
+If you want to use the
+[Two!Ears Binaural Simulator](https://github.com/TWOEARS/binaural-simulator)
+without any other part of the
+[Two!Ears Auditory Model](https://github.com/TWOEARS/TwoEars)
+you can start it as a single module with the
+`startTwoEars` function which is part of the
+[Two!Ears Auditory Model](https://github.com/TWOEARS/TwoEars) repository.
 
 ```Matlab
 startTwoEars('BinauralSimulator.xml');
