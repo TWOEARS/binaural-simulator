@@ -1,4 +1,4 @@
-Two!Ears binaural simulator
+Two!Ears Binaural Simulator
 ===========================
 
 The Two!Ears binaural simulator enables the creation of binaural audio signals
@@ -87,8 +87,14 @@ in the [Two!Ears data] repository.
 
 ## Usage
 
-Add descriptions for the following applications of the model and add a general
-description at this position.
+If you want to use the Two!Ears Binaural Simulator without any other part of the
+Two!Ears Auditory model you can start it as a single module with the
+`startTwoEars` function which is part of the main
+[Two!Ears](https://github.com/TWOEARS/TwoEars) repository.
+
+```Matlab
+startTwoEars('BinauralSimulator.xml');
+```
 
 See the [API documentation] for further details.
 
