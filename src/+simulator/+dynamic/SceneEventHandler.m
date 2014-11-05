@@ -22,7 +22,7 @@ classdef SceneEventHandler < xml.MetaObject
     function obj = SceneEventHandler(sim)
       obj.Simulator = sim;
       obj.SceneObjects = {};
-      obj.SceneObjects = [obj.SceneObjects, num2cell(sim.Sources)];
+      obj.SceneObjects = [obj.SceneObjects, sim.Sources];
       obj.SceneObjects = [obj.SceneObjects, num2cell(sim.Sinks)];
       obj.SceneObjects = [obj.SceneObjects, num2cell(sim.Walls)];
       

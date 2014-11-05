@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scene
+  BlockSize="4096"
+  SampleRate="44100"
+  MaximumDelay="0.05"
+  PreDelay="0.0"
+  LengthOfSimulation="5.0"
+  NumberOfThreads="1"
+  Renderer="ssr_binaural"
+  HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
+  <source Position="1 2 1.75"
+          Type="point"
+          Name="Cello"
+          Volume="0.4">
+    <buffer ChannelMapping="1"
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
+  </source>
+  <source Position="1 -2 1.75"
+          Type="point"
+          Name="Castanets">
+    <buffer ChannelMapping="1"
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
+  </source>
+  <sink Position="0 0 1.75"
+        UnitFront="1 0 0"
+        UnitUp="0 0 1"
+        Name="Head"/>
+  <dynamic>
+    <event Name="Castanets"
+           Attribute="Position"
+           Value="1 2 1.75"
+           Start="1.5"/>
+    <event Name="Cello"
+           Attribute="Position"
+           Value="1 -2 1.75"
+           Start="3.0"/>
+  </dynamic>
+</scene>
