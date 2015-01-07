@@ -98,13 +98,119 @@ you can start it as a single module with the
 ```Matlab
 startTwoEars('BinauralSimulator.xml');
 ```
-
-See the [API documentation] for further details.
-
 ### Configuration
 
-Explain the usage of the xml-configuration file and the possibility to set the
-values without configuration file.
+There are basically two ways for controlling and configurating the binaural
+simulator.
+
+#### Configuration using MATLAB script
+
+The binaural simulator uses the object-oriented programming architecture of
+MATLAB. In order to initialize the simulation tool an Object of the
+`SimulatorConvexRoom()`-Class has to be instantiated by
+
+```Matlab
+sim = simulator.SimulatorConvexRoom();
+```
+
+Note that the constructor returns a handle, which is the pendant to a reference
+of an object in other programming language. Assigning `sim` to a another
+variable does not copy the object. It is not recommended to instantiate
+more than one object of the `SimulatorConvexRoom()`-Class by calling the
+constructor multiple times. To see all configurable parameters of the
+simulator call the object's name in MATLAB:
+
+```Matlab
+>> sim
+
+sim =
+
+  SimulatorConvexRoom with properties:
+
+                BlockSize: 4096
+               SampleRate: 44100
+          NumberOfThreads: 1
+                 Renderer: @ssr_binaural
+              HRIRDataset: [1x1 simulator.DirectionalIR]
+             MaximumDelay: 0.0500
+                 PreDelay: 0
+       LengthOfSimulation: 5
+                  Sources: {[1x1 simulator.source.Point]  [1x1 simulator.source.Point]}
+                    Sinks: [1x1 simulator.AudioSink]
+                    Walls: []
+    ReverberationRoomType: 'shoebox'
+    ReverberationMaxOrder: 0
+```
+In order to change various processing parameters of the simulator the build-in
+set/get functionality of MATLAB should be used, e.g.
+
+```Matlab
+% some processing parameters
+set(sim, ...
+  'BlockSize', 4096, ...
+  'SampleRate', 44100, ...
+  );
+```
+
+Line 4 to 8 set the sample rate of the simulator to 44.1 kHz and defines a block
+size aka. frame size of 4096 Samples. To define the acoustic scene, e.g.
+the sound sources and the listener.
+
+```Matlab
+% acoustic scene
+set(sim, ...
+  'Sources', {simulator.source.Point(), simulator.source.Point()}, ...
+  'Sinks', simulator.AudioSink(2) ...
+  );
+```
+
+Sound sources are stored in a cell array. Line 3 defines two point sources,
+are created by calling the constructor of the `simulator.source.Point`-class.
+For the binaural simulation the parameter `Sinks` must contain only one object
+of the `simulator.AudioSink`-Class describing the listener (Line 4). The
+argument `2` in the contructor's call defines the number of input channel of
+the sink, which is 2 for binaural signals. Since sources and sinks are also
+handles, they can be accessed using the same set/get procedure as for the
+simulator object, e.g.:
+
+```Matlab
+% set parameters of audio sources
+set(sim.Sources{1}, ...
+  'AudioBuffer', simulator.buffer.FIFO(1), ...
+  'Position', [1; 2; 1.75], ...
+  'Name', 'Cello', ...
+  'Volume', 0.4 ...
+  );
+% set parameters of head
+set(sim.Sinks, ...
+  'Position' , [0; 0; 1.75], ...
+  'UnitFront', [1; 0; 0], ...
+  'UnitUp', [0; 0; 1], ...
+  'Name', 'Head' ...
+  );
+```
+
+`Name` (Line 5 and 13) defines an unique identifier for the scene object, which
+should not be re-used for any other scene object. `Position` (Line 4 and 10)
+defines the position of the scene object in 3D cartesian coordinates. In order
+to emit sound from a sound source, a audio buffer has to be defined, which
+contains the source's audio signal. In Line 3 a simple FIFO-Buffer
+(First-In-First-Out) is defined. Again, the argument of the constructor defines
+the number of channels. For more details about possible buffer types please
+refer to the [API documentation on buffers]. To load a sound file into the
+buffer execute
+
+```Matlab
+% set audio input of buffers
+set(sim.Sources{1}.AudioBuffer, ...
+  'File', 'stimuli/anechoic/instruments/anechoic_cello.wav');
+```
+
+#### Configuration using XML Scene Description
+
+```Matlab
+sim = SimulatorConvexRoom('scene_description.xml');
+```
 
 ### Simulate direct sound
 
@@ -133,5 +239,7 @@ Explain how to use BRS files used with the SoundScape Renderer.
 
 
 [API documentation]:https://twoears.github.io/binaural-simulator-doc
+[API documentation on buffers]:http://twoears.github.io/binaural-simulator-doc/namespacesimulator_1_1buffer.html
+
 [Two!Ears data]:https://gitlab.tubit.tu-berlin.de/twoears/data/tree/master
 [GNU General Public License, version 2]:http://www.gnu.org/licenses/gpl-2.0.html
