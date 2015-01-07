@@ -15,24 +15,24 @@ in the [Two!Ears data] repository.
 * Debian or Debian-based Linux operating system (e.g. Ubuntu) recommended
 * matlab + mex-compiler
 * packages (install with apt-get, aptitude, synaptic, macports, ...)
-  	* **make**
-  	* **g++** (at least version 4.7.3)
-  	* **libsndfile1-dev**
-	* **libxml2-dev**
-	* **libfftw3-dev**
+    * **make**
+    * **g++** (at least version 4.7.3)
+    * **libsndfile1-dev**
+    * **libxml2-dev**
+    * **libfftw3-dev**
 * optional: get SoundScape Renderer (location will be denoted as `SSR_DIR`)
-	<pre>
-	git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
-	git checkout origin/master -b master
-	</pre>
+    <pre>
+    git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
+    git checkout origin/master -b master
+    </pre>
 
 #### Windows 7 64bit
 
 * get SoundScape Renderer (location will be denoted as `SSR_DIR`)
-	<pre>
-	git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
-	git checkout origin/win64 -b win64
-	</pre>
+    <pre>
+    git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
+    git checkout origin/win64 -b win64
+    </pre>
 * add `SSR_DIR\3rdparty\win64\bin` to PATH enviroment variable ([HOWTO](http://www.computerhope.com/issues/ch000549.htm))
 
 * optional: get [MinGW 64bit](http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z/download) (location will be denoted as `MINGW_DIR`)
@@ -45,24 +45,24 @@ in the [Two!Ears data] repository.
 ##### Alternative 1
 * use the pre-compiled binaries provided inside `src/mex`
 
-##### Alternative 2
+##### Alternative 2 (requires optional prerequisites)
 * switch to directory containing the mex-files
-	<pre>
-	cd SSR_DIR/mex/
-	</pre>
+    <pre>
+    cd SSR_DIR/mex/
+    </pre>
 * if you are using a Mac and installed Matlab at /Applications/MATLAB_R2013a.app
-	<pre>
-	export PATH="/Applications/MATLAB_R2013a.app/bin:$PATH"
-	export CPPFLAGS="-I/Applications/MATLAB_R2013a.app/extern/include"
-	</pre>
+    <pre>
+    export PATH="/Applications/MATLAB_R2013a.app/bin:$PATH"
+    export CPPFLAGS="-I/Applications/MATLAB_R2013a.app/extern/include"
+    </pre>
 * generate mex-files
-	<pre>
-	make matlab
-	</pre>
+    <pre>
+    make matlab
+    </pre>
 * If you get an error saying that the version of `GLIBCXX` is not correct this is due to the usage of the Matlab provided libstdc++ which is for an older gcc version. You can solve this by deleting linking it to your system libstdc++ via
-	<pre>
-	ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.<LIBSTDC-VERSION> /usr/local/MATLAB/MATLAB-VERSION/bin/glnxa64/libstdc++.so.6
-	</pre>
+    <pre>
+    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.<LIBSTDC-VERSION> /usr/local/MATLAB/MATLAB-VERSION/bin/glnxa64/libstdc++.so.6
+    </pre>
 * open Matlab and add `SSR_DIR/mex/` to MATLAB-path using `pathtool` or `addpath`
 
 #### Windows 7 64bit
@@ -70,19 +70,19 @@ in the [Two!Ears data] repository.
 ##### Alternative 1
 * use the pre-compiled binaries provided inside `src/mex`
 
-##### Alternative 2
+##### Alternative 2 (requires optional prerequisites)
 * edit `SSR_DIR/mex/win64/Makefile` and set the `MATLABROOT` to the location of your systems MATLAB
 * edit or create `MSYS_DIR\etc\fstab` and add mounts for `MINGW_DIR` and `SSR_DIR`
-	<pre>
-	MINGW_DIR    /mingw
-	SSR_DIR      /ssr
-	</pre>
+    <pre>
+    MINGW_DIR    /mingw
+    SSR_DIR      /ssr
+    </pre>
 * start the shell by executing `MSYS_DIR/msys.bat`
 * switch to directory and compile sources
-	<pre>
-	cd /ssr/mex/win64
-	make
-	</pre>
+    <pre>
+    cd /ssr/mex/win64
+    make
+    </pre>
 * open Matlab and add `SSR_DIR/mex/` to MATLAB-path using `pathtool` or `addpath`
 
 ## Usage
