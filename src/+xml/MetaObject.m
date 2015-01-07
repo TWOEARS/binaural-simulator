@@ -4,7 +4,7 @@ classdef (Abstract) MetaObject < hgsetget
   %
   % http://www.mathworks.de/de/help/matlab/ref/xmlread.html
 
-  properties (SetAccess=protected)
+  properties (SetAccess=protected, Hidden=true)
     % array of parseable xml-attributes
     % @type xml.PropertyDescription
     XMLAttributes;

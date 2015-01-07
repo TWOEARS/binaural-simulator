@@ -38,7 +38,7 @@ classdef (Abstract) Base < simulator.Object
     IRDataset = simulator.DirectionalIR();
   end
 
-  properties (SetAccess = protected)
+  properties (SetAccess = protected, Hidden=true)
     % required number of channels of input signal
     % @type integer
     % @default 1

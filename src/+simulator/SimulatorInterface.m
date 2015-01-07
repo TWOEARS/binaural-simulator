@@ -55,7 +55,9 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % @type integer
     % @default 0
     ReverberationMaxOrder = 0;
-
+  end
+  
+  properties (Hidden=true)
     % object for eventhandler (for dynamic scenes)
     % @type simulator.dynamic.SceneEventHandler
     EventHandler;
@@ -173,7 +175,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
   %% some functionalities for controlling the Simulator
   % this properties can be used to invoke some of the abstract functions
 
-  properties
+  properties (Hidden=true)
     % flag indicates if the simulator is initialited
     % @type logical
     % @default false

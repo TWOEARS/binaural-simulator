@@ -40,7 +40,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % @default 0
     Polar;
   end
-  properties (Dependent, SetAccess=private)
+  properties (Dependent, SetAccess=private, Hidden=true)
     % vector resulting of UnitUp x UnitFront
     % @type double[]
     % @default [0; 1; 0]
@@ -60,7 +60,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
   end
 
   % Dynamic Stuff
-  properties (SetAccess = private)
+  properties (SetAccess = private, Hidden=true)
     PositionDynamic = simulator.dynamic.AttributeLinear([0; 0; 0]);
     UnitFrontDynamic = simulator.dynamic.AttributeAngular([1; 0; 0]);
   end
