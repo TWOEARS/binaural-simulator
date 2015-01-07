@@ -141,18 +141,26 @@ sim =
     ReverberationRoomType: 'shoebox'
     ReverberationMaxOrder: 0
 ```
-In order to change various processing parameters of the simulator the build-in
-set/get functionality of MATLAB should be used, e.g.
+For a more detailed description of each parameter refer to the
+[API documentation on the Simulator]. In order to change various processing
+parameters of the simulator the build-in set/get functionality of MATLAB should
+be used, e.g.
 
 ```Matlab
 % some processing parameters
 set(sim, ...
   'BlockSize', 4096, ...
   'SampleRate', 44100, ...
+  'MaximumDelay', 0.05, ...
+  'PreDelay', 0.0, ...
+  'LengthOfSimulation', 5.0, ...
+  'Renderer', @ssr_binaural, ...
+  'HRIRDataset', simulator.DirectionalIR( ...
+    'impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa') ...
   );
 ```
 
-Line 4 to 8 set the sample rate of the simulator to 44.1 kHz and defines a block
+Line 3 and 4 set the sample rate of the simulator to 44.1 kHz and defines a block
 size aka. frame size of 4096 Samples. To define the acoustic scene, e.g.
 the sound sources and the listener.
 
@@ -181,6 +189,13 @@ set(sim.Sources{1}, ...
   'Name', 'Cello', ...
   'Volume', 0.4 ...
   );
+
+set(sim.Sources{2}, ...
+  'AudioBuffer', simulator.buffer.FIFO(1), ...
+  'Position', [1; -2; 1.75], ...
+  'Name', 'Castanets' ...
+  );
+
 % set parameters of head
 set(sim.Sinks, ...
   'Position' , [0; 0; 1.75], ...
@@ -190,27 +205,77 @@ set(sim.Sinks, ...
   );
 ```
 
-`Name` (Line 5 and 13) defines an unique identifier for the scene object, which
-should not be re-used for any other scene object. `Position` (Line 4 and 10)
-defines the position of the scene object in 3D cartesian coordinates. In order
-to emit sound from a sound source, a audio buffer has to be defined, which
-contains the source's audio signal. In Line 3 a simple FIFO-Buffer
-(First-In-First-Out) is defined. Again, the argument of the constructor defines
-the number of channels. For more details about possible buffer types please
-refer to the [API documentation on buffers]. To load a sound file into the
-buffer execute
+`Name` defines an unique identifier for the scene object, which
+should not be re-used for any other scene object. `Position`
+defines the position of the scene object in 3D cartesian coordinates (measured
+in meter). In order to emit sound from a sound sources, audio buffers have to be
+respectively defined containing the sources' audio signals. A single-channel
+FIFO-Buffer (First-In-First-Out) can be defined by `simulator.buffer.FIFO(1)`.
+For more details about possible buffer types please refer to the
+[API documentation on buffers]. To load a sound files into the buffers execute
 
 ```Matlab
 % set audio input of buffers
 set(sim.Sources{1}.AudioBuffer, ...
   'File', 'stimuli/anechoic/instruments/anechoic_cello.wav');
+
+set(sim.Sources{2}.AudioBuffer, ...
+  'File', 'stimuli/anechoic/instruments/anechoic_castanets.wav');
 ```
 
+All code snippets have been taken from example script `test_binaural_wo.m`
+located in `./test`.
+
 #### Configuration using XML Scene Description
+
+In following the configuration as defined above using a matlab scripts is done
+calling the constructor of the simulator object with an extra argument defining
+the filename of a XML scene description file.
+
+```Matlab
+sim = simulator.SimulatorConvexRoom('test_binaural.xml');
+```
+
+The content of `test_binaural.xml` is shown below.
+
+```XML
+<scene
+  BlockSize="4096"
+  SampleRate="44100"
+  MaximumDelay="0.05"
+  PreDelay="0.0"
+  LengthOfSimulation="5.0"
+  NumberOfThreads="1"
+  Renderer="ssr_binaural"
+  HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
+  <source Position="1 2 1.75"
+          Type="point"
+          Name="Cello"
+          Volume="0.4">
+    <buffer ChannelMapping="1"
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
+  </source>
+  <source Position="1 -2 1.75"
+          Type="point"
+          Name="Castanets">
+    <buffer ChannelMapping="1"
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
+  </source>
+  <sink Position="0 0 1.75"
+        UnitFront="1 0 0"
+        UnitUp="0 0 1"
+        Name="Head"/>
+</scene>
+```
+
 
 ```Matlab
 sim = SimulatorConvexRoom('scene_description.xml');
 ```
+
+## Examples
 
 ### Simulate direct sound
 
@@ -239,7 +304,7 @@ Explain how to use BRS files used with the SoundScape Renderer.
 
 
 [API documentation]:https://twoears.github.io/binaural-simulator-doc
+[API documentation on the Simulator]:http://twoears.github.io/binaural-simulator-doc/classsimulator_1_1_simulator_interface.html
 [API documentation on buffers]:http://twoears.github.io/binaural-simulator-doc/namespacesimulator_1_1buffer.html
-
 [Two!Ears data]:https://gitlab.tubit.tu-berlin.de/twoears/data/tree/master
 [GNU General Public License, version 2]:http://www.gnu.org/licenses/gpl-2.0.html
