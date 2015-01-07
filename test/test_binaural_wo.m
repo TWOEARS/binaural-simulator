@@ -1,7 +1,7 @@
 test_startup;
 
 %% processing parameters
-sim = SimulatorConvexRoom();  % simulator object
+sim = simulator.SimulatorConvexRoom();  % simulator object
 
 set(sim, ...
   'BlockSize', 4096, ...

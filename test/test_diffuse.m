@@ -1,7 +1,7 @@
 test_startup;
 
 %% processing paramet
-sim = SimulatorConvexRoom('test_diffuse.xml');  % simulator object
+sim = simulator.SimulatorConvexRoom('test_diffuse.xml');  % simulator object
 
 %% initialization
 % note that all the parameters including objects' positions have to be
