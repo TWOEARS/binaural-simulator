@@ -115,10 +115,12 @@ sim = simulator.SimulatorConvexRoom();
 
 Note that the constructor returns a handle, which is the pendant to a reference
 of an object in other programming language. Assigning `sim` to a another
-variable does not copy the object. It is not recommended to instantiate
+variable does not copy the object. The simulation framework is depending on
+a simulation kernel written in C++/MEX. It is not recommended to instantiate
 more than one object of the `SimulatorConvexRoom()`-Class by calling the
-constructor multiple times. To see all configurable parameters of the
-simulator call the object's name in MATLAB:
+constructor multiple times, since all objects would access the same simulation
+kernel. To see all configurable parameters of the simulator call the object's
+name in MATLAB:
 
 ```Matlab
 >> sim
@@ -141,6 +143,7 @@ sim =
     ReverberationRoomType: 'shoebox'
     ReverberationMaxOrder: 0
 ```
+
 For a more detailed description of each parameter refer to the
 [API documentation on the Simulator]. In order to change various processing
 parameters of the simulator the build-in set/get functionality of MATLAB should
@@ -270,30 +273,87 @@ The content of `test_binaural.xml` is shown below.
 </scene>
 ```
 
+### Simulate Ear-Signals
+
+After setting up all parameters the simulator object is ready to simulate ear
+signals according to the defined acoustic scene. In order load all parameters
+into the simulation kernel execute
 
 ```Matlab
-sim = SimulatorConvexRoom('scene_description.xml');
+sim.set('Init',true);
 ```
 
-## Examples
+Note, that all the processing parameters and objects' initial positions have to
+be defined BEFORE initialization in order to initialize the simulation properly.
+After the simulator has been initialized it is not possible to re-assign any
+property of the simulator object. Hence the number of acoustic source can not be
+changed within one simulation run. However, modifying e.g. the position of a
+scene object is possible. The following loop calculates the ear signals until
+the acoustic scene is finished.
 
-### Simulate direct sound
+```Matlab
+while ~sim.isFinished()
+  sim.set('Refresh',true);  % refresh all objects
+  sim.set('Process',true);
+end
+```
+
+The function `sim.isFinished()` yields true if the buffers of all sound sources
+are empty or if `sim.LengthOfSimulation` has been reached. Note, that the
+simulator is a block-wise processor: Each call of line 3 generates a block of
+ear signals whose length is defined by `sim.BlockSize`. Between two processing
+steps, the properties of scene objects may be manipulated, e.g. the position of
+a scene object is changed. If necessary, call line 2 once before processing a new
+block in order to send any modification to the simulation kernel. The ear
+signals are stored in the FIFO buffer of the `sim.Sinks` object.
+
+```Matlab
+% read whole data from buffer
+data = sim.Sinks.getData();
+% save date into file
+sim.Sinks.saveFile('out_binaural.wav',sim.SampleRate);
+```
+
+In order to access or store the data line 2 or 4 may be used respectively. To
+finish the simulation shut down and clean up the simulator by calling:
+
+```Matlab
+sim.set('ShutDown',true);
+```
+
+The simulator reverts to an uninitialized state, where the manipulation of every
+parameter is possible, again. This is necessary, if you want to start a new
+simulation with complete different parameters like e.g. different number of
+sound sources. If you want to start a new simulation with same parameters as
+before a kind of a weak shut down should do the job:
+
+```Matlab
+sim.set('ReInit',true);
+```
+
+Again, objects' initial positions have to be defined BEFORE re-initialization
+in order to initialize the simulation properly. The simulator however remains in
+an initialized state.
+
+### Examples
+
+#### Simulate direct sound
 
 Explain how to use HRTFs
 
 
-### Dynamic scenes
+#### Dynamic scenes
 
 Explain how to rotate the head and how to create moving sources.
 
 
-### Simulate rooms
+#### Simulate rooms
 
 Explain how to incorporate rooms from BRIRs, image source model, and plane waves
 for diffuse sound.
 
 
-### Incorporate binaural room scanning files
+#### Incorporate binaural room scanning files
 
 Explain how to use BRS files used with the SoundScape Renderer.
 
