@@ -231,7 +231,7 @@ located in `./test`.
 
 #### Configuration using XML Scene Description
 
-In following the configuration as defined above using a matlab scripts is done
+In following the configuration as defined above using a MATLAB script is done
 calling the constructor of the simulator object with an extra argument defining
 the filename of a XML scene description file.
 
@@ -276,7 +276,7 @@ The content of `test_binaural.xml` is shown below.
 ### Simulate Ear-Signals
 
 After setting up all parameters the simulator object is ready to simulate ear
-signals according to the defined acoustic scene. In order load all parameters
+signals according to the defined acoustic scene. In order to load all parameters
 into the simulation kernel execute
 
 ```Matlab
@@ -286,7 +286,7 @@ sim.set('Init',true);
 Note, that all the processing parameters and objects' initial positions have to
 be defined BEFORE initialization in order to initialize the simulation properly.
 After the simulator has been initialized it is not possible to re-assign any
-property of the simulator object. Hence the number of acoustic source can not be
+property of the simulator object. Hence the number of acoustic sources cannot be
 changed within one simulation run. However, modifying e.g. the position of a
 scene object is possible. The following loop calculates the ear signals until
 the acoustic scene is finished.
