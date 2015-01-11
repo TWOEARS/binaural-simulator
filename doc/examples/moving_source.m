@@ -17,7 +17,7 @@ sim.set('Init',true);
 sim.Sources{1}.setDynamic( ...
     'Position', 'Velocity', 0.25); % move source with 0.25 m/s
 set(sim.Sources{1}, ...
-    'Position', [1; -2; 1.75] ... %end position
+    'Position', [1; -2; 0] ... %end position
     );
 while ~sim.isFinished()
     sim.set('Refresh',true);  % refresh all objects
