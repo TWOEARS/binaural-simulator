@@ -67,8 +67,8 @@ classdef Wall < simulator.Polygon
       end
 
       edges = size(obj.Vertices,2);
-      v3D = [obj.Vertices; zeros(1,edges)];
-      up = [0; 0; 1];
+      v3D = [obj.UnitRight, obj.UnitUp, obj.UnitFront] ...
+        * [obj.Vertices; zeros(1,edges)];
 
       prism(edges) = simulator.Wall();
 
@@ -80,9 +80,8 @@ classdef Wall < simulator.Polygon
         prism(idx).Vertices = [0.0, 0.0, vdist, vdist; 0.0, height, height, 0.0];
         prism(idx).Position = v3D(:,next) + obj.Position;
 
-        rot = [obj.UnitRight, obj.UnitUp, obj.UnitFront];
-        prism(idx).UnitUp = rot*up;
-        prism(idx).UnitFront = rot*(cross(vdiff, up)/vdist);
+        prism(idx).UnitUp = obj.UnitFront;
+        prism(idx).UnitFront = cross(vdiff, prism(idx).UnitUp)/vdist;
         prism(idx).ReflectionCoeff = obj.ReflectionCoeff;
         prism(idx).Name = [obj.Name, '#', num2str(idx)];
       end
