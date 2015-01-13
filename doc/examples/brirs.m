@@ -34,6 +34,6 @@ while ~sim.isFinished()
 end
 
 % save file
-sim.Sinks.saveFile('out_brs.wav',sim.SampleRate);
+sim.Sinks.saveFile('out_brirs.wav',sim.SampleRate);
 %% clean up
 sim.set('ShutDown',true);
