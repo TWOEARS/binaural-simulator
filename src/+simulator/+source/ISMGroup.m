@@ -1,17 +1,13 @@
 classdef ISMGroup < simulator.source.GroupBase
   % Class for mirror source objects used for the mirror image model
 
-  properties (Access = protected)
+  properties
     Room;
   end
 
   methods
-    function init(obj)
-      % re-initialize image objects
-      obj.SubSources = simulator.source.Image.empty();
-      for idx=1:obj.Room.NumberOfSubSources()
-        obj.SubSources(idx) = simulator.source.Image(obj);
-      end
+    function init(obj)      
+      obj.Room.initSubSources(obj);
     end
     
     function refresh(obj, T)
@@ -25,9 +21,7 @@ classdef ISMGroup < simulator.source.GroupBase
       
       for idx=1:length(obj.SubSources)
         % mute invalid image sources and sources with muted OriginalObject
-        obj.SubSources(idx).Mute = ~SubSources(idx).Valid;
-        % correct distance for 3D to 2D
-        % obj.SubSources(idx).correctDistance(obj.Simulator.Sinks.Position);
+        obj.SubSources(idx).Mute = ~obj.SubSources(idx).Valid;
       end
     end
   end

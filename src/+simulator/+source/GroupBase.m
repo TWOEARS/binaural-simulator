@@ -1,6 +1,6 @@
 classdef GroupBase < simulator.source.Base
 
-  properties (SetAccess = protected)
+  properties
     SubSources;
   end
 

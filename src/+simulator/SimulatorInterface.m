@@ -37,24 +37,15 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % are empty (WHICH MAY NEVER HAPPEN!)
     LengthOfSimulation = inf;
 
-    % array of sources
-    % @type AudioSource[]
+    % cell array of sources
+    % @type simulator.source.Base{}
     Sources
     % array of sinks
-    % @type AudioSink[]
+    % @type simulator.AudioSink[]
     Sinks = simulator.AudioSink.empty;
-    % array of walls
-    % @type Wall[]
-    Walls = simulator.Wall.empty;
-
-    % assumed room type for image source model
-    % @type char[]
-    % @default shoebox
-    ReverberationRoomType = 'shoebox';
-    % order of image source model (number of subsequent reflections)
-    % @type integer
-    % @default 0
-    ReverberationMaxOrder = 0;
+    % shoebox room
+    % @type simulator.room.Shoebox
+    Room = simulator.room.Shoebox.empty;
   end
   
   properties (Hidden=true)
@@ -72,7 +63,6 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.addXMLAttribute('MaximumDelay', 'double');
       obj.addXMLAttribute('PreDelay', 'double');
       obj.addXMLAttribute('LengthOfSimulation', 'double');
-      obj.addXMLAttribute('ReverberationMaxOrder', 'double');
       obj.addXMLAttribute('Renderer', 'function_handle');
       obj.addXMLAttribute('HRIRDataset',  ...
         'simulator.DirectionalIR', ...
@@ -83,6 +73,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         'simulator.AudioSink', ...
         'sink', ...
         @(x)simulator.AudioSink(2));
+      obj.addXMLElement('Room', 'simulator.room.Shoebox', 'room');
       obj.addXMLElement('EventHandler', ...
         'simulator.dynamic.SceneEventHandler', ...
         'dynamic', ...
@@ -110,11 +101,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
           case 'point'
             obj.Sources{kdx} = simulator.source.Point();
           case 'ism'
-            if strcmp(obj.ReverberationRoomType, 'shoebox')
-              obj.Sources{kdx} = simulator.source.ISMShoeBox(obj);
-            elseif strcmp(obj.ReverberationModel, 'convex')
-              obj.Sources{kdx} = simulator.source.ISMConvex(obj);
-            end
+            obj.Sources{kdx} = simulator.source.ISMGroup();
           case 'plane'
             obj.Sources{kdx} = simulator.source.Plane();
           case 'pwd'
@@ -127,48 +114,7 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         end
         obj.Sources{kdx}.XML(source);
         kdx = kdx + 1;
-      end
-
-      % special handling of wall objects
-      wallList = xmlnode.getElementsByTagName('wall');
-      wallNum = wallList.getLength;
-      kdx = 1;
-      for idx=1:wallNum
-        wall = wallList.item(idx-1);
-
-        % create new wall object and do the xml-parsing for the wall
-        wallObj = simulator.Wall();
-        wallObj.XML(wall);
-
-        % try to get the room informations
-        roomtype = (char(wall.getAttribute('Room')));
-
-        % try to get the room height
-        roomheight = str2num(wall.getAttribute('RoomHeight'));
-
-        % try to get the room height
-        RT60 = str2num(wall.getAttribute('RoomRT60'));
-
-        % distinguish the number of walls which will be generated
-        switch roomtype
-          case ''
-            range = kdx;
-            obj.Walls(kdx) = wallObj;
-          case '2D'
-            range = kdx+3;
-            obj.Walls(kdx:range) = ...
-              wallObj.createUniformPrism(roomheight, roomtype, RT60);
-            delete(wallObj);
-          case '3D'
-            range = kdx+5;
-            obj.Walls(kdx:range) = ...
-              wallObj.createUniformPrism(roomheight, roomtype, RT60);
-          otherwise
-            error('room type not yet supported for xml parsing');
-        end
-
-        kdx = range + 1;
-      end
+      end     
     end
   end
 
@@ -327,22 +273,13 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.errorIfInitialized;
       obj.Sources = Sources;
     end
-    function set.Walls(obj, Walls)
-      isargclass('simulator.Wall',Walls);  % check class
-      isargvector(Walls);  % check if vector
-      obj.errorIfInitialized;
-      obj.Walls = Walls;
-    end
-    function set.ReverberationRoomType(obj, v)
-      isargchar(v);  % check if string
-      if ~any(strcmp(v, {'shoebox', 'convex'}))
-        error('"%s" is not a supported room type', v);
+    function set.Room(obj, Room)
+      isargclass('simulator.room.Base', Room);  % check class
+      if numel(Room) ~= 1
+        error('only one room is allowed');
       end
-      obj.ReverberationRoomType = v;
-    end
-    function set.ReverberationMaxOrder(obj, ReverberationMaxOrder)
-      isargpositivescalar(ReverberationMaxOrder);  % check if positive scalar
-      obj.ReverberationMaxOrder = ReverberationMaxOrder;
+      obj.errorIfInitialized;
+      obj.Room = Room;
     end
     function set.EventHandler(obj, EventHandler)
       isargclass('simulator.dynamic.SceneEventHandler',EventHandler);  % check class

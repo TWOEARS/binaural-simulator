@@ -36,11 +36,19 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % function init(obj)
       % initialize Simulator
 
+      % initialize Room
+      if ~isempty(obj.Room)
+        obj.Room.init();
+      end      
+      
       % define source types
       source_types = {};
       source_irfiles = {};
       obj.NumberOfSSRSources = 0;
       for idx=1:length(obj.Sources)
+        if isa(obj.Sources{idx},'simulator.source.ISMGroup')
+          obj.Sources{idx}.Room = obj.Room;
+        end
         obj.Sources{idx}.init();
         obj.NumberOfSSRSources ...
           = obj.NumberOfSSRSources + obj.Sources{idx}.ssrChannels;
@@ -322,8 +330,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       [htmp, legtmp] = obj.Sinks.plot(id);
       h = [h, htmp];
       leg = [leg, legtmp];
-      for idx=1:length(obj.Walls)
-        [htmp, legtmp] = obj.Walls(idx).plot(id);
+      if ~isempty(obj.Room)
+        [htmp, legtmp] = obj.Room.plot(id);
         h = [h, htmp];
         leg = [leg, legtmp];
       end

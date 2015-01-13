@@ -40,7 +40,7 @@
       <xs:sequence>
         <xs:element ref="source" minOccurs="1" maxOccurs="unbounded"/>
         <xs:element ref="sink" minOccurs="1"/>
-        <xs:element ref="wall" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="room" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="dynamic" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
       <xs:attribute name="BlockSize" type="xs:positiveInteger" default="8192">
@@ -99,38 +99,6 @@
       source signal. If you are not using any plane wave source or don't want to
       shift the sources' position away from the reference point
       (head position) leave the value at 0.0.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="ReverberationRoomType" type="reverb_t" default="shoebox">
-        <xs:annotation>
-          <xs:documentation xml:lang="short">
-      assumed room shape for image source model
-          </xs:documentation>
-          <xs:documentation>
-      "shoebox" expects a room of pairwise orthogonal/parallel walls building a
-      cuboid.
-          </xs:documentation>
-          <xs:documentation>
-      "convex" expects a arbitraly convex room.
-          </xs:documentation>
-          <xs:documentation xml:lang="see">
-      reverb_t ReverberationMaxOrder
-          </xs:documentation>
-        </xs:annotation>
-      </xs:attribute>
-      <xs:attribute name="ReverberationMaxOrder" type="nonNegativeInteger" default="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="short">
-      number of subsequent reflections in image source model
-          </xs:documentation>
-          <xs:documentation>
-      Determines the number of image source. Due to the computional complexity
-      a value higher than 8 for shoebox rooms and higher than 3 for convex rooms
-      is NOT recommended.
-          </xs:documentation>
-          <xs:documentation xml:lang="see">
-      ReverberationModel
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -219,21 +187,18 @@
       sink_t object_t
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:element name="wall" type="wall_t">
+  <xs:element name="room" type="room_t">
     <xs:annotation><xs:documentation xml:lang="short">
-      wall object
+      room object
     </xs:documentation>
     <xs:documentation>
-      Wall objects can either define a single wall or a whole room. Walls are
-      important for the image source model. If you chose to define all wall
-      objects separately, you have to ensure the consistency of the resulting
-      room. The ISM only supports shoebox or arbitrary convex rooms.
+      The ISM only supports shoebox rooms.
     </xs:documentation>
     <xs:documentation xml:lang="matlab">
-      simObject.Walls(5) = simulator.Wall;
+      simObject.Room = simulator.room.Shoebox;
     </xs:documentation>
     <xs:documentation xml:lang="see">
-      wall_t object_t ReverberationMaxOrder ReverberationRoomType
+      room_t object_t
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:element name="dynamic">
@@ -309,15 +274,30 @@
   </xs:complexType>
 
   <!-- Types for Walls: -->
-  <xs:complexType name="wall_t">
+  <xs:complexType name="room_t">
     <xs:complexContent>
       <xs:extension base="object_t">
-        <xs:attribute name="ReflectionCoeff" type="reflection_t" default="1.0"/>
-        <xs:attribute name="AbsorptionCoeff" type="absorption_t" use="optional"/>
-        <xs:attribute name="Vertices" type="coord2Darray_t" use="required"/>
-        <xs:attribute name="Room" type="room_t" use="optional"/>
-        <xs:attribute name="RoomHeight" type="positiveDecimal" use="optional"/>
-        <xs:attribute name="RoomRT60" type="nonNegativeDecimal" use="optional"/>
+        <xs:attribute name="ReverberationMaxOrder" type="nonNegativeInteger" default="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="short">
+            number of subsequent reflections in image source model
+              </xs:documentation>
+              <xs:documentation>
+            Determines the number of images source. Due to the computional complexity
+            a value higher than 8 is NOT recommended.
+              </xs:documentation>
+              <xs:documentation xml:lang="see">
+
+              </xs:documentation>
+            </xs:annotation>
+            </xs:attribute>
+        <xs:attribute name="ReflectionCoeffs" type="reflectionList" default="1.0"/>
+        <xs:attribute name="AbsorptionCoeffs" type="absorptionList" use="optional"/>
+        <xs:attribute name="RT60" type="nonNegativeDecimal" use="optional"/>
+        <xs:attribute name="Height" type="nonNegativeDecimal" use="required"/>
+        <xs:attribute name="Width" type="nonNegativeDecimal" use="required"/>
+        <xs:attribute name="Length" type="nonNegativeDecimal" use="required"/>
+        <xs:attribute name="Mode" type="room_mode_t" default="2D"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -329,13 +309,21 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="reflectionList">
+    <xs:list itemType="reflection_t"/>
+  </xs:simpleType>
+
   <xs:simpleType name="absorption_t">
     <xs:restriction base="positiveDecimal">
       <xs:maxInclusive value="1"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="room_t">
+  <xs:simpleType name="absorptionList">
+    <xs:list itemType="absorption_t"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="room_mode_t">
     <xs:restriction base="xs:token">
       <xs:enumeration value="2D"/>
       <xs:enumeration value="3D"/>
