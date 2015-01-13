@@ -60,7 +60,6 @@ in the [Two!Ears data] repository.
     make matlab
     </pre>
 * If you get an error saying that the version of `GLIBCXX` is not correct this is due to the usage of the Matlab provided libstdc++ which is for an older gcc version. You can solve this by deleting linking it to your system libstdc++ via
-
     ```
     ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.<LIBSTDC-VERSION> \
           /usr/local/MATLAB/MATLAB-VERSION/bin/glnxa64/libstdc++.so.6
