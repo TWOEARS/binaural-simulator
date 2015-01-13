@@ -353,7 +353,8 @@ an initialized state.
 
 ## Examples
 
-The following examples apply the configuration directly in MATLAB. For larger
+The following examples apply the configuration directly in MATLAB, the
+corresponding files can be found in the `doc/examples/` directory. For larger
 setups it will be easier to use the
 [XML Scene Description](#configuration-using-xml-scene-description). Examples
 using the [XML Scene Description](#configuration-using-xml-scene-description)
@@ -361,8 +362,10 @@ can be found in the `test/` directory.
 
 ### Simulate two dry sources
 
-In this example, two dry sources will be simulated and the binaural output is written to the file `out_two_sources.wav`.
-One source is a cello placed to the left of the listener and the other source is castanets placed in the front of the listener.
+In the `doc/examples/two_sources.m` example, two dry sources will be simulated
+and the binaural output is written to the file `out_two_sources.wav`.
+One source is a cello placed to the left of the listener and the other source
+is castanets placed in the front of the listener.
 
 ```Matlab
 sim = simulator.SimulatorConvexRoom();
@@ -405,7 +408,9 @@ sim.set('ShutDown',true);
 
 ### Simulate a moving source
 
-The following example simulates a dry cello that moves from the left to the right of the listener.
+The `doc/examples/moving_source.m` example simulates a dry cello that moves from
+the left to the right of the listener and stores the resulting binaural signal
+as `out_moving_source.wav`.
 
 ```Matlab
 sim = simulator.SimulatorConvexRoom();
@@ -440,7 +445,9 @@ sim.set('ShutDown',true);
 
 ### Simulate rooms using the Image Source Model
 
-The following example simulates a dry cello in a shoebox room
+The `doc/examples/room.m` example simulates a dry cello in a shoebox room and
+stores the resulting binaural signal in `out_room.wav`. The shoebox room is
+simulated with an image source model.
 
 ```MATLAB
 sim = simulator.SimulatorConvexRoom();
@@ -491,7 +498,9 @@ sim.set('ShutDown',true);
 
 ### Simulate rooms using Binaural Room Impulse Responses
 
-The following example simulates a cello in a reverberant environment
+The `doc/examples/brirs.m` example simulates a cello in a reverberant
+environment using BRIR recordings. The resulting binaural signal as stored in
+`out_brirs.wav`.
 
 ```MATLAB
 sim = simulator.SimulatorConvexRoom();
