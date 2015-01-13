@@ -1,10 +1,22 @@
 Two!Ears Binaural Simulator
 ===========================
 
-The Two!Ears binaural simulator enables the creation of binaural audio signals
+The [Two!Ears Binaural Simulator] enables the creation of binaural audio signals
 for different situations. This is done via the usage of head-related transfer
 functions (HRTFs) or binaural room impulse responses (BRIRs), which are provided
 in the [Two!Ears data] repository.
+It can be used as one module in the [Two!Ears Auditory Model].
+
+
+### Table of Contents
+
+**[Installation](#Installation)**
+**[Usage](#Usage)**
+**[Examples](#Examples)**
+**[Credits](#Credits)**
+**[License](#License)**
+**[Funding](#Funding)**
+
 
 ## Installation
 
@@ -13,30 +25,30 @@ in the [Two!Ears data] repository.
 #### Linux/Mac
 
 * Debian or Debian-based Linux operating system (e.g. Ubuntu) recommended
-* matlab + mex-compiler
+* MATLAB + mex-compiler
 * packages (install with apt-get, aptitude, synaptic, macports, ...)
-    * **make**
-    * **g++** (at least version 4.7.3)
-    * **libsndfile1-dev**
-    * **libxml2-dev**
-    * **libfftw3-dev**
+  * **make**
+  * **g++** (at least version 4.7.3)
+  * **libsndfile1-dev**
+  * **libxml2-dev**
+  * **libfftw3-dev**
 * optional: get SoundScape Renderer (location will be denoted as `SSR_DIR`)
-    <pre>
-    git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
-    git checkout origin/master -b master
-    </pre>
+  ```
+  git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
+  git checkout origin/master -b master
+  ```
 
 #### Windows 7 64bit
 
 * get SoundScape Renderer (location will be denoted as `SSR_DIR`)
-    <pre>
-    git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
-    git checkout origin/win64 -b win64
-    </pre>
-* add `SSR_DIR\3rdparty\win64\bin` to PATH environment variable ([HOWTO])
+  ```
+  git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
+  git checkout origin/win64 -b win64
+  ```
+* add `SSR_DIR\3rdparty\win64\bin` to `PATH` environment variable ([HOWTO])
 
-* optional: get [MinGW 64bit] (location will be denoted as `MINGW_DIR`)
-* optional: get [MSYS] (location will be denoted as `MSYS_DIR`)
+* optional: get [MinGW 64bit], location will be denoted as `MINGW_DIR`
+* optional: get [MSYS], location will be denoted as `MSYS_DIR`
 
 ### MEX Binaries
 
@@ -47,19 +59,22 @@ in the [Two!Ears data] repository.
 
 ##### Alternative 2 (requires optional prerequisites)
 * switch to directory containing the mex-files
-    <pre>
-    cd SSR_DIR/mex/
-    </pre>
-* if you are using a Mac and installed Matlab at /Applications/MATLAB_R2013a.app
-    <pre>
-    export PATH="/Applications/MATLAB_R2013a.app/bin:$PATH"
-    export CPPFLAGS="-I/Applications/MATLAB_R2013a.app/extern/include"
-    </pre>
+  ```
+  cd SSR_DIR/mex/
+  ```
+* if you are using a Mac and installed MATLAB at `/Applications/MATLAB_R2013a.app`
+  ```
+  export PATH="/Applications/MATLAB_R2013a.app/bin:$PATH"
+  export CPPFLAGS="-I/Applications/MATLAB_R2013a.app/extern/include"
+  ```
 * generate mex-files
-    <pre>
-    make matlab
-    </pre>
-* If you get an error saying that the version of `GLIBCXX` is not correct this is due to the usage of the Matlab provided libstdc++ which is for an older gcc version. You can solve this by deleting linking it to your system libstdc++ via
+  ```
+  make matlab
+  ```
+* If you get an error saying that the version of `GLIBCXX` is not correct this
+  is due to the usage of the MATLAB provided `libstdc++? which is for an older
+  gcc version. You can solve this by deleting linking it to your system
+  `libstdc++` via
     ```
     ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.<LIBSTDC-VERSION> \
           /usr/local/MATLAB/MATLAB-VERSION/bin/glnxa64/libstdc++.so.6
@@ -75,17 +90,18 @@ in the [Two!Ears data] repository.
 ##### Alternative 2 (requires optional prerequisites)
 * edit `SSR_DIR/mex/win64/Makefile` and set the `MATLABROOT` to the location of your systems MATLAB
 * edit or create `MSYS_DIR\etc\fstab` and add mounts for `MINGW_DIR` and `SSR_DIR`
-    <pre>
+  ```
     MINGW_DIR    /mingw
     SSR_DIR      /ssr
-    </pre>
+  ```
 * start the shell by executing `MSYS_DIR/msys.bat`
 * switch to directory and compile sources
-    <pre>
+  ```
     cd /ssr/mex/win64
     make
-    </pre>
+  ```
 * open Matlab and add `SSR_DIR/mex/` to MATLAB-path using `pathtool` or `addpath`
+
 
 ## Usage
 
@@ -96,6 +112,7 @@ If you want to use the [Two!Ears Binaural Simulator] without any other part of t
 ```Matlab
 startTwoEars('BinauralSimulator.xml');
 ```
+
 ### Configuration
 
 There are basically two ways for controlling and configuring the binaural
@@ -333,9 +350,16 @@ Again, objects' initial positions have to be defined BEFORE re-initialization
 in order to initialize the simulation properly. The simulator however remains in
 an initialized state.
 
-### Examples
 
-#### Simulate two dry sources
+## Examples
+
+The following examples apply the configuration directly in MATLAB. For larger
+setups it will be easier to use the [XML Scene Description](#Configuration
+using XML Scene Description). Examples using the [XML Scene
+Description](#Configuration using XML Scene Description) can be found in the
+`test/` directory.
+
+### Simulate two dry sources
 
 In this example, two dry sources will be simulated and the binaural output is written to the file `out_two_sources.wav`.
 One source is a cello placed to the left of the listener and the other source is castanets placed in the front of the listener.
@@ -379,7 +403,7 @@ sim.Sinks.saveFile('out_two_sources.wav',sim.SampleRate);
 sim.set('ShutDown',true);
 ```
 
-#### Simulate a moving source
+### Simulate a moving source
 
 The following example simulates a dry cello that moves from the left to the right of the listener.
 
@@ -414,7 +438,7 @@ sim.Sinks.saveFile('out_moving_source.wav',sim.SampleRate);
 sim.set('ShutDown',true);
 ```
 
-#### Simulate rooms using the Image Source Model
+### Simulate rooms using the Image Source Model
 
 The following example simulates a dry cello in a shoebox room
 
@@ -465,7 +489,7 @@ sim.Sinks.saveFile('out_room.wav',sim.SampleRate);
 sim.set('ShutDown',true);
 ```
 
-#### Simulate rooms using Binaural Room Impulse Responses
+### Simulate rooms using Binaural Room Impulse Responses
 
 The following example simulates a cello in a reverberant environment
 
