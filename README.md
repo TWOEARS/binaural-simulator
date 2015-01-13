@@ -10,12 +10,12 @@ It can be used as one module in the [Two!Ears Auditory Model].
 
 ### Table of Contents
 
-**[Installation](#Installation)**
-**[Usage](#Usage)**
-**[Examples](#Examples)**
-**[Credits](#Credits)**
-**[License](#License)**
-**[Funding](#Funding)**
+**[Installation](#Installation)**  
+**[Usage](#Usage)**  
+**[Examples](#Examples)**  
+**[Credits](#Credits)**  
+**[License](#License)**  
+**[Funding](#Funding)**  
 
 
 ## Installation
