@@ -33,10 +33,10 @@ in the [Two!Ears data] repository.
     git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
     git checkout origin/win64 -b win64
     </pre>
-* add `SSR_DIR\3rdparty\win64\bin` to PATH enviroment variable ([HOWTO](http://www.computerhope.com/issues/ch000549.htm))
+* add `SSR_DIR\3rdparty\win64\bin` to PATH environment variable ([HOWTO])
 
-* optional: get [MinGW 64bit](http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z/download) (location will be denoted as `MINGW_DIR`)
-* optional: get [MSYS](http://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip/download) (location will be denoted as `MSYS_DIR`)
+* optional: get [MinGW 64bit] (location will be denoted as `MINGW_DIR`)
+* optional: get [MSYS] (location will be denoted as `MSYS_DIR`)
 
 ### MEX Binaries
 
@@ -87,20 +87,16 @@ in the [Two!Ears data] repository.
 
 ## Usage
 
-If you want to use the
-[Two!Ears Binaural Simulator](https://github.com/TWOEARS/binaural-simulator)
-without any other part of the
-[Two!Ears Auditory Model](https://github.com/TWOEARS/TwoEars)
-you can start it as a single module with the
-`startTwoEars` function which is part of the
-[Two!Ears Auditory Model](https://github.com/TWOEARS/TwoEars) repository.
+If you want to use the [Two!Ears Binaural Simulator] without any other part of the
+[Two!Ears Auditory Model] you can start it as a single module with the
+`startTwoEars` function which is part of the [Two!Ears Auditory Model] repository.
 
 ```Matlab
 startTwoEars('BinauralSimulator.xml');
 ```
 ### Configuration
 
-There are basically two ways for controlling and configurating the binaural
+There are basically two ways for controlling and configuring the binaural
 simulator.
 
 #### Configuration using MATLAB script
@@ -179,7 +175,7 @@ Sound sources are stored in a cell array. Line 3 defines two point sources,
 are created by calling the constructor of the `simulator.source.Point`-class.
 For the binaural simulation the parameter `Sinks` must contain only one object
 of the `simulator.AudioSink`-Class describing the listener (Line 4). The
-argument `2` in the contructor's call defines the number of input channel of
+argument `2` in the constructor's call defines the number of input channel of
 the sink, which is 2 for binaural signals. Since sources and sinks are also
 handles, they can be accessed using the same set/get procedure as for the
 simulator object, e.g.:
@@ -210,7 +206,7 @@ set(sim.Sinks, ...
 
 `Name` defines an unique identifier for the scene object, which
 should not be re-used for any other scene object. `Position`
-defines the position of the scene object in 3D cartesian coordinates (measured
+defines the position of the scene object in 3D Cartesian coordinates (measured
 in meter). In order to emit sound from a sound sources, audio buffers have to be
 respectively defined containing the sources' audio signals. A single-channel
 FIFO-Buffer (First-In-First-Out) can be defined by `simulator.buffer.FIFO(1)`.
@@ -482,7 +478,8 @@ set(sim, ...
 set(sim.Sources{1}, ...
     'Name', 'Cello', ...
     'IRDataset', simulator.DirectionalIR( ...
-      'impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src3_xs+2.20_ys-1.94.sofa'), ...
+      ['impulse_responses/qu_kemar_rooms/auditorium3/', ...
+       'QU_KEMAR_Auditorium3_src3_xs+2.20_ys-1.94.sofa']), ...
     'AudioBuffer', simulator.buffer.FIFO(1) ...
     );
 
@@ -512,13 +509,35 @@ sim.Sinks.saveFile('out_brs.wav',sim.SampleRate);
 sim.set('ShutDown',true);
 ```
 
+
+## Credits
+
+The Two!Ears Binaural Simulator is developed by Fiete Winter from Universität Rostock, and
+the rest of the [Two!Ears team].
+
+
 ## License
 
-[GNU General Public License, version 2]
+The Two!Ears Binaural Simulator is released under [GNU General Public License, version 2].
 
 
+## Funding
+
+This project has received funding from the European Union’s Seventh Framework
+Programme for research, technological development and demonstration under grant
+agreement no 618075.
+
+![EU Flag](doc/img/eu-flag.gif) [![Tree](doc/img/tree.jpg)](http://cordis.europa.eu/fet-proactive/)
+
+
+[MinGW 64bit]:http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z/download
+[MSYS]:http://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip/download
+[HOWTO]:http://www.computerhope.com/issues/ch000549.htm
 [API documentation]:https://twoears.github.io/binaural-simulator-doc
 [API documentation on the Simulator]:http://twoears.github.io/binaural-simulator-doc/classsimulator_1_1_simulator_interface.html
 [API documentation on buffers]:http://twoears.github.io/binaural-simulator-doc/namespacesimulator_1_1buffer.html
 [Two!Ears data]:https://gitlab.tubit.tu-berlin.de/twoears/data/tree/master
+[Two!Ears team]:http://twoears.aipa.tu-berlin.de/consortium
+[Two!Ears Binaural Simulator]:https://github.com/TWOEARS/binaural-simulator
+[Two!Ears Auditory Model]:https://github.com/TWOEARS/TwoEars
 [GNU General Public License, version 2]:http://www.gnu.org/licenses/gpl-2.0.html
