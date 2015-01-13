@@ -10,12 +10,12 @@ It can be used as one module in the [Two!Ears Auditory Model].
 
 ### Table of Contents
 
-**[Installation](#Installation)**  
-**[Usage](#Usage)**  
-**[Examples](#Examples)**  
-**[Credits](#Credits)**  
-**[License](#License)**  
-**[Funding](#Funding)**  
+**[Installation](#installation)**  
+**[Usage](#usage)**  
+**[Examples](#examples)**  
+**[Credits](#credits)**  
+**[License](#license)**  
+**[Funding](#funding)**  
 
 
 ## Installation
@@ -354,10 +354,10 @@ an initialized state.
 ## Examples
 
 The following examples apply the configuration directly in MATLAB. For larger
-setups it will be easier to use the [XML Scene Description](#Configuration
-using XML Scene Description). Examples using the [XML Scene
-Description](#Configuration using XML Scene Description) can be found in the
-`test/` directory.
+setups it will be easier to use the
+[XML Scene Description](#configuration-using-xml-scene-description). Examples
+using the [XML Scene Description](#configuration-using-xml-scene-description)
+can be found in the `test/` directory.
 
 ### Simulate two dry sources
 
