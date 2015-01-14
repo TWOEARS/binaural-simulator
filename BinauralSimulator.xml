@@ -10,7 +10,5 @@
   <TwoEarsPart  sub="API_MO"
                 startup="SOFAstart">sofa</TwoEarsPart>
   <TwoEarsPart  sub="src"
-                startup="startData" >data</TwoEarsPart>
-  <TwoEarsPart  sub="src"
                 startup="startTools" >tools</TwoEarsPart>
 </requirements>
