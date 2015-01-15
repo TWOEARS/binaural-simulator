@@ -6,6 +6,8 @@ for different situations. This is done via the usage of head-related transfer
 functions (HRTFs) or binaural room impulse responses (BRIRs), which are provided
 in the [Two!Ears data] repository.
 It can be used as one module in the [Two!Ears Auditory Model].
+The [Two!Ears Binaural Simulator] uses the signal processing core of the
+[SoundScape Renderer].
 
 
 ### Table of Contents
@@ -564,7 +566,7 @@ agreement no 618075.
 
 ![EU Flag](doc/img/eu-flag.gif) [![Tree](doc/img/tree.jpg)](http://cordis.europa.eu/fet-proactive/)
 
-
+[SoundScape Renderer]:https://github.com/SoundScapeRenderer/ssr
 [MinGW 64bit]:http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/x86_64-4.8.2-release-win32-seh-rt_v3-rev4.7z/download
 [MSYS]:http://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip/download
 [HOWTO]:http://www.computerhope.com/issues/ch000549.htm
