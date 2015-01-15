@@ -4,9 +4,10 @@ Two!Ears Binaural Simulator
 The [Two!Ears Binaural Simulator] enables the creation of binaural audio signals
 for different situations. This is done via the usage of head-related transfer
 functions (HRTFs) or binaural room impulse responses (BRIRs), which are provided
-in the [Two!Ears data] repository.  All the needed data will be downloaded on
-demand via a http connection to the data repository. It can be used as one module in the [Two!Ears Auditory Model].
-The [Two!Ears Binaural Simulator] uses the signal processing core of the
+in the [Two!Ears data] repository. All the needed data will be downloaded on
+demand from the data repository via a http connection. The simulation framework
+can be used as one module in the [Two!Ears Auditory Model]. The
+[Two!Ears Binaural Simulator] uses the signal processing core of the
 [SoundScape Renderer].
 
 
