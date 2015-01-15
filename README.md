@@ -14,10 +14,15 @@ can be used as one module in the [Two!Ears Auditory Model]. The
 ### Table of Contents
 
 **[Installation](#installation)**
+
 **[Usage](#usage)**
+
 **[Examples](#examples)**
+
 **[Credits](#credits)**
+
 **[License](#license)**
+
 **[Funding](#funding)**
 
 
