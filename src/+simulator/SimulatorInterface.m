@@ -20,7 +20,8 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     Renderer = @ssr_binaural;
     % HRIR-dataset
     % @type DirectionalIR
-    HRIRDataset;
+    % @default simulator.DirectionalIR()
+    HRIRDataset = simulator.DirectionalIR();
 
     % maximum delay in seconds caused by distance and finite sound velocity
     % @type double

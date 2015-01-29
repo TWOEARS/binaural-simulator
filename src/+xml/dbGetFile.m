@@ -19,29 +19,41 @@ function filename = dbGetFile(filename)
 
 import xml.*;
 
+isargchar(filename);
 try
-  % try relative or absolute path
-  isargfile(filename);
-  fprintf('INFO: local file (%s) found, will not search in db\n', filename);
-  filename = which(filename);
+  % try relative path
+  isargfile(fullfile(pwd,filename));
+  fprintf('INFO: relative local file (%s) found, will not search in db\n', filename);
+  filename = fullfile(pwd,filename);
+  return;
 catch
   try
-    % try local database
-    isargfile(fullfile(dbPath(),filename));
-    filename = fullfile(dbPath(),filename);
+    % try absolute path
+    isargfile(filename);
+    fprintf('INFO: absolute local file (%s) found, will not search in db\n', filename);
+    return;
   catch
-    fprintf(['INFO: file (%s) not found in local database (dbPath=%s),', ...
-      'trying remote database\n'], filename, dbPath());
-
-    % try cache of remote database
     try
-      tmppath = xml.dbTmp();
-      isargfile(fullfile(tmppath,filename));
-      filename = fullfile(tmppath,filename);
-      fprintf('INFO: file (%s) found in cache of remote database\n', filename);
+      % try local database
+      isargfile(fullfile(dbPath(),filename));
+      fprintf('INFO: file (%s) found in local database\n', filename);
+      filename = fullfile(dbPath(),filename);
+      return;
     catch
-      % try download from remote database
-      filename = dbDownloadFile(filename);
+      fprintf(['INFO: file (%s) not found in local database (dbPath=%s),', ...
+        'trying remote database\n'], filename, dbPath());
+
+      % try cache of remote database
+      try
+        tmppath = xml.dbTmp();
+        isargfile(fullfile(tmppath,filename));
+        fprintf('INFO: file (%s) found in cache of remote database\n', filename);
+        filename = fullfile(tmppath,filename);
+        return;
+      catch
+        % try download from remote database
+        filename = dbDownloadFile(filename);
+      end
     end
   end
 end

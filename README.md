@@ -1,4 +1,4 @@
-Two!Ears binaural simulator
+Two!Ears Binaural Simulator
 ===========================
 
 The Two!Ears binaural simulator enables the creation of binaural audio signals
@@ -43,7 +43,8 @@ in the [Two!Ears data] repository.
 #### Linux/Mac
 
 ##### Alternative 1
-* use the pre-compiled binaries provided inside `MAT_DIR/src/mex`
+* use the pre-compiled binaries provided inside `src/mex`
+
 ##### Alternative 2
 * switch to directory containing the mex-files
 	<pre>
@@ -67,7 +68,8 @@ in the [Two!Ears data] repository.
 #### Windows 7 64bit
 
 ##### Alternative 1
-* use the pre-compiled binaries provided inside `MAT_DIR/src/mex`
+* use the pre-compiled binaries provided inside `src/mex`
+
 ##### Alternative 2
 * edit `SSR_DIR/mex/win64/Makefile` and set the `MATLABROOT` to the location of your systems MATLAB
 * edit or create `MSYS_DIR\etc\fstab` and add mounts for `MINGW_DIR` and `SSR_DIR`
@@ -85,8 +87,17 @@ in the [Two!Ears data] repository.
 
 ## Usage
 
-Add descriptions for the following applications of the model and add a general
-description at this position.
+If you want to use the
+[Two!Ears Binaural Simulator](https://github.com/TWOEARS/binaural-simulator)
+without any other part of the
+[Two!Ears Auditory Model](https://github.com/TWOEARS/TwoEars)
+you can start it as a single module with the
+`startTwoEars` function which is part of the
+[Two!Ears Auditory Model](https://github.com/TWOEARS/TwoEars) repository.
+
+```Matlab
+startTwoEars('BinauralSimulator.xml');
+```
 
 See the [API documentation] for further details.
 
