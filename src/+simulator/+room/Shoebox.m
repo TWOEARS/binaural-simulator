@@ -3,18 +3,18 @@ classdef Shoebox < simulator.room.Base
   %   Detailed explanation goes here
   
   properties
-    % length of room in meter
+    % Length of room in UnitRight direction
     % @type double
     % @default 1
-    Length = 1;
-    % width of room in meter
+    LengthX = 1;
+    % Length of room in UnitFront direction
     % @type double
     % @default 1
-    Width = 1;
-    % height of room in meter
+    LengthY = 1;
+    % Length of room in UnitUp direction
     % @type double
     % @default 1
-    Height = 1;
+    LengthZ = 1;
     % 
     % @type char[]
     % @default '2D'
@@ -45,9 +45,9 @@ classdef Shoebox < simulator.room.Base
     function obj = Shoebox()
       obj = obj@simulator.room.Base();
       
-      obj.addXMLAttribute('Length', 'double');
-      obj.addXMLAttribute('Width', 'double');
-      obj.addXMLAttribute('Height', 'double');
+      obj.addXMLAttribute('LengthX', 'double');
+      obj.addXMLAttribute('LengthY', 'double');
+      obj.addXMLAttribute('LengthZ', 'double');
       obj.addXMLAttribute('ReverberationMode', 'char');
       obj.addXMLAttribute('RT60', 'double');      
     end
@@ -67,13 +67,13 @@ classdef Shoebox < simulator.room.Base
       select = abs(2*mx - qq) + abs(2*my - jj) + abs(2*mz - kk) <= obj.ReverberationMaxOrder;
       
       obj.Q = 1 - 2 * [qq(select), jj(select), kk(select)]';
-      obj.M = 2*[obj.Length*mx(select), obj.Width*my(select), obj.Height*mz(select)]';
+      obj.M = 2*[obj.LengthX*mx(select), obj.LengthY*my(select), obj.LengthZ*mz(select)]';
       
       if ~isempty(obj.RT60)        
-        V = obj.Length*obj.Width*obj.Height;
-        A = 2*( obj.Length*obj.Height + obj.Width*obj.Height );
+        V = obj.LengthX*obj.LengthY*obj.LengthZ;
+        A = 2*( obj.LengthX*obj.LengthZ + obj.LengthY*obj.LengthZ);
         if strcmp(obj.ReverberationMode, '3D')
-          A = A + 2*obj.Length*obj.Width;
+          A = A + 2*obj.LengthX*obj.LengthY;
         end
         % Sabine formula for the reverberation time of rectangular rooms
         obj.AbsorptionCoeffs = repmat(24*log(10.0)*V / (343*A*obj.RT60),1,6);
@@ -100,7 +100,7 @@ classdef Shoebox < simulator.room.Base
     function refreshSubSources(obj, source)      
       pos = obj.RotationMatrix' * (source.Position - obj.Position);
       
-      if any(pos < 0) || any(pos > [obj.Length; obj.Width; obj.Height])
+      if any(pos < 0) || any(pos > [obj.LengthX; obj.LengthY; obj.LengthZ])
         for idx=1:obj.NumberOfSubSources
           source.SubSources(idx).Valid = false;
         end
@@ -148,9 +148,9 @@ classdef Shoebox < simulator.room.Base
       end            
       
       % Create Vertices
-      x = obj.Length*[0 1 1 0 0 1 1 0]';
-      y = obj.Width *[1 1 1 1 0 0 0 0]';
-      z = obj.Height*[0 0 1 1 1 1 0 0]';
+      x = obj.LengthX*[0 1 1 0 0 1 1 0]';
+      y = obj.LengthY*[1 1 1 1 0 0 0 0]';
+      z = obj.LengthZ*[0 0 1 1 1 1 0 0]';
        
       % Rotate and Translate Vertices  
       verts = zeros(3,8);

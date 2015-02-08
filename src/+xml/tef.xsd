@@ -294,9 +294,9 @@
         <xs:attribute name="ReflectionCoeffs" type="reflectionList" default="1.0"/>
         <xs:attribute name="AbsorptionCoeffs" type="absorptionList" use="optional"/>
         <xs:attribute name="RT60" type="nonNegativeDecimal" use="optional"/>
-        <xs:attribute name="Height" type="nonNegativeDecimal" use="required"/>
-        <xs:attribute name="Width" type="nonNegativeDecimal" use="required"/>
-        <xs:attribute name="Length" type="nonNegativeDecimal" use="required"/>
+        <xs:attribute name="LengthX" type="nonNegativeDecimal" use="optional"/>
+        <xs:attribute name="LengthY" type="nonNegativeDecimal" use="required"/>
+        <xs:attribute name="LengthZ" type="nonNegativeDecimal" use="required"/>
         <xs:attribute name="Mode" type="room_mode_t" default="2D"/>
       </xs:extension>
     </xs:complexContent>

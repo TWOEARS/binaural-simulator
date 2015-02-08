@@ -20,11 +20,11 @@
         UnitUp="0 1 0"
         Name="Head"/>
   <room Position="-1 -1 0"
-        UnitFront="1 0 0"
+        UnitFront="0 0 1"
         UnitUp="0 1 0"
-        Length="4"
-        Width="3"
-        Height="2.50"
+        LengthX="4"
+        LengthY="3"
+        LengthZ="2.5"
         RT60="0.6"
         ReverberationMaxOrder="8"
         Name="Room"/>
