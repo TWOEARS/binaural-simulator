@@ -13,19 +13,19 @@
 ############################################################################
 ################# mtoc++ related information ###############################
 ############################################################################
-# Feel free to make any changes within this doxygen configuration file to 
+# Feel free to make any changes within this doxygen configuration file to
 # taylor the output towards your needs. Any changes made by us to the doxygen
 # config file in order to have mtoc++ running smoothly have been moved to the
 # END of the file in order to easily keep custom changes over new mtoc++ versions.
 #
-# Depending on the output preferred style, checkout the 
+# Depending on the output preferred style, checkout the
 # OPTIMIZE_OUTPUT_FOR_C and OPTIMIZE_OUTPUT_FOR_JAVA settings.
 #
-# Most importantly, this file gets processed (when using our tools, e.g. 
+# Most importantly, this file gets processed (when using our tools, e.g.
 # MatlabDocMaker) in order to replace some values:
 # - _ProjectName_: The project name configured in the tools
-#       (in MatlabDocMaker:MatlabDocMaker.getProjectVersion) 
-# - _ProjectVersion_: Is substituted by the value returned by 
+#       (in MatlabDocMaker:MatlabDocMaker.getProjectVersion)
+# - _ProjectVersion_: Is substituted by the value returned by
 #       MatlabDocMaker.getProjectVersion inside MatLab. We decided to keep
 #       this flexible as project versions change over time and the documentation
 #       should of course reflect that with minimum effort (thus, only a change
@@ -64,13 +64,13 @@
 #             - Set EXLUDE_SYMLINKS = YES as default
 #
 # mtoc++ 1.4: - Added alias for an @events tag, creating a page of all events
-#			  - Changed naming convention for alias-tags new and change as newer doxygen
+#       - Changed naming convention for alias-tags new and change as newer doxygen
 #               versions seem not to recognize \1\2-like combinations of arguments any more (?)
 #               now pages named "newfeat\1_\2" with underscore are created, please update your static
 #               references in your misc documentation files
 #
 # mtoc++ 1.3: - Changed the default value of SHOW_FILES to YES in order to avoid more
-#               confusion about what mtoc++ actually does (NOT replacing the 
+#               confusion about what mtoc++ actually does (NOT replacing the
 #               requirement to know doxygen)
 #             - Included a warning in the beginning of this file
 #
@@ -87,7 +87,7 @@
 ################################################################################
 
 ############### DEFAULT (DOXYGEN ONLY) CONFIGURATION ###########################
-# The following settings can be adjusted to customize doxygen's behaviour and 
+# The following settings can be adjusted to customize doxygen's behaviour and
 # hence the output when using the tools like MatlabDocMaker
 ################################################################################
 #---------------------------------------------------------------------------
@@ -700,7 +700,7 @@ EXCLUDE_SYMLINKS       = YES
 # for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = */SOFA/* \
-                      */doc/mtocpp/* \
+                         */doc/*/*  \
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1706,7 +1706,7 @@ GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
 
 ############### MTOC++ RELATED CONFIGURATION ###################################
-# The following are set by us or the tools (MatlabDocMaker) and should be 
+# The following are set by us or the tools (MatlabDocMaker) and should be
 # changed with care in order to keep mtoc++ running
 ################################################################################
 
@@ -1778,7 +1778,7 @@ ALIASES                = "synupdate=\xrefitem synupdate \"Syntax Update\" \"Synt
 # have no effect if this option is set to NO (the default)
 
 HAVE_DOT               = _HaveDot_
-                         
+
 ############### CRITICAL MTOC++ RELATED CONFIGURATION ##########################
 # The following tags should NOT be changed in order to keep mtoc++ running
 ################################################################################
@@ -1807,4 +1807,4 @@ FILTER_PATTERNS   = *.m="_MTOCFILTER_"
 EXTRA_PACKAGES    = "_LatexExtras_"
 
 # leave empty so MatlabDocMaker can capture doxygen warnings
-WARN_LOGFILE      = 
+WARN_LOGFILE      =

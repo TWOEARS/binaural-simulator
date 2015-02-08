@@ -18,6 +18,6 @@ persistent CachedURL;
 if exist('url','var')
   CachedURL=url;
 elseif isempty(CachedURL)
-  CachedURL= 'https://gitlab.tubit.tu-berlin.de/twoears/data/raw/master/';
+  CachedURL= 'https://dev.qu.tu-berlin.de/projects/twoears-database/repository/revisions/master/raw/';
 end
 url=CachedURL;

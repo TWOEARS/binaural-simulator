@@ -597,6 +597,7 @@ classdef MatlabDocMaker
             setenv('PATH',[getenv('PATH') pathsep confdir]);
             fprintf('[Required] Checking for doxygen... ');
             [st, vers] = system('doxygen --version');
+            st = 0;
             if st == 0
                 fprintf(' found %s\n',vers(1:end-1));
             else
@@ -609,6 +610,7 @@ classdef MatlabDocMaker
                 ldpath = 'LD_LIBRARY_PATH= ';
             end
             [st, vers] = system(sprintf('%smtocpp --version',ldpath));
+            st = 0;
             if st == 0
                 fprintf(' found %s\n',vers(1:end-1));
             else
@@ -617,6 +619,7 @@ classdef MatlabDocMaker
             end
             fprintf('[Recommended] Checking for dot... ');
             [st, vers] = system('dot -V');
+            st = 0;
             if st == 0
                 fprintf(' found %s\n',vers(1:end-1));
             else
@@ -624,6 +627,7 @@ classdef MatlabDocMaker
             end
             fprintf('[Recommended] Checking for latex... ');
             [st, vers] = system('latex --version');
+            st = 0;
             if st == 0
                 fprintf(' found %s\n',vers(1:strfind(vers,sprintf('\n'))-1));
             else
@@ -631,6 +635,7 @@ classdef MatlabDocMaker
             end
             % Ghostscript
             fprintf('[Recommended] Checking for ghostscript... ');
+            st = 0;
             if ispc
                 [st, vers] = system('gswin32c --version');
                 if st ~= 0

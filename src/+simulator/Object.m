@@ -265,7 +265,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     end
     function v = get.Position(obj)
       v = obj.PositionDynamic.Current;
-      v = obj.GroupRotation*(v + obj.GroupTranslation);
+      v = obj.GroupRotation*v + obj.GroupTranslation;
     end
     %
     function set.UnitUp(obj,v)

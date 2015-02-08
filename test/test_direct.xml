@@ -12,7 +12,7 @@
           Name="Forest">
     <buffer ChannelMapping="1 2"
             Type="fifo"
-            File="stimuli/binaural/binaural_forest.wav"/>
+            File="stimuli/binaural/binaural_cello.wav"/>
   </source>
   <sink Position="0 0 1.75"
         UnitFront="1 0 0"

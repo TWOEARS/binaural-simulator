@@ -15,7 +15,7 @@ BRANCH=$(git symbolic-ref --short HEAD)
 if [ -d html ]
 then
   cd html
-  if [ -d .git ]
+  if [ -d .git -a "$BRANCH" = master ]
   then
     git rm -rf --ignore-unmatch .
   fi
