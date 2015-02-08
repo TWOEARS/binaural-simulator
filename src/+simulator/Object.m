@@ -246,10 +246,13 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       else
         figure(figureid);
       end
-      % Draw Head-Position
+      % Draw Position
       pos = obj.Position;
-      h = plot3(pos(1), pos(2), pos(3),'k.');
+      h = plot3(pos(1), pos(2), pos(3),'k.');      
       leg = {[obj.Name, ' (', class(obj), ')']};
+      % Draw Orientation
+      ori = 0.25*obj.UnitX;
+      quiver3(pos(1), pos(2), pos(3), ori(1), ori(2), ori(3));
     end
   end
 
