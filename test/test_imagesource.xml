@@ -16,12 +16,8 @@
             File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
   </source>
   <sink Position="0 0 1.75"
-        UnitFront="0 0 1"
-        UnitUp="0 1 0"
         Name="Head"/>
   <room Position="-1 -1 0"
-        UnitFront="0 0 1"
-        UnitUp="0 1 0"
         LengthX="4"
         LengthY="3"
         LengthZ="2.5"

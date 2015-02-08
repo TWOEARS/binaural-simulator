@@ -12,8 +12,7 @@
             File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
   </source>
   <sink Position="0 0 1.75"
-        UnitFront="0 -1 0"
-        UnitUp="0 0 1"
+        UnitX="0 -1 0"
         Name="Head"
         RootPath="some/root/path/"
         MeshFile="blub.ext"/>

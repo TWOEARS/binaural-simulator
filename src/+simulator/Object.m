@@ -15,7 +15,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % view-up vector
     % @type double[]
     % @default [0; 0; 1]
-    UnitUp = [0; 0; 1];
+    UnitZ = [0; 0; 1];
   end
   properties (Dependent)
     % 3D-Position
@@ -25,7 +25,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     % front vector
     % @type double[]
     % @default [1; 0; 0]
-    UnitFront;
+    UnitX;
 
     % radius (spherical coordinates) of Position in meter
     % @type double
@@ -41,19 +41,19 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     Polar;
   end
   properties (Dependent, SetAccess=private, Hidden=true)
-    % vector resulting of UnitUp x UnitFront
+    % vector resulting of UnitZ x UnitX 
     % @type double[]
     % @default [0; 1; 0]
-    UnitRight;
+    UnitY;
     % xy-coordinates of Position
     % @type double[]
     % @default [0; 0]
     PositionXY;
-    % azimuth of UnitFront in degree
+    % azimuth of UnitX in degree
     % @type double
     % @default 0
     OrientationXY;
-    % RotationMatrix resulting of [obj.UnitRight, obj.UnitUp, obj.UnitFront]
+    % RotationMatrix resulting of [obj.UnitZ, obj.UnitY, obj.UnitX]
     % @type double[][]
     % @default eye(3)
     RotationMatrix;
@@ -62,7 +62,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
   % Dynamic Stuff
   properties (SetAccess = private, Hidden=true)
     PositionDynamic = simulator.dynamic.AttributeLinear([0; 0; 0]);
-    UnitFrontDynamic = simulator.dynamic.AttributeAngular([1; 0; 0]);
+    UnitXDynamic = simulator.dynamic.AttributeAngular([1; 0; 0]);
   end
 
   % Hierarchical Stuff
@@ -88,8 +88,8 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
   methods
     function obj = Object()
       obj = obj@simulator.vision.Meta();
-      obj.addXMLAttribute('UnitUp', 'double');
-      obj.addXMLAttribute('UnitFront', 'double');
+      obj.addXMLAttribute('UnitX', 'double');
+      obj.addXMLAttribute('UnitZ', 'double');
       obj.addXMLAttribute('Position', 'double');
       obj.addXMLAttribute('Radius', 'double');
       obj.addXMLAttribute('Name', 'char');
@@ -99,29 +99,26 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
 
   methods
     %% Rotation
-    function rotateAroundFront(obj, alpha)
-      % function rotateAroundFront(obj, alpha)
-      % rotate object around its UnitFront vector
+    function rotateAroundX(obj, alpha)
+      % rotate object around its UnitX vector
       %
       % Parameters:
       %   alpha:  rotation angle in degree @type double
-      obj.rotateAroundAxis(obj.UnitFront, alpha);
+      obj.rotateAroundAxis(obj.UnitX, alpha);
     end
-    function rotateAroundUp(obj, alpha)
-      % function rotateAroundUp(obj, alpha)
-      % rotate object around its UnitUp vector
+    function rotateAroundY(obj, alpha)
+      % rotate object around its UnitY vector
       %
       % Parameters:
       %   alpha:  rotation angle in degree @type double
-      obj.rotateAroundAxis(obj.UnitUp, alpha);
+      obj.rotateAroundAxis(obj.UnitY, alpha);
     end
-    function rotateAroundRight(obj, alpha)
-      % function rotateAroundRight(obj, alpha)
-      % rotate object around its UnitRight vector
+    function rotateAroundZ(obj, alpha)
+      % rotate object around its UnitZ vector
       %
       % Parameters:
       %   alpha:  rotation angle in degree @type double
-      obj.rotateAroundAxis(obj.UnitRight, alpha);
+      obj.rotateAroundAxis(obj.UnitZ, alpha);
     end
     function rotateAroundAxis(obj, n, alpha)
       % function rotateAroundAxis(obj, n, alpha)
@@ -143,8 +140,8 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
         n(3)*s,  c     , -n(1)*s; ...
         -n(2)*s,  n(1)*s,  c     ];
 
-      obj.UnitFront = R*obj.UnitFront;
-      obj.UnitUp = R*obj.UnitUp;
+      obj.UnitX = R*obj.UnitX;
+      obj.UnitZ = R*obj.UnitZ;
     end
   end
   %% dynamic stuff
@@ -170,7 +167,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
         return;
       end
       obj.PositionDynamic = obj.PositionDynamic.refresh(T);
-      obj.UnitFrontDynamic = obj.UnitFrontDynamic.refresh(T);
+      obj.UnitXDynamic = obj.UnitXDynamic.refresh(T);
     end
     % extended setter, getter for dynamic extension
     function setDynamic(obj, name, prop, value)
@@ -183,7 +180,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       %
       % supported properties (name)
       % - Position
-      % - UnitFront
+      % - UnitX
       %
       % supported limited speed parameters (prop)
       % - Velocity
@@ -268,7 +265,7 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
       v = obj.GroupRotation*v + obj.GroupTranslation;
     end
     %
-    function set.UnitUp(obj,v)
+    function set.UnitZ(obj,v)
       isargcoord(v);
       try
         isargunitvector(v);
@@ -276,10 +273,10 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
         warning('re-normalization of non-unit vector');
         v = v./norm(v,2);
       end
-      obj.UnitUp = v;
+      obj.UnitZ = v;
     end
     %
-    function set.UnitFront(obj,v)
+    function set.UnitX(obj,v)
       isargcoord(v);
       try
         isargunitvector(v);
@@ -287,19 +284,19 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
         warning('re-normalization of non-unit vector');
         v = v./norm(v,2);
       end
-      obj.UnitFrontDynamic.Target = v;
+      obj.UnitXDynamic.Target = v;
     end
-    function v = get.UnitFront(obj)
-      v = obj.UnitFrontDynamic.Current;
+    function v = get.UnitX(obj)
+      v = obj.UnitXDynamic.Current;
       v = obj.GroupRotation*v;
     end
     %
-    function v = get.UnitRight(obj)
-      v = cross(obj.UnitUp,obj.UnitFront);
+    function v = get.UnitY(obj)
+      v = cross(obj.UnitZ, obj.UnitX);
     end
     %
-    function v = get.UnitUp(obj)
-      v = obj.GroupRotation*obj.UnitUp;
+    function v = get.UnitZ(obj)
+      v = obj.GroupRotation*obj.UnitZ;
     end
     %
     function v = get.PositionXY(obj)
@@ -342,11 +339,11 @@ classdef Object < simulator.vision.Meta & xml.MetaObject
     end
     %
     function v = get.OrientationXY(obj)
-      v = atan2d(obj.UnitFront(2,:), obj.UnitFront(1,:));
+      v = atan2d(obj.UnitX(2,:), obj.UnitX(1,:));
     end
     %
     function v = get.RotationMatrix(obj)
-      v = [obj.UnitRight, obj.UnitUp, obj.UnitFront];
+      v = [obj.UnitX, obj.UnitY, obj.UnitZ];
     end
 
     %

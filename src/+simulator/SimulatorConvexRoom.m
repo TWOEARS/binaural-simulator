@@ -264,7 +264,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % function rotateHeadRelative(obj, angleIncDeg)
       %
       % See also: simulator.RobotInterface.rotateHeadRelative
-      obj.Sinks.rotateAroundUp(angleIncDeg);
+      obj.Sinks.rotateAroundZ(angleIncDeg);
     end
     function rotateHeadAbsolute(obj, angleDeg)
       % function rotateHeadAbsolute(obj, angleDeg)

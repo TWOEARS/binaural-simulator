@@ -11,8 +11,8 @@ sim.set('Init',true);
 %% static scene, dynamic head
 
 % head should rotate about 170 degree to the right with 20 degrees per second
-sim.Sinks.setDynamic('UnitFront', 'Velocity', 20);
-sim.Sinks.set('UnitFront', [cosd(85); sind(85); 0]);
+sim.Sinks.setDynamic('UnitX', 'Velocity', 20);
+sim.Sinks.set('UnitX', [cosd(85); sind(85); 0]);
 
 while ~sim.isFinished()
   sim.set('Refresh',true);  % refresh all objects

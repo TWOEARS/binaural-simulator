@@ -17,7 +17,5 @@
             Mean="0.0"/>
   </source>
   <sink Position="0 0 1.75"
-        UnitFront="1 0 0"
-        UnitUp="0 0 1"
         Name="Head"/>
 </scene>

@@ -229,8 +229,8 @@
     </xs:documentation></xs:annotation>
     <xs:attribute name="Position" type="coord3D_t" use="optional"/>
     <xs:attribute name="Radius" type="nonNegativeDecimal" use="optional"/>
-    <xs:attribute name="UnitUp" type="coord3D_t" use="optional"/>
-    <xs:attribute name="UnitFront" type="coord3D_t" use="optional"/>
+    <xs:attribute name="UnitX" type="coord3D_t" use="optional"/>
+    <xs:attribute name="UnitZ" type="coord3D_t" use="optional"/>
     <xs:attribute name="Name" type="xs:ID" use="required"/>
     <xs:attribute name="Labels" type="stringList" use="optional"/>
     <!-- Attributes for visual simulation: -->

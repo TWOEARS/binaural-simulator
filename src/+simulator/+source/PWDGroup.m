@@ -15,8 +15,6 @@ classdef PWDGroup < simulator.source.GroupBase
       obj = obj@simulator.source.GroupBase();
       obj.addXMLAttribute('Azimuths', 'double', 'Azimuths', @(x) str2num(x));
       obj.addXMLAttribute('Directions', 'double');
-      obj.UnitFront = [0; 0; 1];
-      obj.UnitUp = [0; 1; 0];
     end
   end
 
@@ -27,7 +25,7 @@ classdef PWDGroup < simulator.source.GroupBase
       for wdx=1:obj.RequiredChannels
         obj.SubSources(wdx) = simulator.source.PlaneWave();
         obj.SubSources(wdx).GroupObject = obj;
-        obj.SubSources(wdx).UnitFront = obj.SubDirections(:,wdx);
+        obj.SubSources(wdx).UnitX = obj.SubDirections(:,wdx);
       end
     end
   end

@@ -15,7 +15,5 @@
             File="stimuli/binaural/binaural_cello.wav"/>
   </source>
   <sink Position="0 0 1.75"
-        UnitFront="1 0 0"
-        UnitUp="0 0 1"
         Name="Head"/>
 </scene>

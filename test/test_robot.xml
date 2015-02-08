@@ -5,7 +5,6 @@
   MaximumDelay="0.05"
   PreDelay="0.0"
   NumberOfThreads="1"
-  ReverberationMaxOrder="2"
   Renderer="ssr_binaural"
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
   <source Position="-2 0 1.75"
@@ -23,8 +22,6 @@
             File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
   </source>
   <sink Position="0 0 1.75"
-        UnitFront="1 0 0"
-        UnitUp="0 0 1"
         Name="Head"
         RootPath="some/root/path/"
         MeshFile="blub.ext"/>
