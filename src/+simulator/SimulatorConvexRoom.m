@@ -77,7 +77,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       params.initial_delay = ceil(obj.PreDelay*obj.SampleRate);
 
       % initialize SSR
-      obj.Renderer('init', source_irfiles, params);
+      % TODO: remove workaround by providing newest binaries for Windows/Mac
+      if obj.Verbose
+        obj.Renderer('init', source_irfiles, params);      
+      else
+        obj.Renderer('init', source_irfiles, params, obj.Verbose); 
+      end
       
       if ~isempty(source_types)
         % TODO: remove this workaround and handle this inside the SSR

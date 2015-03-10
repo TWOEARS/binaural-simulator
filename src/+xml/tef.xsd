@@ -157,6 +157,19 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="Verbose" type="xs:boolean" default="true">
+        <xs:annotation>
+          <xs:documentation xml:lang="short">
+      additional information for debugging
+          </xs:documentation>
+          <xs:documentation>
+      If set to true, additional information will be plotting via stdout
+          </xs:documentation>
+          <xs:documentation xml:lang="matlab">
+      simObject.Verbose = false;
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 

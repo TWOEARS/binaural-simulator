@@ -46,6 +46,9 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
     % shoebox room
     % @type simulator.room.Shoebox
     Room = simulator.room.Shoebox.empty;
+    
+    % verbosity
+    Verbose = true;
   end
   
   properties (Hidden=true)
@@ -68,7 +71,8 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         'simulator.DirectionalIR', ...
         'HRIRs', ...
         @(x) simulator.DirectionalIR(xml.dbGetFile(x)));
-
+      obj.addXMLAttribute('Verbose', 'logical');
+      
       obj.addXMLElement('Sinks', ...
         'simulator.AudioSink', ...
         'sink', ...
@@ -80,6 +84,8 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
         @(x) simulator.dynamic.SceneEventHandler(obj));
       % sources and walls do not occur here because they have to be handled
       % in a different way. See configureXMLSpecific.
+      
+      
     end
   end
 
@@ -289,6 +295,13 @@ classdef (Abstract) SimulatorInterface < xml.MetaObject
       obj.errorIfInitialized;
       obj.EventHandler = EventHandler;
     end
+    function set.Verbose(obj, Verbose)
+      isargclass('logical', Verbose);
+      if numel(Verbose) ~= 1
+        error('Verbose must have only one element');
+      end
+      obj.Verbose = Verbose;
+    end    
   end
 
   %% Misc
