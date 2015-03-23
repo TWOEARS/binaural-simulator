@@ -36,5 +36,5 @@ fprintf('Downloading file %s\n', url);
 [~, status] = urlwrite(url, outfile);
 
 if ~status
-  error('Download failed (url=%s), url');
+  error('Download failed (url=%s)', url);
 end
