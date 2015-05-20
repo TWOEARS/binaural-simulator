@@ -49,18 +49,21 @@ You need the following repositories from the Two!Ears project
   * **libxml2-dev**
   * **libfftw3-dev**
 * optional: get SoundScape Renderer (location will be denoted as `SSR_DIR`)
-  ```
-  git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
-  git checkout origin/master -b master
-  ```
 
+    ```
+    git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
+    git checkout origin/master -b master
+    ```
+ 
 #### Windows 7 64bit
 
 * get SoundScape Renderer (location will be denoted as `SSR_DIR`)
-  ```
-  git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
-  git checkout origin/win64 -b win64
-  ```
+
+    ```
+    git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
+    git checkout origin/win64 -b win64
+    ```
+ 
 * add `SSR_DIR\3rdparty\win64\bin` to `PATH` environment variable ([HOWTO])
 
 * optional: get [MinGW 64bit], location will be denoted as `MINGW_DIR`
@@ -79,10 +82,11 @@ You need the following repositories from the Two!Ears project
   cd SSR_DIR/mex/
   ```
 * if you are using a Mac and installed MATLAB at `/Applications/MATLAB_R2013a.app`
-  ```
-  export PATH="/Applications/MATLAB_R2013a.app/bin:$PATH"
-  export CPPFLAGS="-I/Applications/MATLAB_R2013a.app/extern/include"
-  ```
+
+    ```
+    export PATH="/Applications/MATLAB_R2013a.app/bin:$PATH"
+    export CPPFLAGS="-I/Applications/MATLAB_R2013a.app/extern/include"
+    ```
 * generate mex-files
   ```
   make matlab
