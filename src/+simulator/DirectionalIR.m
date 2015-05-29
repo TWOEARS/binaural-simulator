@@ -57,8 +57,7 @@ classdef DirectionalIR < hgsetget
         [d, fs] = audioread(filename);
       elseif strcmp('.sofa', ext)
         warning('SOFA HRTF support is still very experimental');
-        data = SOFAload(filename);
-        [d, fs]= obj.convertSOFA(data);
+        [d, fs]= obj.convertSOFA(filename);
       else
         error('file extension (%s) not supported (only .wav and .sofa)', ext);
       end
@@ -143,31 +142,53 @@ classdef DirectionalIR < hgsetget
     end
   end
   methods (Static)
-    function [d, fs] = convertSOFA(data)
+    function [d, fs] = convertSOFA(filename)
 
-      switch data.GLOBAL_SOFAConventions
+      header = SOFAload(filename, 'nodata');
+
+      switch header.GLOBAL_SOFAConventions
         case 'SimpleFreeFieldHRIR'
           % convert to spherical coordinates
-          data.SourcePosition = SOFAconvertCoordinates(...
-            data.SourcePosition,data.SourcePosition_Type,'spherical');
+          header.SourcePosition = SOFAconvertCoordinates(...
+            header.SourcePosition,header.SourcePosition_Type,'spherical');
           % find entries with zero elevation angle
-          select = find(data.SourcePosition(:,2) == 0);
+          select = find(header.SourcePosition(:,2) == 0);
+          % error if different distances are present
+          if any( header.SourcePosition(select(1),3) ~= ...
+              header.SourcePosition(select,3) )
+            error('HRTFs with different distance are not supported');
+          end
           % sort remaining with respect to azimuth angle
-          [azimuths, ind] = sort(data.SourcePosition(select,1));
+          [azimuths, ind] = sort(header.SourcePosition(select,1));
         case 'SingleRoomDRIR'
           % convert to spherical coordinates
-          data.ListenerView = SOFAconvertCoordinates(...
-            data.ListenerView, data.ListenerView_Type,'spherical');
+          header.ListenerView = SOFAconvertCoordinates(...
+            header.ListenerView, header.ListenerView_Type,'spherical');
           % find entries with zero elevation angle
-          select = find(data.ListenerView(:,2) == 0);
+          select = find(header.ListenerView(:,2) == 0);
           % sort remaining with respect to azimuth angle
-          [azimuths, ind] = sort(data.ListenerView(select,1));
+          [azimuths, ind] = sort(header.ListenerView(select,1));
         otherwise
           error('SOFA Conventions (%s) not supported', ...
-            data.GLOBAL_SOFAConventions);
+            header.GLOBAL_SOFAConventions);
       end
-      % select data
-      d = data.Data.IR(select,:,:);
+
+      % get segments of selected indices, which are comming after each other
+      segments = [1, find( select(2:end) - select(1:end-1) ~= 1)+1, ...
+        length(select)+1];
+
+      % slide-wise load of IRs (saves memory)
+      d = zeros(length(select), header.API.R, header.API.N);
+      jdx = 1;
+      for idx=1:length(segments)-1
+        iseg = select(segments(idx));  % first element of segment
+        lseg = segments(idx+1) - segments(idx);  % number of elements in segment
+        tmp = SOFAload(filename, [iseg lseg], 'M');  % get data from SOFA file
+        d(jdx:jdx+lseg-1,:,:) = tmp.Data.IR;  % copy data into array
+        jdx = jdx + lseg;
+      end
+      % get sampling frequency
+      fs = tmp.Data.SamplingRate;
       % sort data
       d = d(ind,:,:);
       % get the minimum distance between two measurements
@@ -187,8 +208,6 @@ classdef DirectionalIR < hgsetget
       % reshape the array
       d = permute(d,[3 2 1]);
       d = reshape(d,size(d,1),[]);
-      % get sampling frequency
-      fs = data.Data.SamplingRate;
     end
     function res = angularDistanceMeasure(a, b)
       res = abs(mod(abs(a - b) + 180, 360) - 180);
