@@ -151,8 +151,8 @@ classdef DirectionalIR < hgsetget
           % convert to spherical coordinates
           header.SourcePosition = SOFAconvertCoordinates(...
             header.SourcePosition,header.SourcePosition_Type,'spherical');
-          % find entries with zero elevation angle
-          select = find(header.SourcePosition(:,2) == 0);
+          % find entries with approx. zero elevation angle
+          select = find( abs( header.SourcePosition(:,2) ) < 0.01 );
           % error if different distances are present
           if any( header.SourcePosition(select(1),3) ~= ...
               header.SourcePosition(select,3) )
@@ -164,8 +164,8 @@ classdef DirectionalIR < hgsetget
           % convert to spherical coordinates
           header.ListenerView = SOFAconvertCoordinates(...
             header.ListenerView, header.ListenerView_Type,'spherical');
-          % find entries with zero elevation angle
-          select = find(header.ListenerView(:,2) == 0);
+          % find entries with approx. zero elevation angle
+          select = find( abs( header.ListenerView(:,2) ) < 0.01 );
           % sort remaining with respect to azimuth angle
           [azimuths, ind] = sort(header.ListenerView(select,1));
         otherwise
@@ -174,7 +174,7 @@ classdef DirectionalIR < hgsetget
       end
 
       % get segments of selected indices, which are comming after each other
-      segments = [1, find( select(2:end) - select(1:end-1) ~= 1)+1, ...
+      segments = [1; find( select(2:end) - select(1:end-1) ~= 1)+1; ...
         length(select)+1];
 
       % slide-wise load of IRs (saves memory)
