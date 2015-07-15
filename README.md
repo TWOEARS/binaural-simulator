@@ -54,7 +54,7 @@ You need the following repositories from the Two!Ears project
     git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
     git checkout origin/master -b master
     ```
- 
+
 #### Windows 7 64bit
 
 * get SoundScape Renderer (location will be denoted as `SSR_DIR`)
@@ -63,7 +63,7 @@ You need the following repositories from the Two!Ears project
     git clone https://github.com/TWOEARS/twoears-ssr.git SSR_DIR
     git checkout origin/win64 -b win64
     ```
- 
+
 * add `SSR_DIR\3rdparty\win64\bin` to `PATH` environment variable ([HOWTO])
 
 * optional: get [MinGW 64bit], location will be denoted as `MINGW_DIR`
@@ -404,7 +404,7 @@ set(sim.Sources{1}.AudioBuffer, ...
     );
 set(sim.Sources{2}, ...
     'Name', 'Castanets', ...
-    'Position', [0; 0; 0], ...
+    'Position', [1; -2; 0], ...
     'AudioBuffer', simulator.buffer.FIFO(1) ...
     );
 set(sim.Sources{2}.AudioBuffer, ...
@@ -415,13 +415,21 @@ set(sim.Sinks, ...
     'UnitX', [1; 0; 0], ...
     'Position', [0; 0; 0] ...
     );
+
+%% initialization
+% note that all the parameters including objects' positions have to be
+% defined BEFORE initialization in order to init properly
 sim.set('Init',true);
+
+%%
 while ~sim.isFinished()
     sim.set('Refresh',true);  % refresh all objects
     sim.set('Process',true);
 end
+
 data = sim.Sinks.getData();
 sim.Sinks.saveFile('out_two_sources.wav',sim.SampleRate);
+sim.plot();
 sim.set('ShutDown',true);
 ```
 
@@ -447,18 +455,27 @@ set(sim.Sources{1}, ...
 set(sim.Sources{1}.AudioBuffer, ...
     'File', 'stimuli/anechoic/instruments/anechoic_cello.wav' ...
     );
+
+%% initialization
+% note that all the parameters including objects' positions have to be
+% defined BEFORE initialization in order to init properly
 sim.set('Init',true);
+
+%%
 sim.Sources{1}.setDynamic( ...
     'Position', 'Velocity', 0.25); % move source with 0.25 m/s
 set(sim.Sources{1}, ...
-    'Position', [1; -2; 0] ... %end position
+    'Position', [1; -2; 0] ... %final position
     );
+
 while ~sim.isFinished()
     sim.set('Refresh',true);  % refresh all objects
     sim.set('Process',true);
 end
+
 data = sim.Sinks.getData();
 sim.Sinks.saveFile('out_moving_source.wav',sim.SampleRate);
+sim.plot();
 sim.set('ShutDown',true);
 ```
 
@@ -471,7 +488,7 @@ simulated with an image source model.
 ```MATLAB
 sim = simulator.SimulatorConvexRoom();
 set(sim, ...
-    'MaximumDelay', 0.05, ...
+    'MaximumDelay', 0.5, ...
     'PreDelay', 0.0, ...
     'HRIRDataset', simulator.DirectionalIR( ...
         'impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa'), ...
@@ -490,7 +507,7 @@ set(sim.Sources{1}.AudioBuffer, ...
     'File', 'stimuli/anechoic/instruments/anechoic_cello.wav' ...
     );
 
-% define floor of the room
+% define the room
 set(sim.Room, ...
     'Name', 'Room', ...
     'Position', [-3; -3; -1.75], ...
@@ -498,17 +515,25 @@ set(sim.Room, ...
     'UnitZ', [0; 0; 1], ...
     'LengthX', 6.0, ...
     'LengthY', 6.0, ...
-    'LengthZ', 2.5, ...
-    'ReverberationMaxOrder', 8 ...
+    'LengthZ', 2.7, ...
+    'ReverberationMaxOrder', 8, ...
+    'RT60', 1.0 ...
     );
 
+%% initialization
+% note that all the parameters including objects' positions have to be
+% defined BEFORE initialization in order to init properly
 sim.set('Init',true);
+
+%%
 while ~sim.isFinished()
     sim.set('Refresh',true);  % refresh all objects
     sim.set('Process',true);
 end
+
 data = sim.Sinks.getData();
-sim.Sinks.saveFile('out_room.wav',sim.SampleRate);
+sim.Sinks.saveFile('out_room.wav',sim.SampleRate);  % save file
+sim.plot();
 sim.set('ShutDown',true);
 ```
 
@@ -554,10 +579,9 @@ while ~sim.isFinished()
   sim.set('Process',true);
 end
 
-% save file
-sim.Sinks.saveFile('out_brirs.wav',sim.SampleRate);
-%% clean up
-sim.set('ShutDown',true);
+sim.Sinks.saveFile('out_brirs.wav',sim.SampleRate);  % save file
+sim.plot();  % plot
+sim.set('ShutDown',true);  % clean up
 ```
 
 
