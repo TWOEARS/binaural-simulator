@@ -33,7 +33,6 @@ while ~sim.isFinished()
   sim.set('Process',true);
 end
 
-% save file
-sim.Sinks.saveFile('out_brirs.wav',sim.SampleRate);
-%% clean up
-sim.set('ShutDown',true);
+sim.Sinks.saveFile('out_brirs.wav',sim.SampleRate);  % save file
+sim.plot();  % plot
+sim.set('ShutDown',true);  % clean up
