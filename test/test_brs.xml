@@ -6,13 +6,13 @@
   Renderer="ssr_brs">
   <source Type="point"
           Name="Castanets"
-          IRs="impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src3_xs+2.20_ys-1.94.sofa">
+          IRs="impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src4_xs+0.00_ys+1.50.sofa">
     <buffer ChannelMapping="1"
             Type="fifo"
             File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
   </source>
   <sink Position="0 0 1.75"
-        UnitX="0 -1 0"
+        UnitX="-1 0 0"
         Name="Head"
         RootPath="some/root/path/"
         MeshFile="blub.ext"/>
