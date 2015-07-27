@@ -32,8 +32,7 @@ can be used as one module in the [Two!Ears Auditory Model]. The
 
 You need the following repositories from the Two!Ears project
 
-* [Two!Ears Main Repo](https://github.com/TWOEARS/TwoEars)
-* [Two!Ears Tools](https://github.com/TWOEARS/tools)
+* [Two!Ears Main Repo](https://github.com/TWOEARS/main)
 * [Two!Ears Database (optional)](https://dev.qu.tu-berlin.de/projects/twoears-database)
 
 ### Prerequisites
