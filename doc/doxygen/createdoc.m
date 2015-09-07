@@ -1,2 +1,0 @@
-MatlabDocMaker.create
-exit
