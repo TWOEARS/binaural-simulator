@@ -292,7 +292,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % get current XY-Orientation
       azi = obj.Sinks.OrientationXY;
       % consider limits of head orientation      
-      angleDeg = max( min( azi+angleIncDeg, obj.AzimuthMax ), obj.AzimuthMin );      
+      angleDeg = obj.angleHelper(azi + angleIncDeg);      
       % rotate Head around z-axis
       obj.Sinks.rotateAroundAxis([0; 0; 1], angleDeg - azi)
     end
@@ -304,11 +304,37 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % get current XY-Orientation
       azi = obj.Sinks.OrientationXY;
       % consider limits of head orientation  
-      angleDeg = max( min( angleDeg, obj.AzimuthMax ), obj.AzimuthMin );
+      angleDeg = obj.angleHelper(angleDeg);
       % rotate Head around z-axis
       obj.Sinks.rotateAroundAxis([0; 0; 1], angleDeg - azi);
     end
   end
+  methods (Access=private)
+    function angleDeg = angleHelper(obj, angleDeg)
+      % function angleDeg = angleHelper(obj, angleDeg)
+      %
+      % return angleDeg taking maximum and mininum rotation angle into
+      % account
+
+      % range of valid angles
+      range = mod(obj.AzimuthMax - obj.AzimuthMin, 360);
+      % center of this area
+      center = obj.AzimuthMin + range/2;
+      % distance of angle to center
+      [dist, ddx] = min( ...
+        [ mod(angleDeg - center, 360), mod(center - angleDeg, 360) ] );
+      
+      % if distance is than half of the range
+      if dist > range/2
+        % choose extrema which is nearer
+        if ddx == 1
+          angleDeg = obj.AzimuthMax;
+        else  % ddx = 2
+          angleDeg = obj.AzimuthMin;
+        end
+      end
+    end
+  end  
   methods
     function azimuth = getCurrentHeadOrientation(obj)
       % function azimuth = getCurrentHeadOrientation(obj)

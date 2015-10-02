@@ -51,9 +51,9 @@ sim.set('Init',true);
 
 %% dynamic scene
 
-sim.rotateHead(0, 'absolute');
+sim.rotateHead(-27.7541, 'absolute');
 sim.Sinks.setDynamic('UnitX', 'Velocity', 30);
-sim.rotateHead(-175, 'absolute');
+sim.rotateHead(176.2459, 'absolute');
 
 while ~sim.isFinished()
   sim.set('Refresh',true);  % refresh all objects
