@@ -50,10 +50,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       obj.AzimuthMin = -inf;
       if strcmp(func2str(obj.Renderer), 'ssr_brs')
         for idx=1:length(obj.Sources)
-          obj.AzimuthMax = min( obj.Sources{idx}.IRDataset.AzimuthMax, ...
-            obj.AzimuthMax );
-          obj.AzimuthMin = max( obj.Sources{idx}.IRDataset.AzimuthMin, ...
-            obj.AzimuthMin);
+          obj.AzimuthMax = obj.Sources{idx}.IRDataset.AzimuthMax;
+          obj.AzimuthMin = obj.Sources{idx}.IRDataset.AzimuthMin;
         end
       end
       

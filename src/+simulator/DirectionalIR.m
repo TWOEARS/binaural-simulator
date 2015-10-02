@@ -35,14 +35,14 @@ classdef DirectionalIR < hgsetget
   end
 
   methods
-    function obj = DirectionalIR(filename)
-      % function obj = DirectionalIR(filename)
+    function obj = DirectionalIR(varargin)
+      % function obj = DirectionalIR(filename, srcidx)
       % constructor for DirectionIR objects
       %
       % Parameters:
       %   filename: optional filename of HRTF dataset @type char[]
-      if nargin == 1
-        obj.open(filename);
+      if nargin >= 1
+        obj.open(varargin{:});
       end
     end
     function delete(obj)
@@ -52,24 +52,29 @@ classdef DirectionalIR < hgsetget
       catch
       end
     end
-    function open(obj, filename)
-      % function open(obj, filename)
+    function open(obj, varargin)
+      % function open(obj, filename, srcidx)
       % open WAV-File for HRTFs
       %
       % Parameters:
       %   filename: name of WAV- or SOFA-file @type char[]
-      filename = xml.dbGetFile(filename);
+      %   srcidx: index of source, if 'MultiSpeakerBRIR' SOFA-File is used
+      %           @type char[] @default 1
+      args{1} = xml.dbGetFile(varargin{1});  % filename
+      if nargin >= 3
+        args{2} = varargin{2};  % srcidx
+      end
 
       % reset maximum and minimum azimuth angle
       obj.AzimuthMax = inf;
       obj.AzimuthMin = -inf;
       
-      [~,name,ext] = fileparts(filename);
+      [~,name,ext] = fileparts(args{1});
       if strcmp('.wav', ext)
-        [d, fs] = audioread(filename);
+        [d, fs] = audioread(args{1});
       elseif strcmp('.sofa', ext)
         warning('SOFA HRTF support is still very experimental');
-        [d, fs]= obj.convertSOFA(filename);
+        [d, fs]= obj.convertSOFA(args{:});
       else
         error('file extension (%s) not supported (only .wav and .sofa)', ext);
       end
@@ -83,18 +88,18 @@ classdef DirectionalIR < hgsetget
       % create local copy of data for the SSR MEX-Code
       % TODO: include SOFA support into the SSR
       [tmpdir, tmpname] = fileparts(tempname(xml.dbTmp()));
-      filename = fullfile(tmpdir, [name, '_', tmpname, '.wav']);
+      varargin = fullfile(tmpdir, [name, '_', tmpname, '.wav']);
       % MATLAB proposes to replace wavwrite with audiowrite, but this does not
       % work for a high number of channels like in HRTF datasets
       d = d./max(abs(d(:))); % normalize
-      wavwrite(d,fs,32,filename);
+      wavwrite(d,fs,32,varargin);
 
       obj.SampleRate = fs;
       obj.Data = d;
       obj.NumberOfDirections = s/2;
       obj.NumberOfSamples = size(d,1);
       obj.AzimuthResolution = 360/obj.NumberOfDirections;
-      obj.Filename = filename;
+      obj.Filename = varargin;
     end
     function tf = getImpulseResponses(obj, azimuth)
       % function tf = getImpulseResponses(obj, azimuth)
@@ -152,7 +157,12 @@ classdef DirectionalIR < hgsetget
       set(gca,'CLim',[-50 0]);
       colorbar;
     end
-    function [d, fs] = convertSOFA(obj,filename)
+    function [d, fs] = convertSOFA(obj, filename, srcidx)
+      %
+      % Parameters:
+      %   filename: name SOFA-file @type char[]
+      %   srcidx: index of source, if 'MultiSpeakerBRIR' SOFA-File is used
+      %           @type char[] @default 1
 
       header = SOFAload(filename, 'nodata');
 
@@ -170,7 +180,7 @@ classdef DirectionalIR < hgsetget
           end
           % sort remaining with respect to azimuth angle
           [azimuths, ind] = sort(header.SourcePosition(select,1));
-        case 'SingleRoomDRIR'
+        case { 'SingleRoomDRIR', 'MultiSpeakerBRIR' }
           % convert to spherical coordinates
           header.ListenerView = SOFAconvertCoordinates(...
             header.ListenerView, header.ListenerView_Type,'spherical');
@@ -178,9 +188,6 @@ classdef DirectionalIR < hgsetget
           select = find( abs( header.ListenerView(:,2) ) < 0.01 );
           % sort remaining with respect to azimuth angle
           [azimuths, ind] = sort(header.ListenerView(select,1));
-          % reset maximum and minimum azimuth angle
-          obj.AzimuthMax = azimuths(end);
-          obj.AzimuthMin = azimuths(1);          
         otherwise
           error('SOFA Conventions (%s) not supported', ...
             header.GLOBAL_SOFAConventions);
@@ -196,7 +203,12 @@ classdef DirectionalIR < hgsetget
       for idx=1:length(segments)-1
         iseg = select(segments(idx));  % first element of segment
         lseg = segments(idx+1) - segments(idx);  % number of elements in segment
-        tmp = SOFAload(filename, [iseg lseg], 'M');  % get data from SOFA file
+        % get data from SOFA file
+        if strcmp( header.GLOBAL_SOFAConventions, 'MultiSpeakerBRIR' )
+          tmp = SOFAload(filename, [iseg lseg], 'M', [srcidx 1], 'E');
+        else
+          tmp = SOFAload(filename, [iseg lseg], 'M');
+        end
         d(jdx:jdx+lseg-1,:,:) = tmp.Data.IR;  % copy data into array
         jdx = jdx + lseg;
       end
@@ -204,12 +216,17 @@ classdef DirectionalIR < hgsetget
       fs = tmp.Data.SamplingRate;
       % sort data
       d = d(ind,:,:);
-      % get the minimum distance between two measurements
-      resolution = min(...
-        simulator.DirectionalIR.angularDistanceMeasure( ...
-        azimuths, circshift(azimuths,1)...
-        ) ...
-        );
+      % distance of measurements along circle
+      dist = simulator.DirectionalIR.angularDistanceMeasure( ...
+        azimuths, circshift(azimuths,1) );
+      % get the minimum distance between two measurements = resolution
+      resolution = min( dist );
+      % get the maximum distance between two measurements
+      [gap, adx] = max( dist );
+      if gap >= 1.5*resolution  % this is an abitrary bound
+        obj.AzimuthMin = azimuths(adx);
+        obj.AzimuthMax = azimuths(mod(adx - 2,length(azimuths)) + 1);
+      end
       % create regular grid with this distance
       nangle = round(360/resolution);
       azimuth_grid = (0:nangle-1)./nangle*360;
@@ -226,7 +243,8 @@ classdef DirectionalIR < hgsetget
 
   methods (Static)   
     function res = angularDistanceMeasure(a, b)
-      res = abs(mod(abs(a - b) + 180, 360) - 180);
+      x = mod(a - b, 360);
+      res = min(abs(x), abs(360 - x));
     end
     function [idx, diff] = nearestNeighbor(grid, b)
       [grid, b] = meshgrid(grid, b);
