@@ -41,6 +41,8 @@ classdef DirectionalIR < hgsetget
       %
       % Parameters:
       %   filename: optional filename of HRTF dataset @type char[]
+      %   srcidx: index of source, if 'MultiSpeakerBRIR' SOFA-File is used
+      %           @type char[] @default 1
       if nargin >= 1
         obj.open(varargin{:});
       end
