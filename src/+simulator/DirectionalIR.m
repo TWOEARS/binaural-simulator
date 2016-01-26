@@ -94,7 +94,7 @@ classdef DirectionalIR < hgsetget
       % MATLAB proposes to replace wavwrite with audiowrite, but this does not
       % work for a high number of channels like in HRTF datasets
       d = d./max(abs(d(:))); % normalize
-      wavwrite(d,fs,32,varargin);
+      simulator.savewav(d,filename,fs);
 
       obj.SampleRate = fs;
       obj.Data = d;
@@ -190,6 +190,9 @@ classdef DirectionalIR < hgsetget
           select = find( abs( header.ListenerView(:,2) ) < 0.01 );
           % sort remaining with respect to azimuth angle
           [azimuths, ind] = sort(header.ListenerView(select,1));
+          % reset maximum and minimum azimuth angle
+          obj.AzimuthMax = azimuths(end);
+          obj.AzimuthMin = azimuths(1);          
         otherwise
           error('SOFA Conventions (%s) not supported', ...
             header.GLOBAL_SOFAConventions);
