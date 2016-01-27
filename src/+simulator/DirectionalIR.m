@@ -94,7 +94,7 @@ classdef DirectionalIR < hgsetget
       % MATLAB proposes to replace wavwrite with audiowrite, but this does not
       % work for a high number of channels like in HRTF datasets
       d = d./max(abs(d(:))); % normalize
-      simulator.savewav(d,filename,fs);
+      simulator.savewav(d,varargin,fs);
 
       obj.SampleRate = fs;
       obj.Data = d;
