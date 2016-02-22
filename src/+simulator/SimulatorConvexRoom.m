@@ -68,6 +68,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         if isa(obj.Sources{idx},'simulator.source.ISMGroup')
           obj.Sources{idx}.Room = obj.Room;
         end
+        if isa(obj.Sources{idx},'simulator.source.BRSGroup')
+          obj.Sources{idx}.Reference = obj.Sinks;
+        end 
         obj.Sources{idx}.init();
         obj.NumberOfSSRSources ...
           = obj.NumberOfSSRSources + obj.Sources{idx}.ssrChannels;

@@ -66,6 +66,9 @@ classdef DirectionalIR < hgsetget
       if nargin >= 3
         args{2} = varargin{2};  % srcidx
       end
+      if nargin >= 4
+        args{3} = varargin{3};  % srcidx
+      end
 
       % reset maximum and minimum azimuth angle
       obj.AzimuthMax = inf;
@@ -90,18 +93,18 @@ classdef DirectionalIR < hgsetget
       % create local copy of data for the SSR MEX-Code
       % TODO: include SOFA support into the SSR
       [tmpdir, tmpname] = fileparts(tempname(xml.dbTmp()));
-      varargin = fullfile(tmpdir, [name, '_', tmpname, '.wav']);
+      filename = fullfile(tmpdir, [name, '_', tmpname, '.wav']);
       % MATLAB proposes to replace wavwrite with audiowrite, but this does not
       % work for a high number of channels like in HRTF datasets
-      d = d./max(abs(d(:))); % normalize
-      simulator.savewav(d,varargin,fs);
+      % d = d./max(abs(d(:))); % normalize
+      simulator.savewav(d,filename,fs);
 
       obj.SampleRate = fs;
       obj.Data = d;
       obj.NumberOfDirections = s/2;
       obj.NumberOfSamples = size(d,1);
       obj.AzimuthResolution = 360/obj.NumberOfDirections;
-      obj.Filename = varargin;
+      obj.Filename = filename;
     end
     function tf = getImpulseResponses(obj, azimuth)
       % function tf = getImpulseResponses(obj, azimuth)
@@ -159,12 +162,16 @@ classdef DirectionalIR < hgsetget
       set(gca,'CLim',[-50 0]);
       colorbar;
     end
-    function [d, fs] = convertSOFA(obj, filename, srcidx)
+    function [d, fs] = convertSOFA(obj, filename, srcidx, mask)
       %
       % Parameters:
       %   filename: name SOFA-file @type char[]
       %   srcidx: index of source, if 'MultiSpeakerBRIR' SOFA-File is used
       %           @type char[] @default 1
+
+      if nargin <= 3
+        mask = 1;
+      end
 
       header = SOFAload(filename, 'nodata');
 
@@ -187,12 +194,12 @@ classdef DirectionalIR < hgsetget
           header.ListenerView = SOFAconvertCoordinates(...
             header.ListenerView, header.ListenerView_Type,'spherical');
           % find entries with approx. zero elevation angle
-          select = find( abs( header.ListenerView(:,2) ) < 0.01 );
+          select = find( abs( header.ListenerView(:,2) ) < 0.01 & mask );
           % sort remaining with respect to azimuth angle
           [azimuths, ind] = sort(header.ListenerView(select,1));
           % reset maximum and minimum azimuth angle
           obj.AzimuthMax = azimuths(end);
-          obj.AzimuthMin = azimuths(1);          
+          obj.AzimuthMin = azimuths(1);
         otherwise
           error('SOFA Conventions (%s) not supported', ...
             header.GLOBAL_SOFAConventions);
@@ -233,7 +240,11 @@ classdef DirectionalIR < hgsetget
         obj.AzimuthMax = azimuths(mod(adx - 2,length(azimuths)) + 1);
       end
       % create regular grid with this distance
-      nangle = round(360/resolution);
+      if resolution == 0
+        nangle = 1;
+      else
+        nangle = round(360/resolution);
+      end
       azimuth_grid = (0:nangle-1)./nangle*360;
       % determine nearest neighbor between grid and measurements
       knd = ...
@@ -246,7 +257,7 @@ classdef DirectionalIR < hgsetget
     end
   end
 
-  methods (Static)   
+  methods (Static)
     function res = angularDistanceMeasure(a, b)
       x = mod(a - b, 360);
       res = min(abs(x), abs(360 - x));
