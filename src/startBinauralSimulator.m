@@ -21,11 +21,15 @@ if exist('TwoEarsPaths.xml', 'file') == 2
   end
 end
 
-clear docNode eleList % Clear used variables
-
-%% add necessary paths
+% Add necessary paths
 basePath = [fileparts(mfilename('fullpath')) filesep];
 
-addpath([basePath 'mex']);
+addpath(fullfile(basePath, 'mex'));
 
-clear basePath;  % Clear used variables
+% Add SOFA HRTF handling
+addpath(fullfile(basePath, 'sofa'));
+SOFAstart(0);
+
+% Clear used variables
+clear basePath;
+clear docNode eleList
