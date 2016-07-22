@@ -34,10 +34,14 @@ case 'SimpleFreeFieldHRIR'
     [~, idx] = findNearestNeighbour(loudspeakerPositions(:,1)', azimuth, 1);
     [impulseResponse, fs] = sofaGetDataFir(sofa, idx);
     %
-case 'MultiSpeakerBRIR'
+case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     %
     % http://www.sofaconventions.org/mediawiki/index.php/MultiSpeakerBRIR
+    % http://www.sofaconventions.org/mediawiki/index.php/SingleRoomDRIR
     %
+    idxLoudspeaker = 1;
+    idxListener = 1;    
+    
     % Find nearest azimuth from listener perspective for the selected loudspeaker and
     % listener position
     loudspeakerPosition = ...
@@ -60,15 +64,6 @@ case 'MultiSpeakerBRIR'
                               [size(impulseResponse, 1) ...
                                size(impulseResponse, 2) ...
                                size(impulseResponse, 4)]);
-    %
-case 'SingleRoomDRIR'
-    %
-    % http://www.sofaconventions.org/mediawiki/index.php/SingleRoomDRIR
-    %
-    error(['%s: SingleRoomDRIR is not supported as it should handle ', ...
-           'microphone array recordings. If you used it for (multiple) ', ...
-           'loudspeakers in a room you should consider to use ', ...
-           'MultiSpeakerBRIR instead.'], upper(mfilename));
     %
 otherwise
     error('%s: %s convention is currently not supported.', ...
