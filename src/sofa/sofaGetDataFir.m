@@ -1,4 +1,4 @@
-function impulseResponses = sofaGetDataFir(sofa, idx)
+function [impulseResponses, fs] = sofaGetDataFir(sofa, idx)
 %sofaGetDataFir returns impulse responses from a SOFA file or struct
 %
 %   USAGE
@@ -17,6 +17,7 @@ function impulseResponses = sofaGetDataFir(sofa, idx)
 %       ir      - impulse response (M,2,N), where
 %                   M ... number of impulse responses
 %                   N ... samples
+%       fs       - sampling rate of impulse response
 %
 if nargin == 1, idx = []; end
 if length(idx) == 0
@@ -24,6 +25,7 @@ if length(idx) == 0
         sofa = SOFAload(sofa);
     end
     impulseResponses = sofa.Data.IR;
+    fs = sofa.Data.SamplingRate;
 else
     header = sofaGetHeader(sofa);
     if sofaIsFile(sofa)
@@ -32,8 +34,10 @@ else
             tmp = SOFAload(sofa, [idx(ii) 1]);
             impulseResponses(ii,:,:) = tmp.Data.IR;
         end
+        fs = tmp.Data.SamplingRate;
     else
         impulseResponses = sofa.Data.IR(idx, :, :);
+        fs = sofa.Data.SamplingRate;
     end
 end
 % vim: sw=4 ts=4 et tw=90:

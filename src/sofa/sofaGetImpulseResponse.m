@@ -1,5 +1,5 @@
-function impulseResponse = sofaGetImpulseResponse(sofa, azimuth, idxLoudspeaker, ...
-                                                  idxListener)
+function [impulseResponse, fs] = sofaGetImpulseResponse(sofa, azimuth, ...
+                                    idxLoudspeaker, idxListener)
 %sofaGetImpulseResponse returns a single impulse response for the desired azimuth from a
 %SOFA data set using nearest neighbour search
 %
@@ -15,6 +15,7 @@ function impulseResponse = sofaGetImpulseResponse(sofa, azimuth, idxLoudspeaker,
 %
 %   OUTPUT PARAMETERS
 %       impulseResponse - impulse response (length of impulse response x 2)
+%       fs              - sampling frequency of impulse response
 %
 if nargin == 2
     idxLoudspeaker = 1;
@@ -31,7 +32,7 @@ case 'SimpleFreeFieldHRIR'
     %
     loudspeakerPositions = sofaGetLoudspeakerPositions(header, 'spherical');
     [~, idx] = findNearestNeighbour(loudspeakerPositions(:,1)', azimuth, 1);
-    impulseResponse = sofaGetDataFir(sofa, idx);
+    [impulseResponse, fs] = sofaGetDataFir(sofa, idx);
     %
 case 'MultiSpeakerBRIR'
     %
@@ -53,7 +54,8 @@ case 'MultiSpeakerBRIR'
     idxActive = find(idxIncludedMeasurements==1);
     idxMeasurement = idxActive(idxNeighbour);
     % Get the impulse responses and reshape
-    impulseResponse = sofaGetDataFire(sofa, idxMeasurement, idxLoudspeaker);
+    [impulseResponse, fs] = ...
+	  	sofaGetDataFire(sofa, idxMeasurement, idxLoudspeaker);
     impulseResponse = reshape(impulseResponse, ... % [M R E N] => [M R N]
                               [size(impulseResponse, 1) ...
                                size(impulseResponse, 2) ...
