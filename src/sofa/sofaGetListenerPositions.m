@@ -47,7 +47,7 @@ else
     % select idx-th unique listener position
     listenerPositions = listenerPositions(idx, :);
     % generate binary mask
-    idxM = any(bsxfun(@eq, idx(:), idxUnique), 1);
+    idxM = any(bsxfun(@eq, idx(:), idxUnique(:).'), 1);
 end
 
 % vim: sw=4 ts=4 et tw=90:
