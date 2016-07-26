@@ -46,7 +46,7 @@ case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
                                             header.SourcePosition_Type, 'cartesian');
     emitterPositions = SOFAconvertCoordinates(header.EmitterPosition, ...
                                               header.EmitterPosition_Type, 'cartesian');
-    loudspeakerPositions = bsxfun(@minus, emitterPositions(idx, :), sourcePosition);
+    loudspeakerPositions = bsxfun(@plus, emitterPositions(idx, :), sourcePosition);
     %
 otherwise
     error('%s: %s convention currently not supported.', ...
