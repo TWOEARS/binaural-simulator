@@ -1,13 +1,13 @@
-function [impulseResponses, fs] = sofaGetDataFir(sofa, idx)
+function [impulseResponses, fs] = sofaGetDataFir(sofa, idxM)
 %sofaGetDataFir returns impulse responses from a SOFA file or struct
 %
 %   USAGE
-%       impulseResponses = sofaGetDataFir(sofa, [idx])
+%       impulseResponses = sofaGetDataFir(sofa, [idxM])
 %
 %   INPUT PARAMETERS
 %       sofa    - impulse response data set (SOFA struct/file)
-%       idx     - index of the single impulse responses that should be returned
-%                 idx could be a single value, then only one impulse response
+%       idxM    - index of the single impulse responses that should be returned
+%                 idxM could be a single value, then only one impulse response
 %                 will be returned, or it can be a vector then all impulse
 %                 responses for the corresponding index positions will be
 %                 returned.
@@ -19,25 +19,43 @@ function [impulseResponses, fs] = sofaGetDataFir(sofa, idx)
 %                   N ... samples
 %       fs       - sampling rate of impulse response
 %
-if nargin == 1, idx = []; end
-if length(idx) == 0
-    if sofaIsFile(sofa)
-        sofa = SOFAload(sofa);
-    end
-    impulseResponses = sofa.Data.IR;
-    fs = sofa.Data.SamplingRate;
-else
-    header = sofaGetHeader(sofa);
-    if sofaIsFile(sofa)
-        impulseResponses = zeros(length(idx), 2, header.API.N);
-        for ii = 1:length(idx)
-            tmp = SOFAload(sofa, [idx(ii) 1]);
-            impulseResponses(ii,:,:) = tmp.Data.IR;
-        end
-        fs = tmp.Data.SamplingRate;
-    else
-        impulseResponses = sofa.Data.IR(idx, :, :);
-        fs = sofa.Data.SamplingRate;
-    end
+%% argument check
+if nargin <= 2 || isempty(idxM)
+    idxM = ':';
 end
+
+%%
+% check if SOFA file is already loaded into RAM
+if ~sofaIsFile(sofa)
+    impulseResponses = sofa.Data.IR(idx, :, :);
+    fs = sofa.Data.SamplingRate;
+    return;
+end
+
+header = sofaGetHeader(sofa);
+% create information about connected indices (i.e. segments)
+if ~isnumeric(idxM)
+    segM_begin = 1;
+    segM_end = header.API.M;
+    segM_length = header.API.M;
+    ununiqueM = 1:header.API.M;
+    sortM = 1:header.API.M;
+else
+    [idxM, ~, ununiqueM] = unique(idxM, 'stable');
+    [idxM, sortM] = sort(idxM, 'ascend');
+    [segM_begin, segM_end, segM_length] = findSegments(idxM);
+end
+% compute index array to undo the sorting
+unsortM(sortM) = 1:length(sortM);
+
+% segment wise load of IRs (saves time)
+for mdx = 1:length(segM_begin)
+    tmp = SOFAload(sofa, [segM_begin(mdx), segM_length(mdx)], 'M');
+    impulseResponses(segM_begin(mdx):segM_end(mdx),:,:) = tmp.Data.IR;
+end
+% get sampling frequency
+fs = tmp.Data.SamplingRate;
+% undo sorting of Data + undo unique
+impulseResponses = impulseResponses(unsortM(ununiqueM),:,:);
+
 % vim: sw=4 ts=4 et tw=90:
