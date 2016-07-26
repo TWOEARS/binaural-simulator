@@ -30,17 +30,29 @@ case 'SimpleFreeFieldHRIR'
     %
     % http://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR
     %
-    loudspeakerPositions = sofaGetLoudspeakerPositions(header, 'spherical');
-    [~, idx] = findNearestNeighbour(loudspeakerPositions(:,1)', azimuth, 1);
-    [impulseResponse, fs] = sofaGetDataFir(sofa, idx);
+    loudspeakerPositions = sofaGetLoudspeakerPositions(header, 'spherical');    
+    availableAzimuths = wrapTo360( loudspeakerPositions(:,1) );
+    
+    % difference between available Azimuths and query azimuth
+    diff = bsxfun(@minus, azimuth(:), availableAzimuths(:).');
+    % wrap around
+    diff = mod(diff, 360);
+    % absolute distance taking wrap-around into account
+    dist = min( abs(diff), abs(360-diff) );
+    % get nearest neighbor with closes distances   
+    [~, idxMeasurement] = min(dist, [], 2);
+    %
+    [impulseResponse, fs] = sofaGetDataFir(sofa, idxMeasurement);
     %
 case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     %
     % http://www.sofaconventions.org/mediawiki/index.php/MultiSpeakerBRIR
     % http://www.sofaconventions.org/mediawiki/index.php/SingleRoomDRIR
     %
-    idxLoudspeaker = 1;
-    idxListener = 1;    
+    if strcmp(header.GLOBAL_SOFAConventions, 'SingleRoomDRIR')
+        idxLoudspeaker = 1;
+        idxListener = 1;
+    end
     
     % Find nearest azimuth from listener perspective for the selected loudspeaker and
     % listener position
@@ -51,9 +63,16 @@ case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     listenerAzimuths = sofaGetHeadOrientations(header, idxIncludedMeasurements);
     listenerOffset = SOFAconvertCoordinates(loudspeakerPosition - listenerPosition, ...
                                            'cartesian', 'spherical');
-    availableAzimuths = listenerOffset(1) - listenerAzimuths;
-    [~, idxNeighbour] = findNearestNeighbour(wrapTo360(availableAzimuths'), ...
-                                             wrapTo360(azimuth), 1);
+    availableAzimuths = wrapTo360( listenerOffset(1) - listenerAzimuths );
+    
+    % difference between available Azimuths and query azimuth
+    diff = bsxfun(@minus, azimuth(:), availableAzimuths(:).');
+    % wrap around
+    diff = mod(diff, 360);
+    % absolute distance taking wrap-around into account
+    dist = min( abs(diff), abs(360-diff) );
+    % get nearest neighbor with closes distances   
+    [~, idxNeighbour] = min(dist, [], 2);
     % Map to absolute measurement index
     idxActive = find(idxIncludedMeasurements==1);
     idxMeasurement = idxActive(idxNeighbour);
@@ -70,5 +89,10 @@ otherwise
         upper(mfilename),header.GLOBAL_SOFAConventions);
 end
 
-impulseResponse = squeeze(impulseResponse)'; % [1 2 N] => [N 2]
+% [Nphi 2 N] => [N 2 Nphi]
+impulseResponse = permute(impulseResponse,[3 2 1]); 
+% [N 2 Nphi] => [N 2*Nphi]
+impulseResponse = reshape(impulseResponse,size(impulseResponse,1),[]);
+
+
 % vim: sw=4 ts=4 et tw=90:
