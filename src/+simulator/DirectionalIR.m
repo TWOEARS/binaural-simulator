@@ -1,6 +1,6 @@
 classdef DirectionalIR < hgsetget
   % Class for HRIRs-Datasets
-
+  
   properties (SetAccess=private)
     % Number of directions of IR-Dataset
     % @type integer
@@ -29,11 +29,11 @@ classdef DirectionalIR < hgsetget
     % @type char[]
     Filename = '';
   end
-
+  
   properties (Access=private)
     Data = [];
   end
-
+  
   methods
     function obj = DirectionalIR(varargin)
       % function obj = DirectionalIR(filename, srcidx)
@@ -69,7 +69,7 @@ classdef DirectionalIR < hgsetget
       if nargin >= 4
         args{3} = varargin{3};  % srcidx
       end
-
+      
       % reset maximum and minimum azimuth angle
       obj.AzimuthMax = inf;
       obj.AzimuthMin = -inf;
@@ -78,18 +78,17 @@ classdef DirectionalIR < hgsetget
       if strcmp('.wav', ext)
         [d, fs] = audioread(args{1});
       elseif strcmp('.sofa', ext)
-        warning('SOFA HRTF support is still very experimental');
         [d, fs]= obj.convertSOFA(args{:});
       else
         error('file extension (%s) not supported (only .wav and .sofa)', ext);
       end
-
+      
       % check whether the number of channels is even
       s = size(d, 2);
       if (mod(s,2) ~= 0)
         error('number of channels of input file has to be an integer of 2!');
       end
-
+      
       % create local copy of data for the SSR MEX-Code
       % TODO: include SOFA support into the SSR
       [tmpdir, tmpname] = fileparts(tempname(xml.dbTmp()));
@@ -98,7 +97,7 @@ classdef DirectionalIR < hgsetget
       % work for a high number of channels like in HRTF datasets
       % d = d./max(abs(d(:))); % normalize
       simulator.savewav(d,filename,fs);
-
+      
       obj.SampleRate = fs;
       obj.Data = d;
       obj.NumberOfDirections = s/2;
@@ -122,7 +121,7 @@ classdef DirectionalIR < hgsetget
       tf.left = obj.Data(:,selector);
       tf.right = obj.Data(:,selector+1);
     end
-
+    
     function plot(obj, id)
       % function plot(obj, id)
       % plot whole HRIR dataset
@@ -134,18 +133,18 @@ classdef DirectionalIR < hgsetget
       else
         figure(id);
       end
-
+      
       azimuth = -180:179;
-
+      
       tf = obj.getImpulseResponses(azimuth);
-
+      
       tfmax = max(max(abs(tf.left(:)),abs(tf.right(:))));
-
+      
       tl = 20*log10(abs(tf.left)/tfmax);
       tr = 20*log10(abs(tf.right)/tfmax);
-
+      
       time = (0:size(tl,1)-1)/obj.SampleRate*1000;
-
+      
       subplot(1,2,1);
       imagesc(azimuth,time, tl);
       title('Left Ear Channel');
@@ -153,7 +152,7 @@ classdef DirectionalIR < hgsetget
       ylabel('time (ms)');
       set(gca,'CLim',[-50 0]);
       colorbar;
-
+      
       subplot(1,2,2);
       imagesc(azimuth,time, tr);
       title('Right Ear Channel');
@@ -162,82 +161,71 @@ classdef DirectionalIR < hgsetget
       set(gca,'CLim',[-50 0]);
       colorbar;
     end
-    function [d, fs] = convertSOFA(obj, filename, srcidx, mask)
+    function [d, fs] = convertSOFA(obj, filename, idxLoudspeaker, idxListener)
+      %convertSOFA return impulse response from a SOFA file
       %
-      % Parameters:
-      %   filename: name SOFA-file @type char[]
-      %   srcidx: index of source, if 'MultiSpeakerBRIR' SOFA-File is used
-      %           @type char[] @default 1
-
-      if nargin <= 3
-        mask = 1;
+      %   USAGE
+      %    [d, fs] = obj.convertSOFA( filename, idxLoudspeaker, idxListener)
+      %
+      %   INPUT PARAMETERS
+      %       filename        - filename of SOFA file
+      %       idxLoudspeaker  - index of loudspeaker to use (default: 1)
+      %       idxListener     - index of listener position (default: 1)
+      %
+      %   OUTPUT PARAMETERS
+      %       d               - impulse responses [length of IRs x 360*2]
+      %       fs              - sampling frequency of impulse response
+      %
+      warning('off', 'SOFA:upgrade');
+      
+      if nargin <= 2
+        idxLoudspeaker = 1;
       end
-
-      header = SOFAload(filename, 'nodata');
-
+      if nargin <= 3
+        idxListener = 1;
+      end
+      
+      header = sofaGetHeader(filename);
       switch header.GLOBAL_SOFAConventions
         case 'SimpleFreeFieldHRIR'
-          % convert to spherical coordinates
-          header.SourcePosition = SOFAconvertCoordinates(...
-            header.SourcePosition,header.SourcePosition_Type,'spherical');
-          % find entries with approx. zero elevation angle
-          select = find( abs( header.SourcePosition(:,2) ) < 0.01 );
-          % error if different distances are present
-          if any( header.SourcePosition(select(1),3) ~= ...
-              header.SourcePosition(select,3) )
-            error('HRTFs with different distance are not supported');
+          loudspeakerPositions = sofaGetLoudspeakerPositions(header, ...
+            'spherical');
+          availableAzimuths = wrapTo360( loudspeakerPositions(:,1).' );
+          %
+        case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
+          %
+          if strcmp(header.GLOBAL_SOFAConventions, 'SingleRoomDRIR')
+            idxLoudspeaker = 1;
+            idxListener = 1;
           end
-          % sort remaining with respect to azimuth angle
-          [azimuths, ind] = sort(header.SourcePosition(select,1));
-        case { 'SingleRoomDRIR', 'MultiSpeakerBRIR' }
-          % convert to spherical coordinates
-          header.ListenerView = SOFAconvertCoordinates(...
-            header.ListenerView, header.ListenerView_Type,'spherical');
-          % find entries with approx. zero elevation angle
-          select = find( abs( header.ListenerView(:,2) ) < 0.01 & mask );
-          % sort remaining with respect to azimuth angle
-          [azimuths, ind] = sort(header.ListenerView(select,1));
-          % reset maximum and minimum azimuth angle
-          obj.AzimuthMax = azimuths(end);
-          obj.AzimuthMin = azimuths(1);
-        otherwise
-          error('SOFA Conventions (%s) not supported', ...
-            header.GLOBAL_SOFAConventions);
+          % get the sound source position
+          loudspeakerPosition = ...
+            sofaGetLoudspeakerPositions(filename, idxLoudspeaker, 'cartesian');
+          % get the listener position
+          [listenerPosition, idxIncludedMeasurements] = ...
+            sofaGetListenerPositions(filename, idxListener, 'cartesian');
+          % get available head orientations for listener position
+          availableAzimuths = ...
+            sofaGetHeadOrientations(filename, idxIncludedMeasurements);
+          % define maximum and miminum head orientation
+          availableAzimuths= sort(availableAzimuths);
+          obj.AzimuthMax = availableAzimuths(end);
+          obj.AzimuthMin = availableAzimuths(1);
+          %
+          listenerOffset = SOFAconvertCoordinates(...
+            loudspeakerPosition - listenerPosition, 'cartesian', 'spherical');
       end
-
-      % get segments of selected indices, which are comming after each other
-      segments = [1; find( select(2:end) - select(1:end-1) ~= 1)+1; ...
-        length(select)+1];
-
-      % slide-wise load of IRs (saves memory)
-      d = zeros(length(select), header.API.R, header.API.N);
-      jdx = 1;
-      for idx=1:length(segments)-1
-        iseg = select(segments(idx));  % first element of segment
-        lseg = segments(idx+1) - segments(idx);  % number of elements in segment
-        % get data from SOFA file
-        if strcmp( header.GLOBAL_SOFAConventions, 'MultiSpeakerBRIR' )
-          tmp = SOFAload(filename, [iseg lseg], 'M', [srcidx 1], 'E');
-        else
-          tmp = SOFAload(filename, [iseg lseg], 'M');
-        end
-        d(jdx:jdx+lseg-1,:,:) = tmp.Data.IR;  % copy data into array
-        jdx = jdx + lseg;
-      end
-      % get sampling frequency
-      fs = tmp.Data.SamplingRate;
-      % sort data
-      d = d(ind,:,:);
       % distance of measurements along circle
       dist = simulator.DirectionalIR.angularDistanceMeasure( ...
-        azimuths, circshift(azimuths,1) );
+        availableAzimuths, circshift(availableAzimuths,1) );
       % get the minimum distance between two measurements = resolution
       resolution = min( dist );
       % get the maximum distance between two measurements
       [gap, adx] = max( dist );
       if gap >= 1.5*resolution  % this is an abitrary bound
-        obj.AzimuthMin = azimuths(adx);
-        obj.AzimuthMax = azimuths(mod(adx - 2,length(azimuths)) + 1);
+        obj.AzimuthMin = availableAzimuths(adx);
+        obj.AzimuthMax = availableAzimuths( ...
+          mod(adx - 2,length(availableAzimuths)) + 1);
       end
       % create regular grid with this distance
       if resolution == 0
@@ -245,18 +233,18 @@ classdef DirectionalIR < hgsetget
       else
         nangle = round(360/resolution);
       end
-      azimuth_grid = (0:nangle-1)./nangle*360;
-      % determine nearest neighbor between grid and measurements
-      knd = ...
-        simulator.DirectionalIR.nearestNeighbor(azimuth_grid, azimuths);
-      % select nearest neightbor measurements for grid
-      d = d(knd, :, :);
-      % reshape the array
-      d = permute(d,[3 2 1]);
-      d = reshape(d,size(d,1),[]);
+      % azimuth grid
+      phi = (0:nangle-1)./nangle*360;
+      % adjust grid corresponding to loudspeaker position
+      if ~strcmp('SimpleFreeFieldHRIR', header.GLOBAL_SOFAConventions)
+        phi = wrapTo360( -phi + listenerOffset(1) );
+      end
+      % get the data
+      [d, fs] = ...
+        sofaGetImpulseResponse(filename, phi, idxLoudspeaker, idxListener);
     end
   end
-
+  
   methods (Static)
     function res = angularDistanceMeasure(a, b)
       x = mod(a - b, 360);
