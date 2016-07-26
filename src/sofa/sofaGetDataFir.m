@@ -50,7 +50,8 @@ unsortM(sortM) = 1:length(sortM);
 
 % segment wise load of IRs (saves time)
 for mdx = 1:length(segM_begin)
-    tmp = SOFAload(sofa, [segM_begin(mdx), segM_length(mdx)], 'M');
+    ii = idxM( segM_begin(mdx) );
+    tmp = SOFAload(sofa, [ii, segM_length(mdx)], 'M');
     impulseResponses(segM_begin(mdx):segM_end(mdx),:,:) = tmp.Data.IR;
 end
 % get sampling frequency

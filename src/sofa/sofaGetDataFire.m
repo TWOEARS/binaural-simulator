@@ -50,7 +50,7 @@ if ~isnumeric(idxM)
 else
     [idxM, ~, ununiqueM] = unique(idxM, 'stable');
     [idxM, sortM] = sort(idxM, 'ascend');
-    [segM_begin, segM_end, segM_length] = findSegments(idxM);    
+    [segM_begin, segM_end, segM_length] = findSegments(idxM);
 end
 if ~isnumeric(idxE)
     segE_begin = 1;
@@ -69,10 +69,12 @@ unsortE(sortE) = 1:length(sortE);
 
 % segment wise load of IRs (saves time)
 for mdx = 1:length(segM_begin)
+    ii = idxM( segM_begin(mdx) );
     for edx = 1:length(segE_begin)
+        jj = idxE( segE_begin(edx) );
         tmp = SOFAload(sofa, ...
-            [segM_begin(mdx), segM_length(mdx)], 'M', ...
-            [segE_begin(edx), segE_length(edx)], 'E');
+            [ii, segM_length(mdx)], 'M', ...
+            [jj, segE_length(edx)], 'E');
         impulseResponses(segM_begin(mdx):segM_end(mdx),:, ...
             segE_begin(edx):segE_end(edx),:) = tmp.Data.IR;
     end
