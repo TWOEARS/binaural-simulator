@@ -36,13 +36,17 @@ listenerPositions = SOFAconvertCoordinates(header.ListenerPosition, ...
     coordinateSystem);
 % get unique listener positions
 [listenerPositions, ~, idxUnique] = unique(listenerPositions, 'rows', 'stable');
-% select idx-th unique listener position
-listenerPositions = listenerPositions(idx, :);
-% generate binary mask
-if ischar(idx) || size(listenerPositions,1) == 1
+
+if idx > size(listenerPositions,1)
+    error(['index (%d) of listener positions exceeds number (%d) of unique', ...
+      'listener positions'], idx, size(listenerPositions,1));
+elseif ischar(idx) || size(listenerPositions,1) == 1
     % if there is only unique measure position, all measurements all including
     idxM = true(1, header.API.M);
 else
+    % select idx-th unique listener position
+    listenerPositions = listenerPositions(idx, :);
+    % generate binary mask
     idxM = any(bsxfun(@eq, idx(:), idxUnique), 1);
 end
 
