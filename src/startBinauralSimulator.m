@@ -27,5 +27,6 @@ clear docNode eleList % Clear used variables
 basePath = [fileparts(mfilename('fullpath')) filesep];
 
 addpath([basePath 'mex']);
+addpath([basePath 'sofa']);
 
 clear basePath;  % Clear used variables
