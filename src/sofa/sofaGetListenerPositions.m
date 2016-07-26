@@ -17,29 +17,33 @@ function [listenerPositions, idxM] = sofaGetListenerPositions(sofa, idx, coordin
 %       idxMeasurements   - logical vector, where 1 indicates the measurement positions
 %                           that correspond to the selected listening positions.
 %
+%% argument check
 if nargin == 1
-    idx = [];
+    idx = ':';
     coordinateSystem = 'cartesian';
 elseif nargin == 2
     if ischar(idx)
         coordinateSystem = idx;
-        idx = [];
+        idx = ':';
     else
         coordinateSystem = 'cartesian';
     end
 end
+%% 
 header = sofaGetHeader(sofa);
 listenerPositions = SOFAconvertCoordinates(header.ListenerPosition, ...
-                                           header.ListenerPosition_Type, ...
-                                           coordinateSystem);
+    header.ListenerPosition_Type, ...
+    coordinateSystem);
+% get unique listener positions
 [listenerPositions, ~, idxUnique] = unique(listenerPositions, 'rows', 'stable');
-if isempty(idx)
-    idx = 1:size(listenerPositions, 1);
-end
+% select idx-th unique listener position
 listenerPositions = listenerPositions(idx, :);
-idxM = zeros(size(idxUnique));
-for ii = 1:length(idx)
-    idxM(idxUnique==idx(ii)) = 1;
+% generate binary mask
+if ischar(idx) || size(listenerPositions,1) == 1
+    % if there is only unique measure position, all measurements all including
+    idxM = true(1, header.API.M);
+else
+    idxM = any(bsxfun(@eq, idx(:), idxUnique), 1);
 end
-idxM = logical(idxM);
+
 % vim: sw=4 ts=4 et tw=90:
