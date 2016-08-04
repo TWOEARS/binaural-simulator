@@ -20,10 +20,9 @@ function [impulseResponses, fs] = getDataFir(brir, idxM)
 %       fs       - sampling rate of impulse response
 %
 %% argument check
-if nargin <= 2 || isempty(idxM)
+if nargin < 2 || isempty(idxM)
     idxM = ':';
 end
-
 %%
 % check if SOFA file is already loaded into RAM
 if ~sofa.isFile(brir)

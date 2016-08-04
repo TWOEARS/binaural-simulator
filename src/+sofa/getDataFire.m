@@ -24,10 +24,10 @@ function [impulseResponses,fs] = getDataFire(brir, idxM, idxE)
 %       fs               - sampling rate of impulse response
 %
 %% argument check
-if nargin <= 2
+if nargin < 3
     idxE = ':';
 end
-if nargin <= 1
+if nargin < 2
     idxM = ':';
 end
 
