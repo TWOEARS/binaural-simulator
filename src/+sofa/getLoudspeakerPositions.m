@@ -1,13 +1,13 @@
 function [loudspeakerPositions, nLoudspeaker] = ...
-            getLoudspeakerPositions(sofa, idx, coordinateSystem)
+            getLoudspeakerPositions(brir, idx, coordinateSystem)
 %getLoudspeakerPositions returns loudspeaker positions from the given SOFA data set
 %
 %   USAGE
 %       [loudspeakerPositions, nLoudspeaker] = ...
-%           getLoudspeakerPositions(sofa, [idx], [coordinateSystem])
+%           getLoudspeakerPositions(brir, [idx], [coordinateSystem])
 %
 %   INPUT PARAMETERS
-%       sofa              - impulse response data set (SOFA struct/file)
+%       brir              - impulse response data set (SOFA struct/file)
 %       idx               - index of secondary sources that should be returned.
 %                           If no index is specified all sources will be
 %                           returned.
@@ -31,7 +31,7 @@ elseif nargin == 2
         coordinateSystem = 'cartesian';
     end
 end
-header = getHeader(sofa);
+header = sofa.getHeader(brir);
 
 switch header.GLOBAL_SOFAConventions
 case 'SimpleFreeFieldHRIR'

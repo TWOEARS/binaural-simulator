@@ -1,11 +1,11 @@
-function [impulseResponses, fs] = getDataFir(sofa, idxM)
+function [impulseResponses, fs] = getDataFir(brir, idxM)
 %getDataFir returns impulse responses from a SOFA file or struct
 %
 %   USAGE
-%       impulseResponses = getDataFir(sofa, [idxM])
+%       impulseResponses = getDataFir(brir, [idxM])
 %
 %   INPUT PARAMETERS
-%       sofa    - impulse response data set (SOFA struct/file)
+%       brir    - impulse response data set (SOFA struct/file)
 %       idxM    - index of the single impulse responses that should be returned
 %                 idxM could be a single value, then only one impulse response
 %                 will be returned, or it can be a vector then all impulse
@@ -26,13 +26,13 @@ end
 
 %%
 % check if SOFA file is already loaded into RAM
-if ~isFile(sofa)
-    impulseResponses = sofa.Data.IR(idx, :, :);
-    fs = sofa.Data.SamplingRate;
+if ~sofa.isFile(brir)
+    impulseResponses = brir.Data.IR(idx, :, :);
+    fs = brir.Data.SamplingRate;
     return;
 end
 
-header = getHeader(sofa);
+header = sofa.getHeader(brir);
 % create information about connected indices (i.e. segments)
 if ~isnumeric(idxM)
     segM_begin = 1;
@@ -51,7 +51,7 @@ unsortM(sortM) = 1:length(sortM);
 % segment wise load of IRs (saves time)
 for mdx = 1:length(segM_begin)
     ii = idxM( segM_begin(mdx) );
-    tmp = SOFAload(sofa, [ii, segM_length(mdx)], 'M');
+    tmp = SOFAload(brir, [ii, segM_length(mdx)], 'M');
     impulseResponses(segM_begin(mdx):segM_end(mdx),:,:) = tmp.Data.IR;
 end
 % get sampling frequency

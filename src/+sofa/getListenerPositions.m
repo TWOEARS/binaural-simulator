@@ -1,11 +1,11 @@
-function [listenerPositions, idxM] = getListenerPositions(sofa, idx, coordinateSystem)
+function [listenerPositions, idxM] = getListenerPositions(brir, idx, coordinateSystem)
 %getListenerPositions returns the listener position from the given SOFA data set
 %
 %   USAGE
-%       listenerPositions = getListenerPositions(sofa, [idx], [coordinateSystem])
+%       listenerPositions = getListenerPositions(brir, [idx], [coordinateSystem])
 %
 %   INPUT PARAMETERS
-%       sofa              - impulse response data set (SOFA struct/file)
+%       brir              - impulse response data set (SOFA struct/file)
 %       idx               - index of listener positons (default: all)
 %       coordinateSystem  - coordinate system the listener position should be
 %                           specified in:
@@ -30,7 +30,7 @@ elseif nargin == 2
     end
 end
 
-header = getHeader(sofa);
+header = sofa.getHeader(brir);
 listenerPositions = SOFAconvertCoordinates(header.ListenerPosition, ...
     header.ListenerPosition_Type, ...
     coordinateSystem);

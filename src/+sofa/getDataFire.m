@@ -1,11 +1,11 @@
-function [impulseResponses,fs] = getDataFire(sofa, idxM, idxE)
+function [impulseResponses,fs] = getDataFire(brir, idxM, idxE)
 %getDataFire returns impulse responses from a SOFA file or struct
 %
 %   USAGE
-%       impulseResponses = getDataFire(sofa, [idxM, [idxE]])
+%       impulseResponses = getDataFire(brir, [idxM, [idxE]])
 %
 %   INPUT PARAMETERS
-%       sofa    - impulse response data set (SOFA struct/file)
+%       brir    - impulse response data set (SOFA struct/file)
 %       idxM    - index of the measurements for which the single impulse
 %                 responses should be returned.
 %                 idxM could be a single value, then only one impulse response
@@ -33,13 +33,13 @@ end
 
 %%
 % check if SOFA file is already loaded into RAM
-if ~isFile(sofa)
-    impulseResponses = sofa.Data.IR(idxM, :, idxE, :);
-    fs = sofa.Data.SamplingRate;
+if ~sofa.isFile(brir)
+    impulseResponses = brir.Data.IR(idxM, :, idxE, :);
+    fs = brir.Data.SamplingRate;
     return;
 end
 
-header = getHeader(sofa);
+header = sofa.getHeader(brir);
 % create information about connected indices (i.e. segments)
 if ~isnumeric(idxM)
     segM_begin = 1;
@@ -72,7 +72,7 @@ for mdx = 1:length(segM_begin)
     ii = idxM( segM_begin(mdx) );
     for edx = 1:length(segE_begin)
         jj = idxE( segE_begin(edx) );
-        tmp = SOFAload(sofa, ...
+        tmp = SOFAload(brir, ...
             [ii, segM_length(mdx)], 'M', ...
             [jj, segE_length(edx)], 'E');
         impulseResponses(segM_begin(mdx):segM_end(mdx),:, ...

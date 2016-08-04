@@ -1,21 +1,21 @@
-function header = getHeader(sofa)
+function header = getHeader(brir)
 %getHeader returns the header of a SOFA file or struct
 %
 %   USAGE
-%       header = getHeader(sofa)
+%       header = getHeader(brir)
 %
 %   INPUT PARAMETERS
-%       sofa    - impulse response data set (SOFA struct/file)
+%       brir    - impulse response data set (SOFA struct/file)
 %
 %   OUTPUT PARAMETERS
 %       header  - SOFA header
 
-if isFile(sofa)
-    header = SOFAload(sofa, 'nodata');
+if sofa.isFile(brir)
+    header = SOFAload(brir, 'nodata');
 else
-    header = sofa;
-    if isfield(sofa.Data, 'IR')
-        header.Data = rmfield(sofa.Data, 'IR');
+    header = brir;
+    if isfield(brir.Data, 'IR')
+        header.Data = rmfield(brir.Data, 'IR');
     end
 end
 % vim: sw=4 ts=4 et tw=90:

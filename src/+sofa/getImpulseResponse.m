@@ -1,14 +1,14 @@
-function [impulseResponse, fs] = getImpulseResponse(sofa, azimuth, ...
+function [impulseResponse, fs] = getImpulseResponse(brir, azimuth, ...
                                     idxLoudspeaker, idxListener)
 %getImpulseResponse returns a single impulse response for the desired azimuth from a
 %SOFA data set using nearest neighbour search
 %
 %   USAGE
-%       impulseResponse = getImpulseResponse(sofa, azimuth, ...
+%       impulseResponse = getImpulseResponse(brir, azimuth, ...
 %                                            [idxLoudspeaker, [idxListener]])
 %
 %   INPUT PARAMETERS
-%       sofa            - impulse response data set (sofa struct/file)
+%       sofa            - impulse response data set (SOFA struct/file)
 %       azimuth         - direction of incident sound
 %       idxLoudspeaker  - index of loudspeaker to use (default: 1)
 %       idxListener     - index of listener position (default: 1)
@@ -23,14 +23,14 @@ if nargin == 2
 elseif nargin == 3
     idxListener = 1;
 end
-header = getHeader(sofa);
+header = sofa.getHeader(brir);
 
 switch header.GLOBAL_SOFAConventions
 case 'SimpleFreeFieldHRIR'
     %
     % http://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR
     %
-    loudspeakerPositions = getLoudspeakerPositions(header, 'spherical');
+    loudspeakerPositions = sofa.getLoudspeakerPositions(header, 'spherical');
     availableAzimuths = wrapTo360( loudspeakerPositions(:,1) );
 
     % difference between available Azimuths and query azimuth
@@ -42,7 +42,7 @@ case 'SimpleFreeFieldHRIR'
     % get nearest neighbor with closes distances
     [~, idxMeasurement] = min(dist, [], 2);
     %
-    [impulseResponse, fs] = getDataFir(sofa, idxMeasurement);
+    [impulseResponse, fs] = sofa.getDataFir(brir, idxMeasurement);
     %
 case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     %
@@ -56,10 +56,10 @@ case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     % Find nearest azimuth from listener perspective for the selected loudspeaker and
     % listener position
     loudspeakerPosition = ...
-        getLoudspeakerPositions(header, idxLoudspeaker, 'cartesian');
+        sofa.getLoudspeakerPositions(header, idxLoudspeaker, 'cartesian');
     [listenerPosition, idxIncludedMeasurements] = ...
-        getListenerPositions(header, idxListener, 'cartesian');
-    listenerAzimuths = getHeadOrientations(header, idxIncludedMeasurements);
+        sofa.getListenerPositions(header, idxListener, 'cartesian');
+    listenerAzimuths = sofa.getHeadOrientations(header, idxIncludedMeasurements);
     listenerOffset = SOFAconvertCoordinates(loudspeakerPosition - listenerPosition, ...
                                            'cartesian', 'spherical');
     availableAzimuths = wrapTo360( listenerOffset(1) - listenerAzimuths );
@@ -77,7 +77,7 @@ case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     idxMeasurement = idxActive(idxNeighbour);
     % Get the impulse responses and reshape
     [impulseResponse, fs] = ...
-	  	getDataFire(sofa, idxMeasurement, idxLoudspeaker);
+	  	sofa.getDataFire(brir, idxMeasurement, idxLoudspeaker);
     impulseResponse = reshape(impulseResponse, ... % [M R E N] => [M R N]
                               [size(impulseResponse, 1) ...
                                size(impulseResponse, 2) ...
