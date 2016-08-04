@@ -1,8 +1,8 @@
-function bSofaFile = sofaIsFile(sofa)
-%sofaIsFile returns 1 for a sofa file, 0 for a sofa struct or an error otherwise
+function bSofaFile = isFile(sofa)
+%isFile returns 1 for a sofa file, 0 for a sofa struct or an error otherwise
 %
 %   USAGE
-%       bSofaFile = sofaIsFile(sofa)
+%       bSofaFile = isFile(sofa)
 %
 %   INPUT PARAMETERS
 %       sofa        - sofa struct or file name

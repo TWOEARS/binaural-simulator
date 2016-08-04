@@ -1,8 +1,8 @@
-function [impulseResponses,fs] = sofaGetDataFire(sofa, idxM, idxE)
-%sofaGetDataFire returns impulse responses from a SOFA file or struct
+function [impulseResponses,fs] = getDataFire(sofa, idxM, idxE)
+%getDataFire returns impulse responses from a SOFA file or struct
 %
 %   USAGE
-%       impulseResponses = sofaGetDataFire(sofa, [idxM, [idxE]])
+%       impulseResponses = getDataFire(sofa, [idxM, [idxE]])
 %
 %   INPUT PARAMETERS
 %       sofa    - impulse response data set (SOFA struct/file)
@@ -33,13 +33,13 @@ end
 
 %%
 % check if SOFA file is already loaded into RAM
-if ~sofaIsFile(sofa)
+if ~isFile(sofa)
     impulseResponses = sofa.Data.IR(idxM, :, idxE, :);
     fs = sofa.Data.SamplingRate;
     return;
 end
 
-header = sofaGetHeader(sofa);
+header = getHeader(sofa);
 % create information about connected indices (i.e. segments)
 if ~isnumeric(idxM)
     segM_begin = 1;

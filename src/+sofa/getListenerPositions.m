@@ -1,8 +1,8 @@
-function [listenerPositions, idxM] = sofaGetListenerPositions(sofa, idx, coordinateSystem)
-%sofaGetListenerPositions returns the listener position from the given SOFA data set
+function [listenerPositions, idxM] = getListenerPositions(sofa, idx, coordinateSystem)
+%getListenerPositions returns the listener position from the given SOFA data set
 %
 %   USAGE
-%       listenerPositions = sofaGetListenerPositions(sofa, [idx], [coordinateSystem])
+%       listenerPositions = getListenerPositions(sofa, [idx], [coordinateSystem])
 %
 %   INPUT PARAMETERS
 %       sofa              - impulse response data set (SOFA struct/file)
@@ -29,8 +29,8 @@ elseif nargin == 2
         coordinateSystem = 'cartesian';
     end
 end
-%% 
-header = sofaGetHeader(sofa);
+
+header = getHeader(sofa);
 listenerPositions = SOFAconvertCoordinates(header.ListenerPosition, ...
     header.ListenerPosition_Type, ...
     coordinateSystem);

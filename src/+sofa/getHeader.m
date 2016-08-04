@@ -1,8 +1,8 @@
-function header = sofaGetHeader(sofa)
-%sofaGetHeader returns the header of a SOFA file or struct
+function header = getHeader(sofa)
+%getHeader returns the header of a SOFA file or struct
 %
 %   USAGE
-%       header = sofaGetHeader(sofa)
+%       header = getHeader(sofa)
 %
 %   INPUT PARAMETERS
 %       sofa    - impulse response data set (SOFA struct/file)
@@ -10,7 +10,7 @@ function header = sofaGetHeader(sofa)
 %   OUTPUT PARAMETERS
 %       header  - SOFA header
 
-if sofaIsFile(sofa)
+if isFile(sofa)
     header = SOFAload(sofa, 'nodata');
 else
     header = sofa;

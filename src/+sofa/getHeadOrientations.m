@@ -1,8 +1,8 @@
-function [phi, theta] = sofaGetHeadOrientations(sofa, idx)
-%sofaGetHeadOrientations returns azimuth and elevation from the given SOFA data set
+function [phi, theta] = getHeadOrientations(sofa, idx)
+%getHeadOrientations returns azimuth and elevation from the given SOFA data set
 %
 %   USAGE
-%       [phi, theta] = sofaGetHeadOrientations(sofa, [idx])
+%       [phi, theta] = getHeadOrientations(sofa, [idx])
 %
 %   INPUT PARAMETERS
 %       sofa    - impulse response data set (SOFA struct/file)
@@ -14,7 +14,7 @@ function [phi, theta] = sofaGetHeadOrientations(sofa, idx)
 %       theta   - head orientations in the median plane / deg
 %
 if nargin == 1, idx = ':'; end
-header = sofaGetHeader(sofa);
+header = getHeader(sofa);
 listenerView = SOFAconvertCoordinates(header.ListenerView, ...
                                       header.ListenerView_Type, 'spherical');
 phi     = wrapTo360(listenerView(:, 1));

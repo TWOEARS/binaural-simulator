@@ -1,11 +1,11 @@
-function [impulseResponse, fs] = sofaGetImpulseResponse(sofa, azimuth, ...
+function [impulseResponse, fs] = getImpulseResponse(sofa, azimuth, ...
                                     idxLoudspeaker, idxListener)
-%sofaGetImpulseResponse returns a single impulse response for the desired azimuth from a
+%getImpulseResponse returns a single impulse response for the desired azimuth from a
 %SOFA data set using nearest neighbour search
 %
 %   USAGE
-%       impulseResponse = sofaGetImpulseResponse(sofa, azimuth, ...
-%                                                [idxLoudspeaker, [idxListener]])
+%       impulseResponse = getImpulseResponse(sofa, azimuth, ...
+%                                            [idxLoudspeaker, [idxListener]])
 %
 %   INPUT PARAMETERS
 %       sofa            - impulse response data set (sofa struct/file)
@@ -23,26 +23,26 @@ if nargin == 2
 elseif nargin == 3
     idxListener = 1;
 end
-header = sofaGetHeader(sofa);
+header = getHeader(sofa);
 
 switch header.GLOBAL_SOFAConventions
 case 'SimpleFreeFieldHRIR'
     %
     % http://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR
     %
-    loudspeakerPositions = sofaGetLoudspeakerPositions(header, 'spherical');    
+    loudspeakerPositions = getLoudspeakerPositions(header, 'spherical');
     availableAzimuths = wrapTo360( loudspeakerPositions(:,1) );
-    
+
     % difference between available Azimuths and query azimuth
     diff = bsxfun(@minus, azimuth(:), availableAzimuths(:).');
     % wrap around
     diff = mod(diff, 360);
     % absolute distance taking wrap-around into account
     dist = min( abs(diff), abs(360-diff) );
-    % get nearest neighbor with closes distances   
+    % get nearest neighbor with closes distances
     [~, idxMeasurement] = min(dist, [], 2);
     %
-    [impulseResponse, fs] = sofaGetDataFir(sofa, idxMeasurement);
+    [impulseResponse, fs] = getDataFir(sofa, idxMeasurement);
     %
 case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     %
@@ -53,32 +53,31 @@ case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
         idxLoudspeaker = 1;
         idxListener = 1;
     end
-    
     % Find nearest azimuth from listener perspective for the selected loudspeaker and
     % listener position
     loudspeakerPosition = ...
-        sofaGetLoudspeakerPositions(header, idxLoudspeaker, 'cartesian');
+        getLoudspeakerPositions(header, idxLoudspeaker, 'cartesian');
     [listenerPosition, idxIncludedMeasurements] = ...
-        sofaGetListenerPositions(header, idxListener, 'cartesian');
-    listenerAzimuths = sofaGetHeadOrientations(header, idxIncludedMeasurements);
+        getListenerPositions(header, idxListener, 'cartesian');
+    listenerAzimuths = getHeadOrientations(header, idxIncludedMeasurements);
     listenerOffset = SOFAconvertCoordinates(loudspeakerPosition - listenerPosition, ...
                                            'cartesian', 'spherical');
     availableAzimuths = wrapTo360( listenerOffset(1) - listenerAzimuths );
-    
+
     % difference between available Azimuths and query azimuth
     diff = bsxfun(@minus, azimuth(:), availableAzimuths(:).');
     % wrap around
     diff = mod(diff, 360);
     % absolute distance taking wrap-around into account
     dist = min( abs(diff), abs(360-diff) );
-    % get nearest neighbor with closes distances   
+    % get nearest neighbor with closes distances
     [~, idxNeighbour] = min(dist, [], 2);
     % Map to absolute measurement index
     idxActive = find(idxIncludedMeasurements==1);
     idxMeasurement = idxActive(idxNeighbour);
     % Get the impulse responses and reshape
     [impulseResponse, fs] = ...
-	  	sofaGetDataFire(sofa, idxMeasurement, idxLoudspeaker);
+	  	getDataFire(sofa, idxMeasurement, idxLoudspeaker);
     impulseResponse = reshape(impulseResponse, ... % [M R E N] => [M R N]
                               [size(impulseResponse, 1) ...
                                size(impulseResponse, 2) ...
@@ -90,9 +89,8 @@ otherwise
 end
 
 % [Nphi 2 N] => [N 2 Nphi]
-impulseResponse = permute(impulseResponse,[3 2 1]); 
+impulseResponse = permute(impulseResponse,[3 2 1]);
 % [N 2 Nphi] => [N 2*Nphi]
 impulseResponse = reshape(impulseResponse,size(impulseResponse,1),[]);
-
 
 % vim: sw=4 ts=4 et tw=90:
