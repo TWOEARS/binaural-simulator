@@ -27,7 +27,7 @@ end
 %%
 % check if SOFA file is already loaded into RAM
 if ~sofa.isFile(brir)
-    impulseResponses = brir.Data.IR(idx, :, :);
+    impulseResponses = brir.Data.IR(idxM, :, :);
     fs = brir.Data.SamplingRate;
     return;
 end
