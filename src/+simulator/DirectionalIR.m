@@ -177,18 +177,18 @@ classdef DirectionalIR < hgsetget
       %       fs              - sampling frequency of impulse response
       %
       warning('off', 'SOFA:upgrade');
-      
+
       if nargin <= 2
         idxLoudspeaker = 1;
       end
       if nargin <= 3
         idxListener = 1;
       end
-      
+
       header = sofaGetHeader(filename);
       switch header.GLOBAL_SOFAConventions
         case 'SimpleFreeFieldHRIR'
-          loudspeakerPositions = sofaGetLoudspeakerPositions(header, ...
+          loudspeakerPositions = sofa.getLoudspeakerPositions(header, ...
             'spherical');
           availableAzimuths = wrapTo360( loudspeakerPositions(:,1).' );
           %
@@ -200,13 +200,13 @@ classdef DirectionalIR < hgsetget
           end
           % get the sound source position
           loudspeakerPosition = ...
-            sofaGetLoudspeakerPositions(filename, idxLoudspeaker, 'cartesian');
+            sofa.getLoudspeakerPositions(filename, idxLoudspeaker, 'cartesian');
           % get the listener position
           [listenerPosition, idxIncludedMeasurements] = ...
-            sofaGetListenerPositions(filename, idxListener, 'cartesian');
+            sofa.getListenerPositions(filename, idxListener, 'cartesian');
           % get available head orientations for listener position
           availableAzimuths = ...
-            sofaGetHeadOrientations(filename, idxIncludedMeasurements);
+            sofa.getHeadOrientations(filename, idxIncludedMeasurements);
           % define maximum and miminum head orientation
           availableAzimuths= sort(availableAzimuths);
           obj.AzimuthMax = availableAzimuths(end);
@@ -241,7 +241,7 @@ classdef DirectionalIR < hgsetget
       end
       % get the data
       [d, fs] = ...
-        sofaGetImpulseResponse(filename, phi, idxLoudspeaker, idxListener);
+        sofa.getImpulseResponse(filename, phi, idxLoudspeaker, idxListener);
     end
   end
   
