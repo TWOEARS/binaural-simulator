@@ -9,7 +9,7 @@ function outfile = downloadFile(filename, outfile)
 %   outfile: absolute name of downloaded file
 %
 % Download file specified by filename relative to root directory of the remote
-% database. The root directory is defined via db.utl(). If no output
+% database. The root directory is defined via db.url(). If no output
 % file is specified the file will relative to the temporary directory. The
 % temporary is via db.tmp();
 %
