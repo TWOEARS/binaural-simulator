@@ -32,7 +32,7 @@ classdef (Abstract) Base < simulator.Object
     % the source. This should be a n-channel *.wav file. All other Renderers
     % will ignore this property
     %
-    % See also: simulator.xml.dbGetFile()
+    % See also: db.getFile()
     % @type DirectionalIR
     % @default simulator.DirectionalIR()
     IRDataset = simulator.DirectionalIR();
@@ -57,7 +57,7 @@ classdef (Abstract) Base < simulator.Object
       obj.addXMLAttribute('IRDataset',  ...
         'simulator.DirectionalIR', ...
         'IRs', ...
-        @(x) simulator.DirectionalIR(xml.dbGetFile(x)));
+        @(x) simulator.DirectionalIR(db.getFile(x)));
     end
   end
 

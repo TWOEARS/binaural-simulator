@@ -1,7 +1,7 @@
-function dbClearTmp()
+function clearTmp()
 % delete content of 'src/tmp'
 
-dir_path = xml.dbTmp();
+dir_path = db.tmp();
 
 dirData = dir(dir_path);
 dirIndex = [dirData.isdir];

@@ -1,4 +1,4 @@
-function filename = dbValidate(filename)
+function filename = validate(filename)
 % validate xml-file against schema ('tef.xsd')
 %
 % Parameters:
@@ -7,7 +7,7 @@ function filename = dbValidate(filename)
 % Return values:
 %   filename: absolute path to validated xml-file
 %
-% See also: xml.dbGetFile
+% See also: db.getFile
 
   import java.io.*;
   import javax.xml.transform.Source;
@@ -15,7 +15,7 @@ function filename = dbValidate(filename)
   import javax.xml.validation.*;
 
   % search for xml file (locally and in database)
-  filename = xml.dbGetFile(filename);
+  filename = db.getFile(filename);
 
   % schema file
   thisfilepath = fileparts(mfilename('fullpath'));

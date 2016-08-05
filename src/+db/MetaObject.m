@@ -122,7 +122,7 @@ classdef (Abstract) MetaObject < hgsetget
           case 'char'
             Constructor = @(x)char(x);
           case 'dbfile'
-            Constructor = @(x)xml.dbGetFile(x);
+            Constructor = @(x)db.getFile(x);
           case 'cell'
             Constructor = @(x)strsplit(x, ' ');
           case 'logical'

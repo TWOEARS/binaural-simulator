@@ -29,7 +29,7 @@ classdef BRSGroup < simulator.source.GroupBase
       if nargin < 3
         srcidx = 1;
       end      
-      header = SOFAload(xml.dbGetFile(filename), 'nodata');  % filename
+      header = SOFAload(db.getFile(filename), 'nodata');  % filename
       % convert listener position to cartesian coordinates
       positions = SOFAconvertCoordinates(...
         header.ListenerPosition, header.ListenerPosition_Type, 'cartesian');
