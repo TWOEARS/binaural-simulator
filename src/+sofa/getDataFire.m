@@ -50,7 +50,7 @@ if ~isnumeric(idxM)
 else
     [idxM, ~, ununiqueM] = unique(idxM, 'stable');
     [idxM, sortM] = sort(idxM, 'ascend');
-    [segM_begin, segM_end, segM_length] = findSegments(idxM);
+    [segM_begin, segM_end, segM_length] = sofa.findSegments(idxM);
 end
 if ~isnumeric(idxE)
     segE_begin = 1;
@@ -61,7 +61,7 @@ if ~isnumeric(idxE)
 else
     [idxE, ~, ununiqueE] = unique(idxE, 'stable');
     [idxE, sortE] = sort(idxE, 'ascend');
-    [segE_begin, segE_end, segE_length] = findSegments(idxE);
+    [segE_begin, segE_end, segE_length] = sofa.findSegments(idxE);
 end
 % compute index array to undo the sorting
 unsortM(sortM) = 1:length(sortM);
