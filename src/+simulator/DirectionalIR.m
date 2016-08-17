@@ -185,7 +185,7 @@ classdef DirectionalIR < hgsetget
         idxListener = 1;
       end
 
-      header = sofaGetHeader(filename);
+      header = sofa.getHeader(filename);
       switch header.GLOBAL_SOFAConventions
         case 'SimpleFreeFieldHRIR'
           loudspeakerPositions = sofa.getLoudspeakerPositions(header, ...
