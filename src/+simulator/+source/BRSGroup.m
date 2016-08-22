@@ -33,20 +33,15 @@ classdef BRSGroup < simulator.source.GroupBase
       % convert listener position to cartesian coordinates
       positions = SOFAconvertCoordinates(...
         header.ListenerPosition, header.ListenerPosition_Type, 'cartesian');
-      [positions, ~, posidx] = unique(positions, 'rows', 'stable');
+      positions = unique(positions, 'rows', 'stable');
       
       obj.SubSources = simulator.source.Point.empty();        
       for wdx=1:size(positions,1)
         obj.SubSources(wdx) = simulator.source.Point();
         obj.SubSources(wdx).Position = positions(wdx,:).';
         obj.SubSources(wdx).GroupObject = obj;
-        if size(positions,1) == 1
-          obj.SubSources(wdx).IRDataset = ...
-            simulator.DirectionalIR(filename, srcidx);
-        else
-          obj.SubSources(wdx).IRDataset = ...
-            simulator.DirectionalIR(filename, srcidx, posidx == wdx);   
-        end
+        obj.SubSources(wdx).IRDataset = ...
+            simulator.DirectionalIR(filename, srcidx, wdx);   
       end
     end    
   end 
