@@ -30,7 +30,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % Parameters:
       %   xmlfile: optional name of xmlfile @type char[] @default ''
       %
-      % See also: db.openXML db.validate db.MetaObject.XML
+      % See also: xml.openXML xml.validate xml.MetaObject
 
       obj = obj@simulator.SimulatorInterface();
       obj = obj@simulator.RobotInterface();

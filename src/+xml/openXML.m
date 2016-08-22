@@ -8,9 +8,9 @@ function [RootNode, DocumentNode] = openXML(filename)
 %   RootNode: DOM-Node of root element in XML-Document
 %   DocumentNode: DOM-Node of XML-Document
 %
-% See also: db.getFile db.validate xmlread
+% See also: db.getFile xml.validate xmlread
 
-  filename = db.validate(filename);
+  filename = xml.validate(filename);
 
   DocumentNode = xmlread(filename);
   RootNode = DocumentNode.getDocumentElement;
