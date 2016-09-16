@@ -217,7 +217,7 @@ classdef DirectionalIR < hgsetget
       end
       % distance of measurements along circle
       dist = simulator.DirectionalIR.angularDistanceMeasure( ...
-        availableAzimuths, circshift(availableAzimuths,1) );
+        availableAzimuths, circshift(availableAzimuths,[0,1]) );
       % get the minimum distance between two measurements = resolution
       resolution = min( dist );
       % get the maximum distance between two measurements
