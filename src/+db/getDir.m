@@ -39,12 +39,12 @@ filenames = {};
 for c = content{1}.'
   if bRecursive && c{:}(end) == '/'
     % try to get the files from the subdirectory
-    filenames = [filenames, ...
-      db.getDir(fullfile(directory, c{:}), bRecursive, bVerbose)];
-  else
+    filenames = [filenames; ...
+      db.getDir(fullfile(directory, c{:}), 1, bVerbose)];
+  elseif c{:}(end) ~= '/'
     % try to get the file
     try
-      filenames = [filenames, ...
+      filenames = [filenames; ...
         {db.getFile(fullfile(directory, c{:}), bVerbose)}];
     catch
       fprintf('Download of %s failed!\n', fullfile(directory, c{:}));
