@@ -1,4 +1,4 @@
-function [RootNode, DocumentNode] = openXML(filename)
+function [RootNode, DocumentNode] = open(filename)
 % open and validates xml file for audio-visual scene description
 % 
 % Parameters:
