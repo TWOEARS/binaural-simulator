@@ -11,8 +11,12 @@ function listDir(directory, bRecursive, nIndent)
 %
 % See also: db.getDir db.getFile db.path
 
-narginchk(1,3);
-isargchar(directory);
+narginchk(0,3);
+if nargin < 1
+  directory='';
+else
+  isargchar(directory);
+end
 if nargin < 2
   bRecursive = false;
 end

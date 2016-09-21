@@ -82,7 +82,7 @@ catch
           return;
         catch
           % try download from remote database
-          filename = db.downloadFile(filename);
+          filename = db.downloadFile(filename, [], bVerbose);
         end
       end
     end

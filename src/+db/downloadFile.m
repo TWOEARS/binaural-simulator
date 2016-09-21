@@ -1,9 +1,10 @@
-function outfile = downloadFile(filename, outfile)
+function outfile = downloadFile(filename, outfile, bVerbose)
 % download file from remote database
 %
 % Parameters:
 %   filename: filename relative to root directory of the database @type char[]
 %   outfile: relative or absolute filename where download should be saved, optional @type char[]
+%   bVerbose: optional boolean verbosity parameter. Default: 0.
 %
 % Return values:
 %   outfile: absolute name of downloaded file
@@ -22,7 +23,7 @@ filename(sdx) = '/';  % replace backslashes with slashed for url
 url = [db.url(), '/', filename];
 
 % create directories if necessary
-if nargin < 2
+if nargin < 2 || isempty(outfile)
   dir_path = db.tmp();
   for idx=1:length(dirs)-1
     dir_path = [dir_path, filesep, dirs{idx}];
@@ -32,7 +33,9 @@ if nargin < 2
 end
 
 % start download
-fprintf('Downloading file %s\n', url);
+if nargin == 3 && bVerbose
+  fprintf('Downloading file %s\n', url);
+end
 [~, status] = urlwrite(url, outfile);
 
 if ~status
