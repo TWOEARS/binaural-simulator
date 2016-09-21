@@ -1,4 +1,4 @@
-function newpath = dbTmp(newpath)
+function newpath = tmp(newpath)
 % defines root path to temporary directory for files downloaded via dbDownlodFile
 %
 % Parameters:

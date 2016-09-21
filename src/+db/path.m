@@ -1,4 +1,4 @@
-function newpath = dbPath(newpath)
+function newpath = path(newpath)
 % defines root path to local copy of twoears database.
 %
 % Parameters:

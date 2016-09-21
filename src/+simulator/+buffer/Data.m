@@ -79,7 +79,7 @@ classdef (Abstract) Data < simulator.buffer.Base
       % kept.
       
       % read audio data from file
-      [obj.data, fsorig] = audioread(xml.dbGetFile(filename));
+      [obj.data, fsorig] = audioread(db.getFile(filename));
       % optional resampling
       if nargin > 2
         isargpositivescalar(fs);

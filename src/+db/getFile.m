@@ -1,4 +1,4 @@
-function filename = dbGetFile(filename, bVerbose)
+function filename = getFile(filename, bVerbose)
 % search for file locally and in database
 %
 % USAGE
@@ -15,14 +15,12 @@ function filename = dbGetFile(filename, bVerbose)
 %   search for file specified by filename relative to current directory.
 %   Filenames starting with '/' will interpreted as absolute paths. If the file
 %   is not found, searching will be extended to the local copy of the
-%   Two!Ears database (database path defined via xml.dbPath()). Again,
+%   Two!Ears database (database path defined via db.path()). Again,
 %   searching will be extended to the remote database (defined via
-%   xml.dbURL). If the download was successfull, the file will be cached in
-%   'src/tmp'. The cache can be cleared via xml.dbClearTmp()
+%   db.url). If the download was successfull, the file will be cached in
+%   'src/tmp'. The cache can be cleared via db.clearTmp()
 %
-% See also: xml.dbPath xml.dbURL xml.dbClearTmp
-
-import xml.*;
+% See also: db.path db.url db.clearTmp
 
 narginchk(1,2);
 isargchar(filename);
@@ -38,7 +36,7 @@ try
       'search in database\n'), filename);
   end
   filename = fullfile(pwd,filename);
-  return;  
+  return;
 catch
   try
     % search inside paths added by addpath
@@ -61,20 +59,20 @@ catch
     catch
       try
         % try local database
-        isargfile(fullfile(dbPath(),filename));
+        isargfile(fullfile(db.path(),filename));
         if bVerbose
           fprintf('INFO: file (%s) found in local database\n', filename);
         end
-        filename = fullfile(dbPath(),filename);
+        filename = fullfile(db.path(),filename);
         return;
       catch
         if bVerbose
           fprintf(strcat('INFO: file (%s) not found in local database ', ...
-            '(dbPath=%s), trying remote database\n'), filename, dbPath());
+            '(dbPath=%s), trying remote database\n'), filename, db.path());
         end
         % try cache of remote database
         try
-          tmppath = xml.dbTmp();
+          tmppath = db.tmp();
           isargfile(fullfile(tmppath,filename));
           if bVerbose
             fprintf('INFO: file (%s) found in cache of remote database\n', ...
@@ -84,7 +82,7 @@ catch
           return;
         catch
           % try download from remote database
-          filename = dbDownloadFile(filename);
+          filename = db.downloadFile(filename);
         end
       end
     end

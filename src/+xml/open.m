@@ -1,4 +1,4 @@
-function [RootNode, DocumentNode] = dbOpenXML(filename)
+function [RootNode, DocumentNode] = open(filename)
 % open and validates xml file for audio-visual scene description
 % 
 % Parameters:
@@ -8,9 +8,9 @@ function [RootNode, DocumentNode] = dbOpenXML(filename)
 %   RootNode: DOM-Node of root element in XML-Document
 %   DocumentNode: DOM-Node of XML-Document
 %
-% See also: xml.dbGetFile xml.dbValidate xmlread
+% See also: db.getFile xml.validate xmlread
 
-  filename = xml.dbValidate(filename);
+  filename = xml.validate(filename);
 
   DocumentNode = xmlread(filename);
   RootNode = DocumentNode.getDocumentElement;

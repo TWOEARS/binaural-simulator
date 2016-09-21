@@ -1,4 +1,4 @@
-function outfile = dbDownloadFile(filename, outfile)
+function outfile = downloadFile(filename, outfile)
 % download file from remote database
 %
 % Parameters:
@@ -9,21 +9,21 @@ function outfile = dbDownloadFile(filename, outfile)
 %   outfile: absolute name of downloaded file
 %
 % Download file specified by filename relative to root directory of the remote
-% database. The root directory is defined via xml.dbURL(). If no output
+% database. The root directory is defined via db.url(). If no output
 % file is specified the file will relative to the temporary directory. The
-% temporary is via xml.dbTmp();
+% temporary is via db.tmp();
 %
-% See also: xml.dbGetFile xml.dbURL xml.getTmp
+% See also: db.getFile db.url db.tmp
 
 % split up filename into directories
 [dirs, sdx] = regexp(filename, '(\\|\/)', 'split', 'start');
 
 filename(sdx) = '/';  % replace backslashes with slashed for url
-url = [xml.dbURL(), '/', filename];
+url = [db.url(), '/', filename];
 
 % create directories if necessary
-if nargin < 2  
-  dir_path = xml.dbTmp();
+if nargin < 2
+  dir_path = db.tmp();
   for idx=1:length(dirs)-1
     dir_path = [dir_path, filesep, dirs{idx}];
     [~, ~] = mkdir(dir_path);
