@@ -2,7 +2,7 @@ function filenames = getDir(directory, bRecursive, bVerbose)
 % get content of directory from hard disk or database
 %
 % USAGE
-%   filename = db.getDir(directory, bRecursive, bVerbose)
+%   filenames = db.getDir(directory, bRecursive, bVerbose)
 %
 % INPUT PARAMETERS
 %   directory  - directory in database

@@ -2,7 +2,7 @@ function listDir(directory, bRecursive, nIndent)
 % list content of directory in database
 %
 % USAGE
-%   filename = db.listDir(directory, bRecursive, nIndent)
+%   db.listDir(directory, bRecursive, nIndent)
 %
 % INPUT PARAMETERS
 %   directory  - directory in database
