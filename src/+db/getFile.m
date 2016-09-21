@@ -2,7 +2,7 @@ function filename = getFile(filename, bVerbose)
 % search for file locally and in database
 %
 % USAGE
-%   filename = dbGetFile(filename, bVerbose)
+%   filename = db.getFile(filename, bVerbose)
 %
 % INPUT PARAMETERS
 %   filename - filename
