@@ -31,6 +31,14 @@ case 'SimpleFreeFieldHRIR'
     % http://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR
     %
     loudspeakerPositions = sofa.getLoudspeakerPositions(header, 'spherical');
+    % find entries with approx. zero elevation angle 
+    selector = find( abs( loudspeakerPositions(:,2) ) < 0.01 );    
+    loudspeakerPositions = loudspeakerPositions( selector, :);
+    % error if different distances are present
+    if any( abs( ...
+        loudspeakerPositions(1,3) - loudspeakerPositions(:,3) ) > 0.001 )
+        error('HRTFs with different distance are not supported');
+    end
     availableAzimuths = wrapTo360( loudspeakerPositions(:,1) );
 
     % difference between available Azimuths and query azimuth
@@ -42,7 +50,7 @@ case 'SimpleFreeFieldHRIR'
     % get nearest neighbor with closes distances
     [~, idxMeasurement] = min(dist, [], 2);
     %
-    [impulseResponse, fs] = sofa.getDataFir(brir, idxMeasurement);
+    [impulseResponse, fs] = sofa.getDataFir(brir, selector(idxMeasurement));
     %
 case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     %
@@ -59,9 +67,13 @@ case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
         sofa.getLoudspeakerPositions(header, idxLoudspeaker, 'cartesian');
     [listenerPosition, idxIncludedMeasurements] = ...
         sofa.getListenerPositions(header, idxListener, 'cartesian');
-    listenerAzimuths = sofa.getHeadOrientations(header, idxIncludedMeasurements);
-    listenerOffset = SOFAconvertCoordinates(loudspeakerPosition - listenerPosition, ...
-                                           'cartesian', 'spherical');
+    [listenerAzimuths, listenerElevations] = ...
+        sofa.getHeadOrientations(header, idxIncludedMeasurements);          
+    % find entries with approx. zero elevation angle
+    selector = find( abs( listenerElevations ) < 0.01 );
+    listenerAzimuths = listenerAzimuths( selector );
+    listenerOffset = SOFAconvertCoordinates(...
+        loudspeakerPosition - listenerPosition, 'cartesian', 'spherical');
     availableAzimuths = wrapTo360( listenerOffset(1) - listenerAzimuths );
 
     % difference between available Azimuths and query azimuth
@@ -74,7 +86,7 @@ case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
     [~, idxNeighbour] = min(dist, [], 2);
     % Map to absolute measurement index
     idxActive = find(idxIncludedMeasurements==1);
-    idxMeasurement = idxActive(idxNeighbour);
+    idxMeasurement = idxActive(selector(idxNeighbour));
     % Get the impulse responses and reshape
     [impulseResponse, fs] = ...
 	  	sofa.getDataFire(brir, idxMeasurement, idxLoudspeaker);
