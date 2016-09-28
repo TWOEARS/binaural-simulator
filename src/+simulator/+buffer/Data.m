@@ -113,6 +113,10 @@ classdef (Abstract) Data < simulator.buffer.Base
       end
 
       tmp = obj.getData();
+      % check if the buffer was empty
+      if isempty(tmp)
+        error('Buffer seems to be empty!');
+      end
 
       audiowrite(filename, tmp./max(abs(tmp(:))), fs);  % normalize data
 
