@@ -190,8 +190,16 @@ classdef DirectionalIR < hgsetget
         case 'SimpleFreeFieldHRIR'
           loudspeakerPositions = sofa.getLoudspeakerPositions(header, ...
             'spherical');
-          availableAzimuths = wrapTo360( loudspeakerPositions(:,1).' );
+          % find entries with approx. zero elevation angle
+          loudspeakerPositions = ...
+            loudspeakerPositions( abs( loudspeakerPositions(:,2) ) < 0.01, :);
+          % error if different distances are present
+          if any( abs( ...
+              loudspeakerPositions(1,3) - loudspeakerPositions(:,3) ) > 0.001 )
+            error('HRTFs with different distance are not supported');
+          end
           %
+          availableAzimuths = wrapTo360( loudspeakerPositions(:,1) );
         case {'MultiSpeakerBRIR', 'SingleRoomDRIR'}
           %
           if strcmp(header.GLOBAL_SOFAConventions, 'SingleRoomDRIR')
@@ -205,16 +213,19 @@ classdef DirectionalIR < hgsetget
           [listenerPosition, idxIncludedMeasurements] = ...
             sofa.getListenerPositions(filename, idxListener, 'cartesian');
           % get available head orientations for listener position
-          availableAzimuths = ...
+          [availableAzimuths, availableElevations] = ...
             sofa.getHeadOrientations(filename, idxIncludedMeasurements);
-          % define maximum and miminum head orientation
-          availableAzimuths= sort(availableAzimuths);
-          obj.AzimuthMax = availableAzimuths(end);
-          obj.AzimuthMin = availableAzimuths(1);
+          % find entries with approx. zero elevation angle
+          availableAzimuths = ...
+            availableAzimuths( abs( availableElevations ) < 0.01 );
+          %
+          availableAzimuths = wrapTo360( availableAzimuths );
           %
           listenerOffset = SOFAconvertCoordinates(...
             loudspeakerPosition - listenerPosition, 'cartesian', 'spherical');
       end
+      % sort azimuths
+      availableAzimuths= sort(availableAzimuths); 
       % distance of measurements along circle
       dist = simulator.DirectionalIR.angularDistanceMeasure( ...
         availableAzimuths(:), circshift(availableAzimuths(:),[1,0]) );
@@ -222,6 +233,7 @@ classdef DirectionalIR < hgsetget
       resolution = min( dist );
       % get the maximum distance between two measurements
       [gap, adx] = max( dist );
+      % define maximum and miminum head orientation
       if gap >= 1.5*resolution  % this is an abitrary bound
         obj.AzimuthMin = availableAzimuths(adx);
         obj.AzimuthMax = availableAzimuths( ...
