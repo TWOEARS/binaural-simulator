@@ -19,8 +19,16 @@ sim.rotateHead(90);
 sig = [sig; sim.getSignal(2.5)];
 % rotate the head degrees to the right (absolute, which is 180 relative)
 sim.rotateHead(-90, 'absolute');
-% append 3 seconds signal
-sig = [sig; sim.getSignal(3)];
+% append 2 seconds signal
+sig = [sig; sim.getSignal(2)];
+% move towards one source
+sim.moveRobot(-1.7, 0, 0, 'absolute');
+% append 2 seconds signal
+sig = [sig; sim.getSignal(2)];
+% turn torso to the one source
+sim.moveRobot(0, 0, -90, 'relative');
+% append 4 seconds signal
+sig = [sig; sim.getSignal(4)];
 % save normalized signal
 audiowrite('out_robot.wav', sig/max(abs(sig(:))),sim.SampleRate);
 

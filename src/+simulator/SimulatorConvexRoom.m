@@ -20,6 +20,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     % Minimum Azimuth of head orientation
     % @type double
     AzimuthMin = -inf;
+    % Torso Azimuth of world frame
+    TorsoAzimuth = 0;
   end
   
   %% Constructor
@@ -78,7 +80,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         source_irfiles = [source_irfiles, obj.Sources{idx}.ssrIRFile];
       end
 
-      % initialize SSR compatible arrays
+      % initialize SSR compatible arraysHead
       obj.SSRPositionXY = zeros(2, obj.NumberOfSSRSources);
       obj.SSROrientationXY = zeros(1, obj.NumberOfSSRSources);
       obj.SSRReferencePosXY = zeros(2, 1);
@@ -286,30 +288,108 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
   end
 
   %% Robot-Interface
-  methods (Access=protected)
-    function rotateHeadRelative(obj, angleIncDeg)
-      % function rotateHeadRelative(obj, angleIncDeg)
+  methods
+    function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
+      % function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
       %
-      % See also: simulator.RobotInterface.rotateHeadRelative
+      % See also: simulator.RobotInterface.getSignal
+      if nargin < 2
+        timeIncSec = inf;
+      end
+      blocks = ceil(timeIncSec*obj.SampleRate/obj.BlockSize);
+      
+      idx = 0;
+      while ~obj.isFinished() && idx < blocks
+        obj.refresh();
+        obj.process();
+        idx = idx + 1;
+      end
+      
+      timeIncSamples = idx*obj.BlockSize;
+      timeIncSec = timeIncSamples/obj.SampleRate;
+      
+      sig = obj.Sinks.getData(timeIncSamples);
+      obj.Sinks.removeData(timeIncSamples);
+    end
+    
+    function rotateHead(obj, angleDeg, mode)
+      % function rotateHead(obj, angleDeg, mode)
+      %
+      % See also: simulator.RobotInterface.rotateHead
+      
+      isargscalar(angleDeg);
+      if (nargin < 3)
+        mode = 'relative';
+      else
+        isargchar(mode);
+      end
       
       % get current XY-Orientation
       azi = obj.Sinks.OrientationXY;
-      % consider limits of head orientation      
-      angleDeg = obj.angleHelper(azi + angleIncDeg);      
-      % rotate Head around z-axis
-      obj.Sinks.rotateAroundAxis([0; 0; 1], angleDeg - azi)
+      switch mode
+        case 'relative'
+          % consider limits of head orientation
+          angleDeg = obj.angleHelper(azi + angleDeg);
+        case 'absolute'
+          % consider limits of head orientation
+          angleDeg = obj.angleHelper(angleDeg + obj.TorsoAzimuth);
+        otherwise
+          error('mode (%s) not supported', mode);
+      end
+      % rotate Sink around z-axis
+      obj.Sinks.rotateAroundAxis([0; 0; 1], angleDeg - azi);
     end
-    function rotateHeadAbsolute(obj, angleDeg)
-      % function rotateHeadAbsolute(obj, angleDeg)
+    
+    function azimuth = getCurrentHeadOrientation(obj)
+      % function azimuth = getCurrentHeadOrientation(obj)
+      % get current head orientation in degrees
       %
-      % See also: simulator.RobotInterface.rotateHeadAbsolute
-
+      % See also: simulator.RobotInterface.getCurrentHeadOrientation
+      azimuth = mod(obj.Sinks.OrientationXY - obj.TorsoAzimuth, 360);
+    end
+    
+    function moveRobot(obj, posX, posY, theta, mode)
+      % function moveRobot(obj, posX, posY, theta, mode)
+      %
+      % See also: simulator.RobotInterface.moveRobot
+      
+      if (nargin < 5)
+        mode = 'relative';
+      else
+        isargchar(mode);
+      end
+      
       % get current XY-Orientation
       azi = obj.Sinks.OrientationXY;
-      % consider limits of head orientation  
-      angleDeg = obj.angleHelper(angleDeg);
-      % rotate Head around z-axis
-      obj.Sinks.rotateAroundAxis([0; 0; 1], angleDeg - azi);
+      switch mode
+        case 'relative'
+          % rotate Sink around z-axis
+          obj.Sinks.rotateAroundAxis([0; 0; 1], theta)
+          % set torso azimuth
+          obj.TorsoAzimuth = mod(azi + obj.TorsoAzimuth, 360);
+          % set torso position
+          obj.Sinks.Position = obj.Sinks.Position + [posX; posY; 0];
+        case 'absolute'
+          % rotate Sink around z-axis
+          obj.Sinks.rotateAroundAxis([0; 0; 1], theta - obj.TorsoAzimuth)
+          % set torso azimuth
+          obj.TorsoAzimuth = mod(theta, 360);
+          % set torso position
+          obj.Sinks.Position = [posX; posY; obj.Sinks.Position(3)];
+        otherwise
+          error('mode (%s) not supported', mode);
+      end     
+    end
+    
+    %% Get the current robot position
+    function [posX, posY, theta] = getRobotPosition(obj)
+    % function [posX, posY, theta] = getRobotPosition(obj)
+    %
+    % See also: simulator.RobotInterface.getRobotPosition
+
+      theta = obj.TorsoAzimuth;
+      posX = obj.Sinks.Position(1);
+      posY = obj.Sinks.Position(2);
     end
   end
   methods (Access=private)
@@ -318,7 +398,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       %
       % return angleDeg taking maximum and mininum rotation angle into
       % account
-
+      
       % range of valid angles
       range = mod(obj.AzimuthMax - obj.AzimuthMin, 360);
       % center of this area
@@ -337,40 +417,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         end
       end
     end
-  end  
-  methods
-    function azimuth = getCurrentHeadOrientation(obj)
-      % function azimuth = getCurrentHeadOrientation(obj)
-      % get current head orientation in degrees
-      %
-      % See also: simulator.RobotInterface.getCurrentHeadOrientation
-      azimuth = obj.Sinks.OrientationXY;
-    end
-    
-    function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
-      % function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
-      %
-      % See also: simulator.RobotInterface.getSignal
-      if nargin < 2
-        timeIncSec = inf;
-      end      
-      blocks = ceil(timeIncSec*obj.SampleRate/obj.BlockSize);
-
-      idx = 0;
-      while ~obj.isFinished() && idx < blocks
-        obj.refresh();
-        obj.process();
-        idx = idx + 1;
-      end
-
-      timeIncSamples = idx*obj.BlockSize;
-      timeIncSec = timeIncSamples/obj.SampleRate;
-
-      sig = obj.Sinks.getData(timeIncSamples);
-      obj.Sinks.removeData(timeIncSamples);
-    end
   end
-
   %% MISC
   methods
     function plot(obj, id)

@@ -1,37 +1,7 @@
 classdef (Abstract) RobotInterface < hgsetget
   % wrapper class for the actual robot functionality
-
-  %% Head Rotation
-  methods
-    function rotateHead(obj, angleDeg, mode)
-      % function rotateHead(obj, angleDeg, mode)
-      % rotate head
-      %
-      % Parameters:
-      %   angleDeg: angle in degree @type double
-      %   mode: either 'relative' or 'absolute' @type char[] @default 'relative'
-      %
-      % rotate head either about (mode='relative') or to (mode='absolute')
-
-      isargscalar(angleDeg);
-      if (nargin < 3)
-        mode = 'relative';
-      else
-        isargchar(mode);
-      end
-
-      switch mode
-        case 'relative'
-          obj.rotateHeadRelative(angleDeg);
-        case 'absolute'
-          obj.rotateHeadAbsolute(angleDeg);
-        otherwise
-          error('mode (%s) not supported', mode);
-      end
-    end
-  end
-  %% signal acquisition
   methods (Abstract)
+    %% Grab binaural audio of a specified length
     [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
     % function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
     % get binaural of specified length
@@ -46,44 +16,71 @@ classdef (Abstract) RobotInterface < hgsetget
     % Due to the frame-wise processing length of the output signal can
     % vary from specified signal length. This is indicated by the 2nd and
     % 3rd return value.
-  end
-  methods (Abstract)
+
+    %% Rotate the head with mode = {?absolute?, ?relative?}
+    rotateHead(obj, angleDeg, mode)
+    % function rotateHead(obj, angleDeg, mode)
+    %
+    % 1) mode = ?absolute?
+    %    Rotate the head to an absolute angle relative to the base
+    %    0  / 360 degrees = dead ahead
+    %    90 /-270 degrees = left
+    %    270/-90  degrees = right
+    %
+    % 2) mode = ?relative?
+    %    Rotate the head by an angle in degrees
+    %    Positive angle = rotation to the left
+    %    Negative angle = rotation to the right
+    %
+    % Head turn will stop when maxLeftHead or maxRightHead is reached
+    %
+    % Input Parameters
+    %     angleDeg : rotation angle in degrees
+    %         mode : 'absolute' or 'relative'
+    
+    %% Get the head orientation relative to the base orientation
     azimuth = getCurrentHeadOrientation(obj)
     % function azimuth = getCurrentHeadOrientation(obj)
     % get current head orientation in degrees
     %
     % Return Values:
-    %   azimuth: absolute angle in degree @type double
+    %   azimuth: head-above-torso azimuth in degree @type double
     %
     % look directions:
-    %   0/ 360 degree = positive x-axis
-    %  90/-270 degrees = positive y-axis
-    % 180/-180 degrees = negative x-axis
-    % 270/- 90 degrees = negative y-axis
-  end
-  methods (Abstract, Access=protected)
-    rotateHeadAbsolute(obj, angleDeg)
-    % function rotateHeadAbsolute(obj, angleDeg)
-    % rotate about an incremental angle in degrees
+    %   0/ 360 degree = dead ahead
+    %  90/-270 degrees = left
+    % 270/- 90 degrees = right
+    
+    %% Move the robot to a new position
+    moveRobot(obj, posX, posY, theta, mode)
+    % function moveRobot(obj, posX, posY, theta, mode)
     %
-    % Parameters:
-    %   angleDeg: absolute angle in degree @type double
+    % All coordinates are in the world frame
+    %     0/ 360 degrees = positive x-axis
+    %    90/-270 degrees = positive y-axis
+    %   180/-180 degrees = negative x-axis
+    %   270/- 90 degrees = negative y-axis
     %
-    % look directions:
-    %   0/ 360 degree = positive x-axis
-    %  90/-270 degrees = positive y-axis
-    % 180/-180 degrees = negative x-axis
-    % 270/- 90 degrees = negative y-axis
-  end
-  methods (Abstract, Access=protected)
-    rotateHeadRelative(obj, angleIncDeg)
-    % function rotateHeadRelative(obj, angleIncDeg)
-    % rotate about an incremental angle in degrees
+    % Input Parameters
+    %         posX : x position
+    %         posY : y position
+    %        theta : robot base orientation in the world frame
+    %         mode : 'absolute' or 'relative'
+    
+    %% Get the current robot position
+    [posX, posY, theta] = getRobotPosition(obj)
+    % function [posX, posY, theta] = getRobotPosition(obj)
     %
-    % Parameters:
-    %   angleIncDeg: angle increment in degree @type double
+    % All coordinates are in the world frame
+    %     0/ 360 degrees = positive x-axis
+    %    90/-270 degrees = positive y-axis
+    %   180/-180 degrees = negative x-axis
+    %   270/- 90 degrees = negative y-axis
     %
-    % negative angle result in rotation to the right
-    % positive angle result in rotation to the left
+    % Output Parameters
+    %         posX : x position
+    %         posY : y position
+    %        theta : robot base orientation in the world frame    
+    
   end
 end
