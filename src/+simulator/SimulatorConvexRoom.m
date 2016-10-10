@@ -382,10 +382,10 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     end
     
     %% Get the current robot position
-    function [posX, posY, theta] = getRobotPosition(obj)
-    % function [posX, posY, theta] = getRobotPosition(obj)
+    function [posX, posY, theta] = getCurrentRobotPosition(obj)
+    % function [posX, posY, theta] = getCurrentRobotPosition(obj)
     %
-    % See also: simulator.RobotInterface.getRobotPosition
+    % See also: simulator.RobotInterface.getCurrentRobotPosition
 
       theta = obj.TorsoAzimuth;
       posX = obj.Sinks.Position(1);
