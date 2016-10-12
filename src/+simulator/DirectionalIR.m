@@ -22,6 +22,10 @@ classdef DirectionalIR < hgsetget
     % @type double
     % @default -inf
     AzimuthMin = -inf;
+    % Middle Azimuth of IR-Dataset
+    % @type double
+    % @default 0
+    AzimuthMid = 0;
     % Sample Rate of HRIR-Dataset in Hz
     % @type double
     SampleRate;
@@ -238,6 +242,8 @@ classdef DirectionalIR < hgsetget
         obj.AzimuthMin = availableAzimuths(adx);
         obj.AzimuthMax = availableAzimuths( ...
           mod(adx - 2,length(availableAzimuths)) + 1);
+        % center of this area
+        obj.AzimuthMid = obj.AzimuthMin + mod(obj.AzimuthMax - obj.AzimuthMin, 360)/2;
       end
       % create regular grid with this distance
       if resolution == 0
