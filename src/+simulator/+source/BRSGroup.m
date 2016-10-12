@@ -1,26 +1,40 @@
 classdef BRSGroup < simulator.source.GroupBase
 
-  properties
-    % Object containg reference position
-    % @type simulator.Object
-    % @default @ssr_binaural
-    Reference@simulator.Object;
-  end  
+  properties (SetAccess = private)
+    CurrentSubSource = [];
+  end
   
   methods
-    function refresh(obj, T)
-      if nargin==2
-        obj.refresh@simulator.source.GroupBase(T);
-      else
-        obj.refresh@simulator.source.GroupBase();
-      end
+    function refresh(obj, sim)
+      obj.refresh@simulator.Object(sim);
       
       [~, idx] = min(sqrt(sum( bsxfun(@minus, [obj.SubSources.Position], ...
-        obj.Reference.Position).^2, 1)));
+        sim.Sinks.Position).^2, 1)));
       for wdx=1:length(obj.SubSources)
         obj.SubSources(wdx).Mute = true;
       end
-      obj.SubSources(idx).Mute = false;
+      obj.CurrentSubSource = obj.SubSources(idx);
+      obj.CurrentSubSource.Mute = false;
+      
+      [left, right, torso] = obj.getHeadLimits();
+
+      headAzimuth = sim.getCurrentHeadOrientation();
+      if headAzimuth > left || headAzimuth < right
+        error(['head-above-torso azimuth (%2.2f deg) out of bounds', ...
+          ' (%2.2f:%2.2f deg)!'], headAzimuth, right,left);
+      end
+      [~, ~, torsoAzimuth] = sim.getCurrentRobotPosition();
+      if ~isnan(torso) && abs(torsoAzimuth - torso) >= 1E-5
+        warning(['The specified torso azimuth (%2.2f deg) of the simulator' ...
+          ' does not match the available torso azimuth of the IR Dataset.' ...
+          ' The torso azimuth will be set to %2.2f deg. The resulting head' ...
+          ' azimuth in world coordinates is now %2.2f deg'], torsoAzimuth, ...
+          torso, mod(headAzimuth + torso, 360));
+        % rotate Sink around z-axis
+        sim.Sinks.rotateAroundAxis([0; 0; 1], torso - torsoAzimuth)
+        % set torso azimuth
+        sim.TorsoAzimuth = mod(torso , 360);
+      end
     end
     
     %%
@@ -41,8 +55,13 @@ classdef BRSGroup < simulator.source.GroupBase
         obj.SubSources(wdx).Position = positions(wdx,:).';
         obj.SubSources(wdx).GroupObject = obj;
         obj.SubSources(wdx).IRDataset = ...
-            simulator.DirectionalIR(filename, srcidx, wdx);   
+            simulator.DirectionalIR(filename, srcidx, wdx);
       end
+    end
+    function [left, right, torso] = getHeadLimits(obj)
+      left = obj.CurrentSubSource.IRDataset.maxHeadLeft;
+      right = obj.CurrentSubSource.IRDataset.maxHeadRight;
+      torso = obj.CurrentSubSource.IRDataset.TorsoAzimuth;
     end    
   end 
   

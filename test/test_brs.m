@@ -10,41 +10,43 @@ sim.set('Init',true);
 
 %% static scene, dynamic head
 
-% brirs dataset limits head orientation from 0 to 180 degrees
+% brirs dataset limits head orientation from -90:90
 
-sim.Sinks.OrientationXY  % initial head orientation is 180 degrees
-
-% this should work ( head orientation still at 180 degrees )
-sim.rotateHead(180, 'relative'); 
+% this should work (head orientation at 90)
+sim.rotateHead(90, 'relative'); 
 while sim.Time < 1.5
   sim.set('Refresh',true);  % refresh all objects
   sim.set('Process',true);
 end
-sim.Sinks.OrientationXY
+sim.getCurrentHeadOrientation() 
 
-% this should work ( head orientation now at 0 degree )
-sim.rotateHead(-180, 'relative'); 
+% this should work (head orientation at -90)
+sim.rotateHead(-90, 'absolute'); 
 while sim.Time < 3
   sim.set('Refresh',true);  % refresh all objects
   sim.set('Process',true);
 end
-sim.Sinks.OrientationXY
+sim.getCurrentHeadOrientation()
 
-% this should not work ( head orientation still at 0 degree  )
-sim.rotateHead(-90, 'absolute'); 
+% this should work (head orientation at 0)
+sim.rotateHead(90, 'relative'); 
 while sim.Time < 4.5
   sim.set('Refresh',true);  % refresh all objects
   sim.set('Process',true);
 end
-sim.Sinks.OrientationXY
+sim.getCurrentHeadOrientation()
 
-% this should work again ( head orientation now at 90 degree  )
-sim.rotateHead(90, 'absolute'); 
-while ~sim.isFinished()
-  sim.set('Refresh',true);  % refresh all objects
-  sim.set('Process',true);
+% this should not work (head orientation still at 0)
+try
+  sim.rotateHead(100, 'absolute');
+  while ~sim.isFinished()
+    sim.set('Refresh',true);  % refresh all objects
+    sim.set('Process',true);
+  end
+catch
+  fprintf('we successfully produced an error!\n');
 end
-sim.Sinks.OrientationXY
+sim.getCurrentHeadOrientation()
 
 % save file
 sim.Sinks.saveFile('out_brs.wav',sim.SampleRate);

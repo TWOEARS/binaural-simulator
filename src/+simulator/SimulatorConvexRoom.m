@@ -14,13 +14,9 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
   
   properties (SetAccess=private)
     Time = 0.0;
-    % Maximum Azimuth of head orientation
-    % @type double
-    AzimuthMax = inf;
-    % Minimum Azimuth of head orientation
-    % @type double
-    AzimuthMin = -inf;
-    % Torso Azimuth of world frame
+  end
+  properties
+    % Torso Azimuth in world frame
     TorsoAzimuth = 0;
   end
   
@@ -47,16 +43,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % function init(obj)
       % initialize Simulator
 
-      % initialize head rotation limits  
-      obj.AzimuthMax = inf;
-      obj.AzimuthMin = -inf;
-      if strcmp(func2str(obj.Renderer), 'ssr_brs')
-        for idx=1:length(obj.Sources)
-          obj.AzimuthMax = obj.Sources{idx}.IRDataset.AzimuthMax;
-          obj.AzimuthMin = obj.Sources{idx}.IRDataset.AzimuthMin;
-        end
-      end
-      
       % initialize Room
       if ~isempty(obj.Room)
         obj.Room.init();
@@ -70,9 +56,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         if isa(obj.Sources{idx},'simulator.source.ISMGroup')
           obj.Sources{idx}.Room = obj.Room;
         end
-        if isa(obj.Sources{idx},'simulator.source.BRSGroup')
-          obj.Sources{idx}.Reference = obj.Sinks;
-        end 
         obj.Sources{idx}.init();
         obj.NumberOfSSRSources ...
           = obj.NumberOfSSRSources + obj.Sources{idx}.ssrChannels;
@@ -166,11 +149,11 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       end
 
       % refresh position of Sinks for limited-speed modifications
-      obj.Sinks.refresh(obj.BlockSize/obj.SampleRate);
+      obj.Sinks.refresh(obj);
 
       % refresh ism and scene objects
       for idx=1:length(obj.Sources)
-        obj.Sources{idx}.refresh(obj.BlockSize/obj.SampleRate);
+        obj.Sources{idx}.refresh(obj);
       end
 
       obj.updateSSRarrays;
@@ -237,7 +220,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
 
       % refresh ism and scene objects
       for idx=1:length(obj.Sources)
-        obj.Sources{idx}.refresh();
+        obj.Sources{idx}.refresh(obj);
       end
 
       obj.updateSSRarrays;
@@ -324,15 +307,14 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         isargchar(mode);
       end
       
-      % get current XY-Orientation
-      azi = obj.Sinks.OrientationXY;
+      azi = obj.Sinks.OrientationXY;  % get current XY-Orientation
       switch mode
         case 'relative'
           % consider limits of head orientation
-          angleDeg = obj.angleHelper(azi + angleDeg);
+          angleDeg = azi + angleDeg;
         case 'absolute'
           % consider limits of head orientation
-          angleDeg = obj.angleHelper(angleDeg + obj.TorsoAzimuth);
+          angleDeg = obj.TorsoAzimuth + angleDeg;
         otherwise
           error('mode (%s) not supported', mode);
       end
@@ -345,7 +327,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       % get current head orientation in degrees
       %
       % See also: simulator.RobotInterface.getCurrentHeadOrientation
-      azimuth = mod(obj.Sinks.OrientationXY - obj.TorsoAzimuth, 360);
+      azimuth = mod(obj.Sinks.OrientationXY - obj.TorsoAzimuth + 180, 360) - 180;
     end
     
     function moveRobot(obj, posX, posY, theta, mode)
@@ -359,14 +341,12 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
         isargchar(mode);
       end
       
-      % get current XY-Orientation
-      azi = obj.Sinks.OrientationXY;
       switch mode
         case 'relative'
           % rotate Sink around z-axis
           obj.Sinks.rotateAroundAxis([0; 0; 1], theta)
           % set torso azimuth
-          obj.TorsoAzimuth = mod(azi + obj.TorsoAzimuth, 360);
+          obj.TorsoAzimuth = mod(theta + obj.TorsoAzimuth, 360);
           % set torso position
           obj.Sinks.Position = obj.Sinks.Position + [posX; posY; 0];
         case 'absolute'
@@ -390,32 +370,6 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       theta = obj.TorsoAzimuth;
       posX = obj.Sinks.Position(1);
       posY = obj.Sinks.Position(2);
-    end
-  end
-  methods (Access=private)
-    function angleDeg = angleHelper(obj, angleDeg)
-      % function angleDeg = angleHelper(obj, angleDeg)
-      %
-      % return angleDeg taking maximum and mininum rotation angle into
-      % account
-      
-      % range of valid angles
-      range = mod(obj.AzimuthMax - obj.AzimuthMin, 360);
-      % center of this area
-      center = obj.AzimuthMin + range/2;
-      % distance of angle to center
-      [dist, ddx] = min( ...
-        [ mod(angleDeg - center, 360), mod(center - angleDeg, 360) ] );
-      
-      % if distance is than half of the range
-      if dist > range/2
-        % choose extrema which is nearer
-        if ddx == 1
-          angleDeg = obj.AzimuthMax;
-        else  % ddx = 2
-          angleDeg = obj.AzimuthMin;
-        end
-      end
     end
   end
   %% MISC
