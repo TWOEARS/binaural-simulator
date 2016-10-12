@@ -24,13 +24,13 @@ classdef (Abstract) RobotInterface < hgsetget
         rotateHead(obj, angleDeg, mode)
         % function rotateHead(obj, angleDeg, mode)
         %
-        % 1) mode = ?absolute?
+        % 1) mode = 'absolute'
         %    Rotate the head to an absolute angle relative to the base
         %      0/ 360 degrees = dead ahead
         %     90/-270 degrees = left
         %    -90/ 270 degrees = right
         %
-        % 2) mode = ?relative?
+        % 2) mode = 'relative'
         %    Rotate the head by an angle in degrees
         %    Positive angle = rotation to the left
         %    Negative angle = rotation to the right
