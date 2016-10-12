@@ -330,6 +330,14 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       azimuth = mod(obj.Sinks.OrientationXY - obj.TorsoAzimuth + 180, 360) - 180;
     end
     
+    function [maxLeft, maxRight] = getHeadTurnLimits(obj)
+      % function [maxLeft, maxRight] = getHeadTurnLimits(obj)
+      %
+      % See also: simulator.RobotInterface.getHeadTurnLimits
+      
+      [maxLeft, maxRight] = obj.Sources{1}.getHeadLimits();
+    end
+    
     function moveRobot(obj, posX, posY, theta, mode)
       % function moveRobot(obj, posX, posY, theta, mode)
       %

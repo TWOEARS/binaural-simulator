@@ -53,7 +53,14 @@ classdef (Abstract) RobotInterface < hgsetget
         %                90 degrees = left
         %               -90 degrees = right
         %
-   
+        
+        %% Get the maximum head orientation relative to the base orientation
+        [maxLeft, maxRight] = getHeadTurnLimits(obj)
+        % function [maxLeft, maxRight] = getHeadTurnLimits(obj)
+        %
+        % Output Parameters
+        %      maxLeft  : maximum possible head orientation
+        %      maxRight : mimimum possible head orientation
         
         %% Move the robot to a new position
         moveRobot(obj, posX, posY, theta, mode)
@@ -74,7 +81,7 @@ classdef (Abstract) RobotInterface < hgsetget
 
     
         %% Get the current robot position
-    	[posX, posY, theta] = getCurrentRobotPosition(obj)
+        [posX, posY, theta] = getCurrentRobotPosition(obj)
         % function [posX, posY, theta] = getCurrentRobotPosition(obj)
         %
         % All coordinates are in the world frame
