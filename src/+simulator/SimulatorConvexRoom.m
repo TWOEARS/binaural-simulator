@@ -42,6 +42,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
     function obj = init(obj)
       % function init(obj)
       % initialize Simulator
+      obj.bActive = true;
 
       % initialize Room
       if ~isempty(obj.Room)
@@ -183,6 +184,7 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       obj.SSRReferenceOriXY = obj.Sinks.ssrOrientation();
     end
   end
+  
   methods
     %% isFinished?
     function b = isFinished(obj)
@@ -272,6 +274,15 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
 
   %% Robot-Interface
   methods
+      
+      % Returns true if robot is active
+      function b = isActive(obj)
+          b = obj.bActive;
+          if b
+              b = ~obj.isFinished;
+          end
+      end
+      
     function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
       % function [sig, timeIncSec, timeIncSamples] = getSignal(obj, timeIncSec)
       %

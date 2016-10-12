@@ -1,4 +1,4 @@
-classdef (Abstract) RobotInterface < hgsetget
+classdef (Abstract) RobotInterface < matlab.mixin.SetGet
   % Abstract class for the robot interface
   
     methods (Abstract)
@@ -95,6 +95,22 @@ classdef (Abstract) RobotInterface < hgsetget
         %         posY : y position
         %        theta : robot base orientation in the world frame
         
+        
+        %% Returns true if robot is active
+        b = isActive(obj)
+        % function b = isActive(obj)
+        
+    end
+    
+    properties
+        bActive = true;
+    end
+    
+    methods
+        %% Stop the robot
+        function stop(obj)
+            obj.bActive = false;
+        end
     end
 
 end
