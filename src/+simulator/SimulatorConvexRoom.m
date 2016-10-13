@@ -277,8 +277,8 @@ classdef SimulatorConvexRoom < simulator.SimulatorInterface & simulator.RobotInt
       
       % Returns true if robot is active
       function b = isActive(obj)
-          b = obj.bActive;
-          if b
+          b = false;
+          if obj.bActive
               b = ~obj.isFinished;
           end
       end

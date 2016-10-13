@@ -107,7 +107,7 @@ classdef (Abstract) RobotInterface < matlab.mixin.SetGet
     end
     
     methods
-        %% Stop the robot
+        %% Stopping the robot will cause isActive() to return false
         function stop(obj)
             obj.bActive = false;
         end
