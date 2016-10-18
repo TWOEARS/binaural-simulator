@@ -103,7 +103,7 @@ classdef (Abstract) RobotInterface < matlab.mixin.SetGet
     end
     
     properties
-        bActive = true;
+        bActive = false;
     end
     
     methods
