@@ -6,13 +6,20 @@
   Renderer="ssr_brs">
   <source Type="point"
           Name="Castanets"
-          IRs="impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src4_xs+0.00_ys+1.50.sofa">
+          IRs="impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src5_xs-0.75_ys+1.30.sofa">
     <buffer ChannelMapping="1"
             Type="fifo"
             File="stimuli/anechoic/instruments/anechoic_castanets.wav"/>
   </source>
+  <source Type="point"
+          Name="Cello"
+          IRs="impulse_responses/qu_kemar_rooms/auditorium3/QU_KEMAR_Auditorium3_src6_xs+0.75_ys+1.30.sofa">
+    <buffer ChannelMapping="1"
+            Type="fifo"
+            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
+  </source>
   <sink Position="0 0 1.75"
-        UnitX="-1 0 0"
+        UnitX="1 0 0"
         Name="Head"
         RootPath="some/root/path/"
         MeshFile="blub.ext"/>

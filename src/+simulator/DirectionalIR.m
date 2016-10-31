@@ -17,11 +17,15 @@ classdef DirectionalIR < hgsetget
     % Maximum Azimuth of IR-Dataset
     % @type double
     % @default inf
-    AzimuthMax = inf;
+    maxHeadLeft = inf;
     % Minimum Azimuth of IR-Dataset
     % @type double
     % @default -inf
-    AzimuthMin = -inf;
+    maxHeadRight = -inf;
+    % Middle Azimuth of IR-Dataset
+    % @type double
+    % @default 0
+    TorsoAzimuth = NaN;
     % Sample Rate of HRIR-Dataset in Hz
     % @type double
     SampleRate;
@@ -71,8 +75,9 @@ classdef DirectionalIR < hgsetget
       end
       
       % reset maximum and minimum azimuth angle
-      obj.AzimuthMax = inf;
-      obj.AzimuthMin = -inf;
+      obj.maxHeadLeft = inf;
+      obj.maxHeadRight = -inf;
+      obj.TorsoAzimuth = NaN;
       
       [~,name,ext] = fileparts(args{1});
       if strcmp('.wav', ext)
@@ -235,9 +240,14 @@ classdef DirectionalIR < hgsetget
       [gap, adx] = max( dist );
       % define maximum and miminum head orientation
       if gap >= 1.5*resolution  % this is an abitrary bound
-        obj.AzimuthMin = availableAzimuths(adx);
-        obj.AzimuthMax = availableAzimuths( ...
+        phiMin = availableAzimuths(adx);
+        phiMax = availableAzimuths( ...
           mod(adx - 2,length(availableAzimuths)) + 1);
+        % center of this area
+        obj.TorsoAzimuth = phiMin + mod(phiMax - phiMin, 360)/2;
+        
+        obj.maxHeadLeft = mod(phiMax - obj.TorsoAzimuth + 180, 360) - 180;
+        obj.maxHeadRight = mod(phiMin - obj.TorsoAzimuth + 180, 360) - 180;
       end
       % create regular grid with this distance
       if resolution == 0

@@ -5,14 +5,15 @@
   MaximumDelay="0.05"
   PreDelay="0.0"
   NumberOfThreads="1"
+  LengthOfSimulation="12"
   Renderer="ssr_binaural"
   HRIRs="impulse_responses/qu_kemar_anechoic/QU_KEMAR_anechoic_3m.sofa">
   <source Position="-2 0 1.75"
           Type="point"
-          Name="Cello">
+          Name="Noise"
+          Volume="0.05">
     <buffer ChannelMapping="1"
-            Type="fifo"
-            File="stimuli/anechoic/instruments/anechoic_cello.wav"/>
+            Type="noise"/>
   </source>
   <source Position="2 0 1.75"
           Type="point"

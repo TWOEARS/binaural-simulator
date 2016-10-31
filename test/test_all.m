@@ -12,3 +12,5 @@ clc;
 test_brs;
 clc;
 test_robot;
+clc;
+test_multispeaker;
