@@ -19,9 +19,6 @@ function outfile = downloadFile(filename, outfile, bVerbose)
 % split up filename into directories
 [dirs, sdx] = regexp(filename, '(\\|\/)', 'split', 'start');
 
-filename(sdx) = '/';  % replace backslashes with slashed for url
-url = [db.url(), '/', filename];
-
 % create directories if necessary
 if nargin < 2 || isempty(outfile)
   dir_path = db.tmp();
@@ -32,12 +29,26 @@ if nargin < 2 || isempty(outfile)
   outfile = fullfile(dir_path, dirs{end});
 end
 
+filename(sdx) = '/';  % replace backslashes with slashed for url
+[dburl, dbalturl] = db.url();  % url of database
+
+% try with URL of database
+url = [dburl, '/', filename];
 % start download
 if nargin == 3 && bVerbose
   fprintf('Downloading file %s\n', url);
 end
 [~, status] = urlwrite(url, outfile);
-
 if ~status
-  error('Download failed (url=%s)', url);
+  warning('Download failed (url=%s), trying alternative database...', url);
+  % try with alternative URL of database
+  url = [dbalturl, '/', filename];
+  % start download
+  if nargin == 3 && bVerbose
+    fprintf('Downloading file %s\n', url);
+  end
+  [~, status] = urlwrite(url, outfile);
+  if ~status
+    error('Download also failed with alternative database (url=%s)', url);
+  end
 end
