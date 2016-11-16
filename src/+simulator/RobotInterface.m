@@ -111,6 +111,10 @@ classdef (Abstract) RobotInterface < matlab.mixin.SetGet
         function stop(obj)
             obj.bActive = false;
         end
+        
+        function start(obj)
+            obj.bActive = true;
+        end
     end
 
 end
