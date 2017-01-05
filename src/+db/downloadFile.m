@@ -32,6 +32,14 @@ end
 filename(sdx) = '/';  % replace backslashes with slashed for url
 [dburl, dbalturl] = db.url();  % url of database
 
+% Avoid "//" in URL concatenation
+if dburl(end) == '/'
+  dburl = dburl(1:end-1);
+end
+if dbalturl(end) == '/'
+  dbalturl = dbalturl(1:end-1);
+end
+
 % try with URL of database
 url = [dburl, '/', filename];
 % start download
