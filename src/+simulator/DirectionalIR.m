@@ -243,12 +243,15 @@ classdef DirectionalIR < hgsetget
         phiMin = availableAzimuths(adx);
         phiMax = availableAzimuths( ...
           mod(adx - 2,length(availableAzimuths)) + 1);
-        % center of this area
-        obj.TorsoAzimuth = phiMin + mod(phiMax - phiMin, 360)/2;
-        
-        obj.maxHeadLeft = mod(phiMax - obj.TorsoAzimuth + 180, 360) - 180;
-        obj.maxHeadRight = mod(phiMin - obj.TorsoAzimuth + 180, 360) - 180;
+      else
+          phiMin = min( availableAzimuths );
+          phiMax = max( availableAzimuths );
       end
+      % center of this area
+      obj.TorsoAzimuth = mod( phiMin + mod(phiMax - phiMin, 360)/2, 360 );
+      
+      obj.maxHeadLeft = mod(phiMax - obj.TorsoAzimuth + 180, 360) - 180;
+      obj.maxHeadRight = mod(phiMin - obj.TorsoAzimuth + 180, 360) - 180;
       % create regular grid with this distance
       if resolution == 0
         nangle = 1;
