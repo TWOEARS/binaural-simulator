@@ -1,6 +1,10 @@
 classdef FIFO < simulator.buffer.Data
   % basically implements a FIFO buffer
 
+  properties
+      startIdx;
+  end
+  
   methods
     function obj = FIFO(mapping)
       % function obj = Data(mapping)
@@ -12,6 +16,7 @@ classdef FIFO < simulator.buffer.Data
         mapping = 1;
       end
       obj = obj@simulator.buffer.Data(mapping);
+      obj.startIdx = 1;
     end
   end
 
@@ -26,7 +31,8 @@ classdef FIFO < simulator.buffer.Data
       if (size(data,2) ~= obj.NumberOfInputs)
         error('number of columns does not match number of inputs');
       end
-      obj.data = [obj.data; data];
+      obj.data = [obj.data(obj.startIdx:end,:); data];
+      obj.startIdx = 1;
     end
     function removeData(obj, length)
       % function removeData(obj, length)
@@ -40,12 +46,25 @@ classdef FIFO < simulator.buffer.Data
       if ~isempty(obj.data)
         if nargin < 2
           obj.data = [];
-        elseif length > size(obj.data,1)
+        elseif length > size(obj.data,1) + 1 - obj.startIdx
           obj.data = [];
         else
-          obj.data = obj.data(length+1:end,:);
+          if obj.startIdx >= 8192 * 50
+              obj.data = obj.data(obj.startIdx+length:end,:);
+              obj.startIdx = 1;
+          else
+              obj.startIdx = obj.startIdx + length;
+          end
         end
       end
+    end
+    function b = isEmpty(obj)
+      % function b = isEmpty(obj)
+      % indicates if buffer is empty
+      %
+      % Return values:
+      %   b: indicates if buffer is empty @type logical
+      b = isempty(obj.data) || obj.startIdx > size( obj.data, 1 );
     end
     function data = getData(obj, length, channels)
       % function data = getData(obj, length, channels)
@@ -70,18 +89,18 @@ classdef FIFO < simulator.buffer.Data
       end
 
       if nargin < 2
-        if size(obj.data,1) > 0
-          data = obj.data(:,mapping);
+        if size(obj.data,1) + 1 - obj.startIdx > 0
+          data = obj.data(obj.startIdx:end,mapping);
         else
           data = [];
         end
-      elseif length > size(obj.data,1)
+      elseif length > size(obj.data,1) + 1 - obj.startIdx
         data = zeros(length, obj.NumberOfOutputs);
         if size(obj.data,1) > 0
-          data(1:size(obj.data,1),:) = obj.data(:,mapping);
+          data(1:size(obj.data,1) + 1 - obj.startIdx,:) = obj.data(obj.startIdx:end,mapping);
         end
       else
-        data = obj.data(1:length,mapping);
+        data = obj.data(obj.startIdx:length+obj.startIdx-1,mapping);
       end
     end
   end
